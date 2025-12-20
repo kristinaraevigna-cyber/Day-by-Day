@@ -1115,3 +1115,4 @@ export default function DayByDayApp() {
       <BottomNav currentView={currentView} setCurrentView={setCurrentView} />
     </div>
   );
+  }
