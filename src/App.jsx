@@ -13,6 +13,13 @@ import { supabase } from './lib/supabase';
 
 const getICFVoicePrompt = () => `You are an ICF-certified Leadership Coach specializing in leader development. You are having a VOICE conversation.
 
+## MULTILINGUAL SUPPORT
+- Detect what language the user is speaking
+- Respond in the SAME language the user speaks
+- If they switch languages, switch with them
+- Maintain the same coaching quality in all languages
+- Supported languages include: English, Spanish, French, German, Italian, Portuguese, Japanese, Korean, Chinese, Dutch, Russian, Arabic, Hindi, and more
+
 ## VOICE CONVERSATION STYLE
 - Speak naturally and conversationally, as if in person
 - Keep responses SHORT (2-4 sentences typically)
@@ -119,6 +126,13 @@ Then continue exploring with ONE question per turn until action emerges.`;
 
 const getDayMentorVoicePrompt = () => `You are a Leadership Development Mentor based on Dr. David V. Day's research from "Developing Leaders and Leadership" (2024). You are having a VOICE conversation.
 
+## MULTILINGUAL SUPPORT
+- Detect what language the user is speaking
+- Respond in the SAME language the user speaks
+- If they switch languages, switch with them
+- Maintain the same mentoring quality in all languages
+- Supported languages include: English, Spanish, French, German, Italian, Portuguese, Japanese, Korean, Chinese, Dutch, Russian, Arabic, Hindi, and more
+
 ## VOICE CONVERSATION STYLE
 - Speak naturally and conversationally
 - Keep responses concise (2-4 sentences typically)
@@ -202,7 +216,7 @@ But you also:
 - Respect their autonomy
 
 ## SAMPLE FLOW
-Turn 1: "Welcome! I'm here to share research-based guidance on leadership development. What would you like to explore today?" [STOP]
+Turn 1: "Welcome! I'm here to share research-based guidance from David Day's work. What aspect of leader or leadership development would you like to explore today?" [STOP]
 Turn 2: Listen, then "That's a great area to focus on. Let me share what the research tells us..." [STOP]
 Continue by teaching concepts and helping them apply to their situation.`;
 
@@ -1038,8 +1052,8 @@ function VoiceCoach({ coachType, setCurrentView }) {
   };
 
   const getGreeting = () => {
-    if (isICF) return "Hello, I'm here to support your leadership journey. What's on your mind today?";
-    return "Welcome! I'm here to share research-based guidance on leadership development. What would you like to learn about or work on?";
+    if (isICF) return "Hello, I'm here to support your leadership journey. What would you like to focus on today?";
+    return "Welcome! I'm here to share research-based guidance from David Day's work. What aspect of leader or leadership development would you like to explore today?";
   };
 
   const handleRealtimeEvent = (event) => {
@@ -1259,8 +1273,8 @@ function TextCoach({ coachType, setCurrentView, user, setActions, actions }) {
 
   useEffect(() => {
     const greeting = isICF
-      ? "Hello! I'm here to support your exploration. What's on your mind today?"
-      : "Welcome! I'm here to share research-based guidance. What would you like to work on?";
+      ? "Hello! I'm here to support your leadership journey. What would you like to focus on today?"
+      : "Welcome! I'm here to share research-based guidance from David Day's work. What aspect of leader or leadership development would you like to explore today?";
     setMessages([{ role: 'assistant', content: greeting }]);
   }, []);
 
@@ -1992,6 +2006,5 @@ export default function DayByDayApp() {
     </div>
   );
 }
-
 
 
