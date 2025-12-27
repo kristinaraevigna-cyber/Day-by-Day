@@ -910,6 +910,292 @@ const KLI_COMPETENCIES = [
 ];
 
 // ============================================================================
+// PRACTICE ACTIVITIES (VCoL Framework - Based on KLI Competencies)
+// ============================================================================
+
+const ACTIVITIES = [
+  // COURAGE - Resilience Activities
+  {
+    id: 'pause_practice',
+    competency: 'courage',
+    capability: 'resilience',
+    title: 'The Pause',
+    description: 'Build emotion management by pausing before responding to triggers',
+    duration: '5 min',
+    level: 'Foundation',
+    vcol: {
+      set_goal: 'Today, pause for 3 seconds before responding in any situation that triggers a strong reaction.',
+      gather_info: 'Notice: What triggered you? What emotion arose? What was your first impulse?',
+      apply: 'Take a breath. Ask yourself: "Is my first reaction the best reaction?" Then choose consciously.',
+      reflect: 'What did you notice when you paused? How did it change your response?'
+    }
+  },
+  {
+    id: 'growth_reframe',
+    competency: 'courage',
+    capability: 'resilience',
+    title: 'Growth Mindset Reframe',
+    description: 'Practice reframing setbacks as opportunities for learning',
+    duration: '10 min',
+    level: 'Foundation',
+    vcol: {
+      set_goal: 'When you encounter a setback today, consciously reframe it using "yet" or "opportunity to learn."',
+      gather_info: 'What setback or failure did you experience? What was your initial reaction?',
+      apply: 'Reframe: "I haven\'t mastered this YET" or "This is an opportunity to learn about..."',
+      reflect: 'How did reframing change your emotional response and next actions?'
+    }
+  },
+  // COURAGE - Entrepreneurial Mindset Activities
+  {
+    id: 'bold_action',
+    competency: 'courage',
+    capability: 'entrepreneurial',
+    title: 'One Bold Action',
+    description: 'Take initiative on something outside your comfort zone',
+    duration: '15 min',
+    level: 'Growth',
+    vcol: {
+      set_goal: 'Identify one bold action you have been avoiding. Commit to taking the first step today.',
+      gather_info: 'What is the action? What fear is holding you back? What is the worst that could happen?',
+      apply: 'Take the first step. Focus on progress, not perfection.',
+      reflect: 'What happened when you took action? What did you learn about yourself?'
+    }
+  },
+  {
+    id: 'resource_hunt',
+    competency: 'courage',
+    capability: 'entrepreneurial',
+    title: 'Resource Hunt',
+    description: 'Find creative solutions using available resources',
+    duration: '15 min',
+    level: 'Growth',
+    vcol: {
+      set_goal: 'Identify a challenge you are facing. Find 3 unconventional resources that could help.',
+      gather_info: 'What resources do you have access to? Who could help? What can be repurposed?',
+      apply: 'Reach out to one resource or person today. Take action with what you have.',
+      reflect: 'What resources did you discover? How did this change your approach?'
+    }
+  },
+  // COURAGE - Responsible Action Activities
+  {
+    id: 'values_alignment',
+    competency: 'courage',
+    capability: 'responsible',
+    title: 'Values in Action',
+    description: 'Act with integrity by aligning behavior with your core values',
+    duration: '10 min',
+    level: 'Foundation',
+    vcol: {
+      set_goal: 'Identify one core value. Watch for moments today when your actions align—or don\'t—with that value.',
+      gather_info: 'What value did you choose? When did you see it guiding you? When did you drift from it?',
+      apply: 'In one situation, consciously choose the action that reflects your value, even if harder.',
+      reflect: 'How did it feel to act from your value? What made it easy or hard?'
+    }
+  },
+  {
+    id: 'speak_up',
+    competency: 'courage',
+    capability: 'responsible',
+    title: 'Speak Your Truth',
+    description: 'Practice advocacy by voicing your perspective respectfully',
+    duration: '10 min',
+    level: 'Growth',
+    vcol: {
+      set_goal: 'In a meeting or conversation today, share a perspective you might normally hold back.',
+      gather_info: 'What perspective are you holding? Why have you been hesitant to share it?',
+      apply: 'Share your view using "I" statements. Be clear, respectful, and open to dialogue.',
+      reflect: 'What happened when you spoke up? How did others respond?'
+    }
+  },
+  // CREATIVITY - Innovation Activities
+  {
+    id: 'idea_generation',
+    competency: 'creativity',
+    capability: 'innovation',
+    title: 'Idea Sprint',
+    description: 'Generate multiple solutions to a challenge without judgment',
+    duration: '15 min',
+    level: 'Foundation',
+    vcol: {
+      set_goal: 'Choose a challenge you face. Generate at least 10 possible solutions without judging any of them.',
+      gather_info: 'What is the challenge? What solutions come to mind? Push beyond the obvious.',
+      apply: 'Write down all 10+ ideas. Circle the 2-3 most interesting. Take action on one.',
+      reflect: 'What surprised you about this exercise? Which idea will you pursue?'
+    }
+  },
+  {
+    id: 'challenge_assumption',
+    competency: 'creativity',
+    capability: 'innovation',
+    title: 'Challenge the Status Quo',
+    description: 'Question an existing process or assumption',
+    duration: '15 min',
+    level: 'Growth',
+    vcol: {
+      set_goal: 'Identify one process or assumption at work that you\'ve always accepted. Question it today.',
+      gather_info: 'Why has this always been done this way? What would happen if you changed it?',
+      apply: 'Propose an alternative approach to one person or test a small change yourself.',
+      reflect: 'What did you learn from challenging the status quo? What resistance did you encounter?'
+    }
+  },
+  // CREATIVITY - Communication Activities
+  {
+    id: 'active_listening',
+    competency: 'creativity',
+    capability: 'communication',
+    title: 'Deep Listening',
+    description: 'Give someone your complete, undivided attention',
+    duration: '10 min',
+    level: 'Foundation',
+    vcol: {
+      set_goal: 'In your next conversation, focus entirely on understanding before responding.',
+      gather_info: 'Are you truly listening or preparing your reply? What is the person really saying?',
+      apply: 'Put away distractions. Don\'t interrupt. Reflect back what you heard.',
+      reflect: 'What did you notice when you listened fully? What did you learn?'
+    }
+  },
+  {
+    id: 'powerful_question',
+    competency: 'creativity',
+    capability: 'communication',
+    title: 'Ask Powerful Questions',
+    description: 'Use inquiry to deepen understanding and spark insight',
+    duration: '10 min',
+    level: 'Growth',
+    vcol: {
+      set_goal: 'In conversations today, ask at least 3 open-ended questions that start with "What" or "How."',
+      gather_info: 'What questions tend to open up conversation? What questions shut it down?',
+      apply: 'Replace advice-giving with curious questions. Ask: "What would be most helpful?"',
+      reflect: 'How did asking questions change the conversation? What did you discover?'
+    }
+  },
+  // CREATIVITY - Problem Solving Activities
+  {
+    id: 'decision_framework',
+    competency: 'creativity',
+    capability: 'problemsolving',
+    title: 'Structured Decision',
+    description: 'Use a framework to make a complex decision',
+    duration: '20 min',
+    level: 'Growth',
+    vcol: {
+      set_goal: 'Apply a decision framework (pros/cons, criteria matrix) to a decision you are facing.',
+      gather_info: 'What is the decision? What are your options? What criteria matter most?',
+      apply: 'Score each option against your criteria. What does the analysis reveal?',
+      reflect: 'Did the framework clarify your thinking? What will you decide?'
+    }
+  },
+  {
+    id: 'anticipate_problems',
+    competency: 'creativity',
+    capability: 'problemsolving',
+    title: 'Pre-Mortem Analysis',
+    description: 'Anticipate problems before they happen',
+    duration: '15 min',
+    level: 'Growth',
+    vcol: {
+      set_goal: 'Choose an upcoming project or decision. Imagine it has failed. What went wrong?',
+      gather_info: 'What are all the ways this could fail? What risks have you overlooked?',
+      apply: 'Identify the top 3 risks. Create one mitigation action for each.',
+      reflect: 'How did this exercise change your planning? What will you do differently?'
+    }
+  },
+  // COLLABORATION - Empathy Activities
+  {
+    id: 'perspective_taking',
+    competency: 'collaboration',
+    capability: 'empathy',
+    title: 'Walk in Their Shoes',
+    description: 'Practice seeing a situation from another\'s perspective',
+    duration: '10 min',
+    level: 'Foundation',
+    vcol: {
+      set_goal: 'Choose someone you disagree with or find challenging. Try to understand their perspective.',
+      gather_info: 'What might they be feeling? What needs or fears might drive their behavior?',
+      apply: 'Have a conversation where you focus on understanding, not convincing.',
+      reflect: 'What did you learn about them? About yourself?'
+    }
+  },
+  {
+    id: 'curiosity_practice',
+    competency: 'collaboration',
+    capability: 'empathy',
+    title: 'Stay Curious',
+    description: 'Replace judgment with genuine curiosity about others',
+    duration: '10 min',
+    level: 'Foundation',
+    vcol: {
+      set_goal: 'When you notice yourself judging someone today, replace it with a curious question.',
+      gather_info: 'What judgments do you typically make? What triggers them?',
+      apply: 'Ask yourself: "What might I be missing about this person\'s situation?"',
+      reflect: 'How did staying curious change your perception? What did you discover?'
+    }
+  },
+  // COLLABORATION - Social Learning Activities
+  {
+    id: 'network_map',
+    competency: 'collaboration',
+    capability: 'sociallearning',
+    title: 'Map Your Network',
+    description: 'Visualize and strengthen your leadership network',
+    duration: '20 min',
+    level: 'Growth',
+    vcol: {
+      set_goal: 'Create a simple map of your leadership network. Identify gaps and opportunities.',
+      gather_info: 'Who provides: Support? Challenge? Information? Connections to others?',
+      apply: 'Identify one relationship to strengthen. Reach out to that person this week.',
+      reflect: 'What patterns did you notice? What relationship will you invest in?'
+    }
+  },
+  {
+    id: 'learn_from_others',
+    competency: 'collaboration',
+    capability: 'sociallearning',
+    title: 'Leadership Learning',
+    description: 'Learn from observing other leaders in action',
+    duration: '15 min',
+    level: 'Foundation',
+    vcol: {
+      set_goal: 'Identify a leader you admire. Observe them in action and note what makes them effective.',
+      gather_info: 'What specific behaviors do they exhibit? How do others respond to them?',
+      apply: 'Try one behavior you observed in your own leadership practice today.',
+      reflect: 'What worked? What would you adapt for your own style?'
+    }
+  },
+  // COLLABORATION - Teamwork Activities
+  {
+    id: 'build_safety',
+    competency: 'collaboration',
+    capability: 'teamwork',
+    title: 'Build Psychological Safety',
+    description: 'Create an environment where people can speak up',
+    duration: '15 min',
+    level: 'Growth',
+    vcol: {
+      set_goal: 'Observe: How safe do people feel to speak up, take risks, and admit mistakes in your team?',
+      gather_info: 'Who speaks? Who stays quiet? How are mistakes discussed?',
+      apply: 'Do one thing to increase safety: invite a quiet person\'s view or share a mistake you made.',
+      reflect: 'What did you observe about safety? What impact did your action have?'
+    }
+  },
+  {
+    id: 'give_recognition',
+    competency: 'collaboration',
+    capability: 'teamwork',
+    title: 'Recognize & Appreciate',
+    description: 'Acknowledge the contributions of team members',
+    duration: '10 min',
+    level: 'Foundation',
+    vcol: {
+      set_goal: 'Today, recognize at least one person for a specific contribution they made.',
+      gather_info: 'Who has gone unrecognized? What specific actions deserve acknowledgment?',
+      apply: 'Share your appreciation directly—be specific about what they did and why it mattered.',
+      reflect: 'How did they respond? How did it feel to give recognition?'
+    }
+  }
+];
+
+// ============================================================================
 // ICONS
 // ============================================================================
 
@@ -1368,6 +1654,7 @@ function TextCoach({ coachType, setCurrentView, user, setActions, actions }) {
 function Sidebar({ currentView, setCurrentView, user, onSignOut }) {
   const navItems = [
     { id: 'dashboard', label: 'Home', icon: Icons.Home },
+    { id: 'practice', label: 'Practice', icon: Icons.Target },
     { id: 'chapters', label: 'Learn', icon: Icons.BookOpen },
     { id: 'journal', label: 'Journal', icon: Icons.Edit },
     { id: 'actions', label: 'Actions', icon: Icons.CheckSquare },
@@ -1420,10 +1707,10 @@ function Header({ streak }) {
 function BottomNav({ currentView, setCurrentView }) {
   const navItems = [
     { id: 'dashboard', label: 'Home', icon: Icons.Home },
+    { id: 'practice', label: 'Practice', icon: Icons.Target },
     { id: 'chapters', label: 'Learn', icon: Icons.BookOpen },
-    { id: 'journal', label: 'Journal', icon: Icons.Edit },
     { id: 'coaches', label: 'Coach', icon: Icons.MessageCircle },
-    { id: 'library', label: 'Library', icon: Icons.Book }
+    { id: 'library', label: 'More', icon: Icons.Book }
   ];
 
   return (
@@ -1447,6 +1734,14 @@ function BottomNav({ currentView, setCurrentView }) {
 function Dashboard({ setCurrentView, streak, user, actions, journalEntries }) {
   const dateStr = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
   const pendingActions = actions.filter(a => !a.completed).length;
+  const todayActivity = ACTIVITIES[Math.floor(Math.random() * ACTIVITIES.length)];
+  const activityCompetency = KLI_COMPETENCIES.find(c => c.id === todayActivity.competency);
+
+  const competencyColors = {
+    courage: 'from-amber-500 to-orange-600',
+    creativity: 'from-violet-500 to-purple-600',
+    collaboration: 'from-teal-500 to-cyan-600'
+  };
 
   return (
     <div className="animate-fadeIn pb-8">
@@ -1456,6 +1751,20 @@ function Dashboard({ setCurrentView, streak, user, actions, journalEntries }) {
           {user?.user_metadata?.full_name ? `Welcome, ${user.user_metadata.full_name.split(' ')[0]}` : 'Welcome back'}
         </h2>
       </div>
+
+      {/* Daily Practice Card */}
+      <button onClick={() => setCurrentView(`practice-${todayActivity.id}`)}
+        className={`w-full bg-gradient-to-br ${competencyColors[todayActivity.competency]} rounded-2xl p-5 text-left hover:shadow-lg transition-all mb-4`}>
+        <div className="flex items-center gap-4">
+          <div className="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center text-white text-2xl">🎯</div>
+          <div className="flex-1">
+            <p className="text-white/80 text-xs font-medium mb-1">Today's Practice • {activityCompetency?.name}</p>
+            <h3 className="text-base font-semibold text-white mb-1">{todayActivity.title}</h3>
+            <p className="text-white/70 text-sm">{todayActivity.duration} • VCoL Framework</p>
+          </div>
+          <Icons.ArrowRight className="text-white" />
+        </div>
+      </button>
 
       <button onClick={() => setCurrentView('coaches')}
         className="w-full bg-gradient-to-br from-stone-800 to-stone-900 rounded-2xl p-5 text-left hover:from-stone-700 transition-all mb-4">
@@ -1484,6 +1793,34 @@ function Dashboard({ setCurrentView, streak, user, actions, journalEntries }) {
           <div className="flex justify-center mb-1 text-violet-600"><Icons.Edit /></div>
           <p className="text-xl font-bold text-stone-800">{journalEntries.length}</p>
           <p className="text-xs text-stone-500">Journal</p>
+        </div>
+      </div>
+
+      {/* KLI Competencies Quick Access */}
+      <div className="mb-6">
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="font-semibold text-stone-800">Practice by Competency</h3>
+          <button onClick={() => setCurrentView('practice')} className="text-amber-700 text-sm font-medium flex items-center gap-1">All <Icons.ChevronRight /></button>
+        </div>
+        <div className="grid grid-cols-3 gap-3">
+          {KLI_COMPETENCIES.map(comp => {
+            const colors = {
+              courage: 'bg-amber-50 border-amber-200 text-amber-700',
+              creativity: 'bg-violet-50 border-violet-200 text-violet-700',
+              collaboration: 'bg-teal-50 border-teal-200 text-teal-700'
+            };
+            const activityCount = ACTIVITIES.filter(a => a.competency === comp.id).length;
+            return (
+              <button
+                key={comp.id}
+                onClick={() => setCurrentView('practice')}
+                className={`${colors[comp.id]} border rounded-xl p-3 text-center hover:shadow-md transition-all`}
+              >
+                <p className="font-semibold text-sm">{comp.name}</p>
+                <p className="text-xs opacity-70">{activityCount} activities</p>
+              </button>
+            );
+          })}
         </div>
       </div>
 
@@ -1936,6 +2273,316 @@ function LibraryView({ setCurrentView }) {
 }
 
 // ============================================================================
+// PRACTICE VIEW (VCoL-Based Activities)
+// ============================================================================
+
+function PracticeView({ setCurrentView, user }) {
+  const [selectedCompetency, setSelectedCompetency] = useState(null);
+
+  const competencyColors = {
+    courage: { bg: 'bg-amber-50', border: 'border-amber-200', text: 'text-amber-700', accent: 'bg-amber-600' },
+    creativity: { bg: 'bg-violet-50', border: 'border-violet-200', text: 'text-violet-700', accent: 'bg-violet-600' },
+    collaboration: { bg: 'bg-teal-50', border: 'border-teal-200', text: 'text-teal-700', accent: 'bg-teal-600' }
+  };
+
+  if (selectedCompetency) {
+    const competency = KLI_COMPETENCIES.find(c => c.id === selectedCompetency);
+    const activities = ACTIVITIES.filter(a => a.competency === selectedCompetency);
+    const colors = competencyColors[selectedCompetency];
+
+    return (
+      <div className="animate-fadeIn">
+        <button onClick={() => setSelectedCompetency(null)} className="flex items-center gap-1 text-stone-500 hover:text-stone-700 mb-4 text-sm">
+          <Icons.ChevronLeft /> All Competencies
+        </button>
+        
+        <div className={`${colors.bg} ${colors.border} border rounded-xl p-6 mb-6`}>
+          <h1 className={`text-2xl font-bold ${colors.text} mb-2`}>{competency.name}</h1>
+          <p className="text-stone-600">{competency.description}</p>
+        </div>
+
+        <h2 className="font-semibold text-stone-800 mb-4">Practice Activities</h2>
+        <div className="space-y-3">
+          {activities.map(activity => {
+            const capability = competency.capabilities.find(c => c.id === activity.capability);
+            return (
+              <button
+                key={activity.id}
+                onClick={() => setCurrentView(`practice-${activity.id}`)}
+                className="w-full bg-white rounded-xl border border-stone-200 p-4 hover:shadow-md transition-all text-left"
+              >
+                <div className="flex justify-between items-start mb-2">
+                  <div>
+                    <h3 className="font-semibold text-stone-800">{activity.title}</h3>
+                    <p className={`text-xs ${colors.text}`}>{capability?.name}</p>
+                  </div>
+                  <span className={`text-xs px-2 py-1 rounded-full ${colors.bg} ${colors.text}`}>{activity.level}</span>
+                </div>
+                <p className="text-sm text-stone-600 mb-2">{activity.description}</p>
+                <div className="flex items-center text-stone-400 text-xs">
+                  <Icons.Clock /> <span className="ml-1">{activity.duration}</span>
+                </div>
+              </button>
+            );
+          })}
+        </div>
+
+        <div className={`mt-6 p-4 ${colors.bg} rounded-xl`}>
+          <h3 className={`font-semibold ${colors.text} mb-2`}>Capabilities & Attributes</h3>
+          {competency.capabilities.map(cap => (
+            <div key={cap.id} className="mb-3">
+              <p className="font-medium text-stone-700 text-sm">{cap.name}</p>
+              <div className="flex flex-wrap gap-1 mt-1">
+                {cap.attributes.map(attr => (
+                  <span key={attr} className="text-xs bg-white px-2 py-0.5 rounded text-stone-600">{attr}</span>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="animate-fadeIn">
+      <h1 className="text-2xl font-bold text-stone-800 mb-2">Daily Practice</h1>
+      <p className="text-stone-600 mb-6">Build leadership skills through the VCoL framework: Vision, Coaching, Learning.</p>
+
+      <div className="bg-gradient-to-r from-amber-50 via-violet-50 to-teal-50 rounded-xl p-4 mb-6 border border-stone-200">
+        <h2 className="font-semibold text-stone-700 mb-2">The VCoL Framework</h2>
+        <div className="grid grid-cols-4 gap-2 text-center">
+          <div className="bg-white rounded-lg p-2">
+            <div className="text-lg font-bold text-amber-600">1</div>
+            <div className="text-xs text-stone-600">Set Goal</div>
+          </div>
+          <div className="bg-white rounded-lg p-2">
+            <div className="text-lg font-bold text-violet-600">2</div>
+            <div className="text-xs text-stone-600">Gather Info</div>
+          </div>
+          <div className="bg-white rounded-lg p-2">
+            <div className="text-lg font-bold text-teal-600">3</div>
+            <div className="text-xs text-stone-600">Apply</div>
+          </div>
+          <div className="bg-white rounded-lg p-2">
+            <div className="text-lg font-bold text-stone-600">4</div>
+            <div className="text-xs text-stone-600">Reflect</div>
+          </div>
+        </div>
+      </div>
+
+      <h2 className="font-semibold text-stone-800 mb-4">Choose a Competency</h2>
+      <div className="space-y-4">
+        {KLI_COMPETENCIES.map(comp => {
+          const colors = competencyColors[comp.id];
+          const activityCount = ACTIVITIES.filter(a => a.competency === comp.id).length;
+          return (
+            <button
+              key={comp.id}
+              onClick={() => setSelectedCompetency(comp.id)}
+              className={`w-full ${colors.bg} ${colors.border} border rounded-xl p-5 hover:shadow-md transition-all text-left`}
+            >
+              <div className="flex justify-between items-center mb-2">
+                <h3 className={`text-xl font-bold ${colors.text}`}>{comp.name}</h3>
+                <span className={`${colors.accent} text-white text-xs px-2 py-1 rounded-full`}>{activityCount} activities</span>
+              </div>
+              <p className="text-stone-600 text-sm mb-3">{comp.description}</p>
+              <div className="flex flex-wrap gap-2">
+                {comp.capabilities.map(cap => (
+                  <span key={cap.id} className="text-xs bg-white px-2 py-1 rounded text-stone-600">{cap.name}</span>
+                ))}
+              </div>
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+// ============================================================================
+// DAILY PRACTICE DETAIL (VCoL 4-Step Framework)
+// ============================================================================
+
+function DailyPractice({ activityId, setCurrentView, user }) {
+  const [currentStep, setCurrentStep] = useState(0);
+  const [responses, setResponses] = useState({});
+  const [completed, setCompleted] = useState(false);
+
+  const activity = ACTIVITIES.find(a => a.id === activityId);
+  if (!activity) return <div>Activity not found</div>;
+
+  const competency = KLI_COMPETENCIES.find(c => c.id === activity.competency);
+  const capability = competency?.capabilities.find(c => c.id === activity.capability);
+
+  const competencyColors = {
+    courage: { bg: 'bg-amber-50', border: 'border-amber-200', text: 'text-amber-700', accent: 'bg-amber-600', light: 'bg-amber-100' },
+    creativity: { bg: 'bg-violet-50', border: 'border-violet-200', text: 'text-violet-700', accent: 'bg-violet-600', light: 'bg-violet-100' },
+    collaboration: { bg: 'bg-teal-50', border: 'border-teal-200', text: 'text-teal-700', accent: 'bg-teal-600', light: 'bg-teal-100' }
+  };
+  const colors = competencyColors[activity.competency];
+
+  const steps = [
+    { key: 'set_goal', title: 'Set Your Goal', icon: '🎯', prompt: activity.vcol.set_goal },
+    { key: 'gather_info', title: 'Gather Information', icon: '🔍', prompt: activity.vcol.gather_info },
+    { key: 'apply', title: 'Apply & Practice', icon: '⚡', prompt: activity.vcol.apply },
+    { key: 'reflect', title: 'Reflect', icon: '💭', prompt: activity.vcol.reflect }
+  ];
+
+  const handleNext = () => {
+    if (currentStep < steps.length - 1) {
+      setCurrentStep(currentStep + 1);
+    } else {
+      setCompleted(true);
+    }
+  };
+
+  const handleBack = () => {
+    if (currentStep > 0) {
+      setCurrentStep(currentStep - 1);
+    }
+  };
+
+  const saveReflection = async () => {
+    if (!user) return;
+    try {
+      await supabase.from('reflections').insert({
+        user_id: user.id,
+        content: JSON.stringify({ activity: activity.title, responses }),
+        reflection_type: 'vcol_practice'
+      });
+    } catch (e) {
+      console.error('Error saving reflection:', e);
+    }
+  };
+
+  if (completed) {
+    return (
+      <div className="animate-fadeIn">
+        <div className={`${colors.bg} rounded-xl p-6 text-center mb-6`}>
+          <div className="text-4xl mb-4">🎉</div>
+          <h1 className={`text-2xl font-bold ${colors.text} mb-2`}>Practice Complete!</h1>
+          <p className="text-stone-600">You've completed "{activity.title}"</p>
+        </div>
+
+        <div className="bg-white rounded-xl border border-stone-200 p-4 mb-6">
+          <h2 className="font-semibold text-stone-800 mb-3">Your Responses</h2>
+          {steps.map((step, idx) => (
+            <div key={step.key} className="mb-4 last:mb-0">
+              <div className={`text-sm font-medium ${colors.text} mb-1`}>{step.icon} {step.title}</div>
+              <p className="text-stone-600 text-sm bg-stone-50 rounded p-2">
+                {responses[step.key] || '(No response recorded)'}
+              </p>
+            </div>
+          ))}
+        </div>
+
+        <div className="flex gap-3">
+          <button
+            onClick={() => {
+              saveReflection();
+              setCurrentView('practice');
+            }}
+            className={`flex-1 ${colors.accent} text-white py-3 rounded-xl font-medium`}
+          >
+            Save & Continue
+          </button>
+          <button
+            onClick={() => setCurrentView('practice')}
+            className="px-4 py-3 border border-stone-300 rounded-xl text-stone-600"
+          >
+            Skip
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  const step = steps[currentStep];
+
+  return (
+    <div className="animate-fadeIn">
+      <button onClick={() => setCurrentView('practice')} className="flex items-center gap-1 text-stone-500 hover:text-stone-700 mb-4 text-sm">
+        <Icons.ChevronLeft /> Back to Practice
+      </button>
+
+      <div className={`${colors.bg} ${colors.border} border rounded-xl p-4 mb-4`}>
+        <div className="flex items-center gap-2 mb-1">
+          <span className={`${colors.accent} text-white text-xs px-2 py-0.5 rounded`}>{competency?.name}</span>
+          <span className="text-stone-400">→</span>
+          <span className="text-stone-600 text-sm">{capability?.name}</span>
+        </div>
+        <h1 className={`text-xl font-bold ${colors.text}`}>{activity.title}</h1>
+        <p className="text-stone-600 text-sm mt-1">{activity.description}</p>
+      </div>
+
+      {/* Progress Bar */}
+      <div className="mb-6">
+        <div className="flex justify-between text-xs text-stone-500 mb-2">
+          <span>Step {currentStep + 1} of 4</span>
+          <span>VCoL Framework</span>
+        </div>
+        <div className="h-2 bg-stone-200 rounded-full overflow-hidden">
+          <div
+            className={`h-full ${colors.accent} transition-all duration-300`}
+            style={{ width: `${((currentStep + 1) / 4) * 100}%` }}
+          />
+        </div>
+      </div>
+
+      {/* Current Step */}
+      <div className="bg-white rounded-xl border border-stone-200 p-5 mb-6">
+        <div className="flex items-center gap-3 mb-4">
+          <div className={`w-10 h-10 ${colors.light} rounded-full flex items-center justify-center text-xl`}>
+            {step.icon}
+          </div>
+          <h2 className="text-lg font-semibold text-stone-800">{step.title}</h2>
+        </div>
+        
+        <p className="text-stone-700 mb-4 leading-relaxed">{step.prompt}</p>
+
+        <textarea
+          className="w-full border border-stone-200 rounded-lg p-3 text-stone-700 focus:outline-none focus:ring-2 focus:ring-amber-200 min-h-[120px]"
+          placeholder="Write your thoughts here..."
+          value={responses[step.key] || ''}
+          onChange={(e) => setResponses({ ...responses, [step.key]: e.target.value })}
+        />
+      </div>
+
+      {/* Navigation */}
+      <div className="flex gap-3">
+        {currentStep > 0 && (
+          <button
+            onClick={handleBack}
+            className="px-4 py-3 border border-stone-300 rounded-xl text-stone-600 hover:bg-stone-50"
+          >
+            <Icons.ChevronLeft />
+          </button>
+        )}
+        <button
+          onClick={handleNext}
+          className={`flex-1 ${colors.accent} text-white py-3 rounded-xl font-medium flex items-center justify-center gap-2`}
+        >
+          {currentStep < steps.length - 1 ? 'Next Step' : 'Complete'} <Icons.ArrowRight />
+        </button>
+      </div>
+
+      {/* Step Indicators */}
+      <div className="flex justify-center gap-2 mt-6">
+        {steps.map((s, idx) => (
+          <div
+            key={s.key}
+            className={`w-2 h-2 rounded-full transition-all ${
+              idx === currentStep ? colors.accent : idx < currentStep ? colors.light : 'bg-stone-200'
+            }`}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ============================================================================
 // MAIN APP
 // ============================================================================
 
@@ -1974,9 +2621,14 @@ export default function DayByDayApp() {
       const chapterId = parseInt(currentView.split('-')[1]);
       return <ChapterDetail chapterId={chapterId} setCurrentView={setCurrentView} />;
     }
+    if (currentView.startsWith('practice-')) {
+      const activityId = currentView.replace('practice-', '');
+      return <DailyPractice activityId={activityId} setCurrentView={setCurrentView} user={user} />;
+    }
     
     switch (currentView) {
       case 'dashboard': return <Dashboard setCurrentView={setCurrentView} streak={streak} user={user} actions={actions} journalEntries={journalEntries} />;
+      case 'practice': return <PracticeView setCurrentView={setCurrentView} user={user} />;
       case 'chapters': return <ChaptersView setCurrentView={setCurrentView} />;
       case 'journal': return <JournalView user={user} journalEntries={journalEntries} setJournalEntries={setJournalEntries} />;
       case 'actions': return <ActionsView user={user} actions={actions} setActions={setActions} />;
@@ -2006,5 +2658,6 @@ export default function DayByDayApp() {
     </div>
   );
 }
+
 
 
