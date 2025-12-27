@@ -311,7 +311,7 @@ Day uses Hiller's (2005) four-item scale:
 **The Paradox:** People who rate themselves as highly self-aware are often not. Those with genuine self-awareness know they have blind spots.
 
 **Key Insight:** Self-awareness is the foundation of all development. Without knowing where you are, you can't chart a course to where you want to be.`,
-        practicalApplication: 'Seek feedback from 3-5 people who know you well. Ask: "What's one thing I do that helps my leadership? One thing that hinders it?" Look for patterns.',
+        practicalApplication: 'Seek feedback from 3-5 people who know you well. Ask: "What is one thing I do that helps my leadership? One thing that hinders it?" Look for patterns.',
         researchBasis: 'Tasha Eurich\'s research on self-awareness showing that only 10-15% of people are as self-aware as they think.'
       },
       {
@@ -1905,7 +1905,6 @@ export default function DayByDayApp() {
     </div>
   );
 }
-
 
 
 
