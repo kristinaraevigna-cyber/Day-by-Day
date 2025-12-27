@@ -1,10 +1,9 @@
-console.log('DAY BY DAY APP LOADING');
-import React, { useState, useEffect, useRef } from 'react';
+mport React, { useState, useEffect, useRef } from 'react';
 import { supabase } from './lib/supabase';
 
 // ============================================================================
 // DAY BY DAY - Leader & Leadership Development Application
-// With ICF Coaching, Supabase Integration & Authentication
+// Responsive Design: Mobile-first with Desktop optimization
 // ============================================================================
 
 // ============================================================================
@@ -35,11 +34,6 @@ const Icons = {
   Loader: () => (
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="animate-spin">
       <line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"/><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/><line x1="4.93" y1="19.07" x2="7.76" y2="16.24"/><line x1="16.24" y1="7.76" x2="19.07" y2="4.93"/>
-    </svg>
-  ),
-  Play: () => (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-      <polygon points="5 3 19 12 5 21 5 3"/>
     </svg>
   ),
   Home: () => (
@@ -123,17 +117,6 @@ const Icons = {
       <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
     </svg>
   ),
-  Users: () => (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-    </svg>
-  ),
-  Lightbulb: () => (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <path d="M9 18h6"/><path d="M10 22h4"/>
-      <path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"/>
-    </svg>
-  ),
   LogOut: () => (
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
       <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
@@ -147,6 +130,16 @@ const Icons = {
   Lock: () => (
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
       <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+    </svg>
+  ),
+  Menu: () => (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/>
+    </svg>
+  ),
+  X: () => (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
     </svg>
   )
 };
@@ -400,12 +393,76 @@ function AuthScreen({ onAuth }) {
 }
 
 // ============================================================================
-// HEADER & NAV
+// SIDEBAR (Desktop Navigation)
+// ============================================================================
+
+function Sidebar({ currentView, setCurrentView, user, onSignOut }) {
+  const navItems = [
+    { id: 'dashboard', label: 'Home', icon: Icons.Home },
+    { id: 'paths', label: 'Learn', icon: Icons.Compass },
+    { id: 'journal', label: 'Journal', icon: Icons.Book },
+    { id: 'goals', label: 'Goals', icon: Icons.Target },
+    { id: 'coach', label: 'Coach', icon: Icons.Brain },
+  ];
+
+  return (
+    <aside className="hidden lg:flex flex-col w-64 bg-white border-r border-stone-200 min-h-screen fixed left-0 top-0">
+      <div className="p-6 border-b border-stone-200">
+        <h1 className="font-serif text-xl font-semibold text-stone-800">Day by Day</h1>
+        <p className="text-xs text-stone-500 mt-1">Leader Development</p>
+      </div>
+      
+      <nav className="flex-1 p-4 space-y-1">
+        {navItems.map(item => {
+          const isActive = currentView === item.id || 
+            (item.id === 'paths' && (currentView === 'path-detail' || currentView === 'practice'));
+          return (
+            <button
+              key={item.id}
+              onClick={() => setCurrentView(item.id)}
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors text-left
+                ${isActive 
+                  ? 'bg-amber-50 text-amber-700 font-medium' 
+                  : 'text-stone-600 hover:bg-stone-50 hover:text-stone-800'}`}
+            >
+              <item.icon />
+              <span>{item.label}</span>
+            </button>
+          );
+        })}
+      </nav>
+
+      <div className="p-4 border-t border-stone-200">
+        <div className="flex items-center gap-3 px-4 py-2 mb-2">
+          <div className="w-8 h-8 rounded-full bg-stone-100 flex items-center justify-center text-stone-400">
+            <Icons.User />
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-medium text-stone-800 truncate">
+              {user?.user_metadata?.full_name || 'User'}
+            </p>
+            <p className="text-xs text-stone-500 truncate">{user?.email}</p>
+          </div>
+        </div>
+        <button
+          onClick={onSignOut}
+          className="w-full flex items-center gap-3 px-4 py-2 text-red-600 hover:bg-red-50 rounded-xl transition-colors text-sm"
+        >
+          <Icons.LogOut />
+          <span>Sign Out</span>
+        </button>
+      </div>
+    </aside>
+  );
+}
+
+// ============================================================================
+// HEADER & BOTTOM NAV (Mobile)
 // ============================================================================
 
 function Header({ streak }) {
   return (
-    <header className="bg-white border-b border-stone-200 px-6 py-4 sticky top-0 z-30">
+    <header className="bg-white border-b border-stone-200 px-6 py-4 sticky top-0 z-30 lg:hidden">
       <div className="max-w-lg mx-auto flex items-center justify-between">
         <h1 className="font-serif text-xl font-semibold text-stone-800">Day by Day</h1>
         {streak > 0 && (
@@ -429,7 +486,7 @@ function BottomNav({ currentView, setCurrentView }) {
   ];
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-stone-200 z-30">
+    <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-stone-200 z-30 lg:hidden">
       <div className="max-w-lg mx-auto flex justify-around py-2">
         {navItems.map(item => {
           const isActive = currentView === item.id || 
@@ -462,50 +519,61 @@ function Dashboard({ setCurrentView, setSelectedPath, setSelectedActivity, strea
     <div className="animate-fadeIn pb-8">
       <div className="mb-6">
         <p className="text-stone-500 text-sm mb-1">{dateStr}</p>
-        <h2 className="font-serif text-2xl text-stone-800">
+        <h2 className="font-serif text-2xl lg:text-3xl text-stone-800">
           {user?.user_metadata?.full_name ? `Welcome, ${user.user_metadata.full_name.split(' ')[0]}` : 'Welcome back'}
         </h2>
       </div>
 
-      {/* AI Coach */}
-      <div className="mb-6">
-        <button onClick={() => setCurrentView('coach')}
-          className="w-full bg-gradient-to-br from-stone-800 to-stone-900 rounded-2xl p-6 text-left hover:from-stone-700 hover:to-stone-800 transition-all group">
-          <div className="flex items-start gap-4">
-            <div className="w-14 h-14 rounded-2xl bg-amber-500 flex items-center justify-center shrink-0 text-white">
-              <Icons.Brain />
-            </div>
-            <div className="flex-1">
-              <div className="flex items-center gap-2 mb-1">
-                <h3 className="text-lg font-semibold text-white">Your Leadership Coach</h3>
-                <span className="px-2 py-0.5 bg-amber-500/20 text-amber-400 text-xs font-medium rounded-full">ICF</span>
+      {/* Desktop: Two column layout for Coach + Stats */}
+      <div className="lg:grid lg:grid-cols-3 lg:gap-6">
+        {/* AI Coach - Full width on mobile, 2 cols on desktop */}
+        <div className="mb-6 lg:mb-0 lg:col-span-2">
+          <button onClick={() => setCurrentView('coach')}
+            className="w-full bg-gradient-to-br from-stone-800 to-stone-900 rounded-2xl p-6 text-left hover:from-stone-700 hover:to-stone-800 transition-all group">
+            <div className="flex items-start gap-4">
+              <div className="w-14 h-14 rounded-2xl bg-amber-500 flex items-center justify-center shrink-0 text-white">
+                <Icons.Brain />
               </div>
-              <p className="text-stone-300 text-sm mb-3">Get personalized guidance and accelerate your development.</p>
-              <div className="flex items-center gap-2 text-amber-400 font-medium text-sm group-hover:gap-3 transition-all">
-                <span>Start a conversation</span>
-                <Icons.ArrowRight />
+              <div className="flex-1">
+                <div className="flex items-center gap-2 mb-1">
+                  <h3 className="text-lg font-semibold text-white">Your Leadership Coach</h3>
+                  <span className="px-2 py-0.5 bg-amber-500/20 text-amber-400 text-xs font-medium rounded-full">ICF</span>
+                </div>
+                <p className="text-stone-300 text-sm mb-3">Get personalized guidance and accelerate your development.</p>
+                <div className="flex items-center gap-2 text-amber-400 font-medium text-sm group-hover:gap-3 transition-all">
+                  <span>Start a conversation</span>
+                  <Icons.ArrowRight />
+                </div>
+              </div>
+            </div>
+          </button>
+        </div>
+
+        {/* Stats - Stacked on desktop sidebar area */}
+        <div className="mb-6 lg:mb-0">
+          <div className="grid grid-cols-3 lg:grid-cols-1 gap-3">
+            <div className="bg-white rounded-xl p-4 border border-stone-200 text-center lg:text-left lg:flex lg:items-center lg:gap-3">
+              <div className="flex justify-center lg:justify-start mb-1 lg:mb-0 text-amber-600"><Icons.Flame /></div>
+              <div>
+                <p className="text-xl font-bold text-stone-800">{streak}</p>
+                <p className="text-xs text-stone-500">Streak</p>
+              </div>
+            </div>
+            <div className="bg-white rounded-xl p-4 border border-stone-200 text-center lg:text-left lg:flex lg:items-center lg:gap-3">
+              <div className="flex justify-center lg:justify-start mb-1 lg:mb-0 text-teal-600"><Icons.Award /></div>
+              <div>
+                <p className="text-xl font-bold text-stone-800">{completedActivities}</p>
+                <p className="text-xs text-stone-500">Done</p>
+              </div>
+            </div>
+            <div className="bg-white rounded-xl p-4 border border-stone-200 text-center lg:text-left lg:flex lg:items-center lg:gap-3">
+              <div className="flex justify-center lg:justify-start mb-1 lg:mb-0 text-violet-600"><Icons.Target /></div>
+              <div>
+                <p className="text-xl font-bold text-stone-800">{activeGoals.length}</p>
+                <p className="text-xs text-stone-500">Goals</p>
               </div>
             </div>
           </div>
-        </button>
-      </div>
-
-      {/* Stats */}
-      <div className="grid grid-cols-3 gap-3 mb-6">
-        <div className="bg-white rounded-xl p-4 border border-stone-200 text-center">
-          <div className="flex justify-center mb-1 text-amber-600"><Icons.Flame /></div>
-          <p className="text-xl font-bold text-stone-800">{streak}</p>
-          <p className="text-xs text-stone-500">Streak</p>
-        </div>
-        <div className="bg-white rounded-xl p-4 border border-stone-200 text-center">
-          <div className="flex justify-center mb-1 text-teal-600"><Icons.Award /></div>
-          <p className="text-xl font-bold text-stone-800">{completedActivities}</p>
-          <p className="text-xs text-stone-500">Done</p>
-        </div>
-        <div className="bg-white rounded-xl p-4 border border-stone-200 text-center">
-          <div className="flex justify-center mb-1 text-violet-600"><Icons.Target /></div>
-          <p className="text-xl font-bold text-stone-800">{activeGoals.length}</p>
-          <p className="text-xs text-stone-500">Goals</p>
         </div>
       </div>
 
@@ -520,7 +588,7 @@ function Dashboard({ setCurrentView, setSelectedPath, setSelectedActivity, strea
         <button onClick={() => { setSelectedActivity(todayActivity); setCurrentView('practice'); }}
           className="w-full bg-white rounded-2xl border border-stone-200 overflow-hidden hover:shadow-lg hover:border-stone-300 transition-all text-left">
           <div className="flex">
-            <img src={todayActivity.image} alt="" className="w-28 h-28 object-cover" />
+            <img src={todayActivity.image} alt="" className="w-28 lg:w-40 h-28 lg:h-32 object-cover" />
             <div className="flex-1 p-4">
               <div className="flex items-center gap-2 mb-1">
                 <span className="text-xs font-medium text-amber-700">{todayActivity.level}</span>
@@ -533,14 +601,14 @@ function Dashboard({ setCurrentView, setSelectedPath, setSelectedActivity, strea
         </button>
       </div>
 
-      {/* Paths */}
+      {/* Learning Paths - 2 cols on mobile, 2 cols on desktop */}
       <div className="mb-6">
         <h3 className="font-semibold text-stone-800 mb-3">Learning Paths</h3>
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-2 gap-3 lg:gap-4">
           {PATHS.map(path => (
             <button key={path.id} onClick={() => { setSelectedPath(path.id); setCurrentView('path-detail'); }}
               className="text-left rounded-xl overflow-hidden border border-stone-200 bg-white hover:shadow-md transition-all group">
-              <div className="relative h-20 overflow-hidden">
+              <div className="relative h-20 lg:h-28 overflow-hidden">
                 <img src={path.image} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                 <p className="absolute bottom-2 left-3 text-white font-medium text-sm">{path.name}</p>
@@ -551,7 +619,7 @@ function Dashboard({ setCurrentView, setSelectedPath, setSelectedActivity, strea
       </div>
 
       {/* Quick Links */}
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-2 gap-3 lg:gap-4">
         <button onClick={() => setCurrentView('journal')} className="flex items-center gap-3 p-4 bg-white rounded-xl border border-stone-200 hover:border-stone-300 text-left">
           <div className="w-10 h-10 rounded-lg bg-stone-100 flex items-center justify-center text-stone-600"><Icons.Book /></div>
           <div>
@@ -601,7 +669,7 @@ function Journal({ user, journalEntries, setJournalEntries }) {
     <div className="animate-fadeIn pb-8">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h2 className="font-serif text-2xl text-stone-800">Journal</h2>
+          <h2 className="font-serif text-2xl lg:text-3xl text-stone-800">Journal</h2>
           <p className="text-sm text-stone-500">Capture your reflections</p>
         </div>
         {!showNew && (
@@ -636,7 +704,7 @@ function Journal({ user, journalEntries, setJournalEntries }) {
           <button onClick={() => setShowNew(true)} className="text-amber-700 font-medium text-sm">Write your first entry</button>
         </div>
       ) : (
-        <div className="space-y-3">
+        <div className="space-y-3 lg:grid lg:grid-cols-2 lg:gap-4 lg:space-y-0">
           {journalEntries.map(entry => (
             <div key={entry.id} className="bg-white rounded-xl border border-stone-200 p-5">
               <div className="flex items-center justify-between mb-2">
@@ -686,7 +754,7 @@ function Goals({ user, goals, setGoals }) {
     <div className="animate-fadeIn pb-8">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h2 className="font-serif text-2xl text-stone-800">Goals</h2>
+          <h2 className="font-serif text-2xl lg:text-3xl text-stone-800">Goals</h2>
           <p className="text-sm text-stone-500">Track your development</p>
         </div>
         {!showNew && (
@@ -716,9 +784,9 @@ function Goals({ user, goals, setGoals }) {
           <button onClick={() => setShowNew(true)} className="text-amber-700 font-medium text-sm">Set your first goal</button>
         </div>
       ) : (
-        <>
+        <div className="lg:grid lg:grid-cols-2 lg:gap-6">
           {activeGoals.length > 0 && (
-            <div className="mb-6">
+            <div className="mb-6 lg:mb-0">
               <p className="text-xs font-semibold text-stone-500 uppercase tracking-wide mb-3">Active ({activeGoals.length})</p>
               <div className="space-y-2">
                 {activeGoals.map(goal => (
@@ -745,14 +813,14 @@ function Goals({ user, goals, setGoals }) {
               </div>
             </div>
           )}
-        </>
+        </div>
       )}
     </div>
   );
 }
 
 // ============================================================================
-// AI COACH - Connected to Supabase Edge Function
+// AI COACH
 // ============================================================================
 
 function AICoach({ setCurrentView }) {
@@ -821,9 +889,9 @@ function AICoach({ setCurrentView }) {
   };
 
   return (
-    <div className="animate-fadeIn flex flex-col h-[calc(100vh-160px)]">
+    <div className="animate-fadeIn flex flex-col h-[calc(100vh-160px)] lg:h-[calc(100vh-100px)]">
       <div className="flex items-center gap-3 mb-4">
-        <button onClick={() => setCurrentView('dashboard')} className="p-2 -ml-2 text-stone-500 hover:text-stone-700"><Icons.ChevronLeft /></button>
+        <button onClick={() => setCurrentView('dashboard')} className="p-2 -ml-2 text-stone-500 hover:text-stone-700 lg:hidden"><Icons.ChevronLeft /></button>
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center text-white"><Icons.Brain /></div>
           <div>
@@ -837,7 +905,7 @@ function AICoach({ setCurrentView }) {
         <div className="flex-1 overflow-y-auto p-4 space-y-4">
           {messages.map((message, idx) => (
             <div key={idx} className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-              <div className={`max-w-[85%] px-4 py-3 text-sm leading-relaxed ${message.role === 'user' ? 'bg-stone-900 text-white rounded-2xl rounded-br-md' : 'bg-stone-100 text-stone-800 rounded-2xl rounded-bl-md'}`}>
+              <div className={`max-w-[85%] lg:max-w-[70%] px-4 py-3 text-sm leading-relaxed ${message.role === 'user' ? 'bg-stone-900 text-white rounded-2xl rounded-br-md' : 'bg-stone-100 text-stone-800 rounded-2xl rounded-bl-md'}`}>
                 <p className="whitespace-pre-wrap">{message.content}</p>
               </div>
             </div>
@@ -884,14 +952,14 @@ function PathsView({ setCurrentView, setSelectedPath }) {
   return (
     <div className="animate-fadeIn pb-8">
       <div className="mb-6">
-        <h2 className="font-serif text-2xl text-stone-800 mb-1">Learning Paths</h2>
+        <h2 className="font-serif text-2xl lg:text-3xl text-stone-800 mb-1">Learning Paths</h2>
         <p className="text-stone-500 text-sm">Build yourself first, then lead with others</p>
       </div>
-      <div className="space-y-4">
+      <div className="space-y-4 lg:grid lg:grid-cols-2 lg:gap-6 lg:space-y-0">
         {PATHS.map(path => (
           <button key={path.id} onClick={() => { setSelectedPath(path.id); setCurrentView('path-detail'); }}
             className="w-full text-left rounded-2xl overflow-hidden border border-stone-200 bg-white hover:shadow-lg transition-all group">
-            <div className="relative h-32 overflow-hidden">
+            <div className="relative h-32 lg:h-40 overflow-hidden">
               <img src={path.image} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
               <div className="absolute bottom-4 left-4">
@@ -916,20 +984,20 @@ function PathDetail({ pathId, setCurrentView, setSelectedActivity }) {
     <div className="animate-fadeIn pb-8">
       <button onClick={() => setCurrentView('paths')} className="flex items-center gap-1 text-stone-500 hover:text-stone-700 mb-4 text-sm"><Icons.ChevronLeft /> Back</button>
       <div className="relative rounded-2xl overflow-hidden mb-6">
-        <img src={path.image} alt="" className="w-full h-36 object-cover" />
+        <img src={path.image} alt="" className="w-full h-36 lg:h-48 object-cover" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
         <div className="absolute bottom-4 left-4">
           <span className="text-xs text-white/80">{path.outcome}</span>
-          <h2 className="text-xl font-semibold text-white">{path.name}</h2>
+          <h2 className="text-xl lg:text-2xl font-semibold text-white">{path.name}</h2>
         </div>
       </div>
       <h3 className="font-semibold text-stone-800 mb-3">Activities</h3>
-      <div className="space-y-3">
+      <div className="space-y-3 lg:grid lg:grid-cols-2 lg:gap-4 lg:space-y-0">
         {activities.map(activity => (
           <button key={activity.id} onClick={() => { setSelectedActivity(activity); setCurrentView('practice'); }}
             className="w-full text-left bg-white rounded-xl border border-stone-200 overflow-hidden hover:shadow-md transition-all">
             <div className="flex">
-              <img src={activity.image} alt="" className="w-24 h-24 object-cover" />
+              <img src={activity.image} alt="" className="w-24 lg:w-32 h-24 lg:h-28 object-cover" />
               <div className="flex-1 p-4">
                 <div className="flex items-center gap-2 mb-1">
                   <span className="text-xs font-medium text-amber-700">{activity.level}</span>
@@ -971,7 +1039,7 @@ function DailyPractice({ selectedActivity, setCurrentView }) {
   }
 
   return (
-    <div className="animate-fadeIn pb-8">
+    <div className="animate-fadeIn pb-8 max-w-2xl mx-auto">
       <button onClick={() => setCurrentView('paths')} className="flex items-center gap-1 text-stone-500 hover:text-stone-700 mb-4 text-sm"><Icons.ChevronLeft /> Back</button>
       <div className="mb-6">
         <span className="text-xs font-medium text-amber-700">{activity.category}</span>
@@ -1009,29 +1077,31 @@ function DailyPractice({ selectedActivity, setCurrentView }) {
 function Profile({ user, onSignOut, setCurrentView }) {
   return (
     <div className="animate-fadeIn pb-8">
-      <h2 className="font-serif text-2xl text-stone-800 mb-6">Profile</h2>
-      <div className="bg-white rounded-2xl border border-stone-200 p-5 mb-4">
-        <div className="flex items-center gap-4">
-          <div className="w-14 h-14 rounded-full bg-stone-100 flex items-center justify-center text-stone-400"><Icons.User /></div>
-          <div>
-            <p className="font-semibold text-stone-800">{user?.user_metadata?.full_name || 'User'}</p>
-            <p className="text-sm text-stone-500">{user?.email}</p>
+      <h2 className="font-serif text-2xl lg:text-3xl text-stone-800 mb-6">Profile</h2>
+      <div className="max-w-md">
+        <div className="bg-white rounded-2xl border border-stone-200 p-5 mb-4">
+          <div className="flex items-center gap-4">
+            <div className="w-14 h-14 rounded-full bg-stone-100 flex items-center justify-center text-stone-400"><Icons.User /></div>
+            <div>
+              <p className="font-semibold text-stone-800">{user?.user_metadata?.full_name || 'User'}</p>
+              <p className="text-sm text-stone-500">{user?.email}</p>
+            </div>
           </div>
         </div>
+        <button onClick={() => setCurrentView('coach')} className="w-full flex items-center justify-between p-4 bg-white rounded-xl border border-stone-200 hover:border-stone-300 mb-2">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-lg bg-amber-100 flex items-center justify-center text-amber-600"><Icons.MessageCircle /></div>
+            <span className="font-medium text-stone-800 text-sm">Talk to Coach</span>
+          </div>
+          <Icons.ChevronRight />
+        </button>
+        <button onClick={onSignOut} className="w-full flex items-center justify-between p-4 bg-white rounded-xl border border-stone-200 hover:border-red-200 text-red-600">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-lg bg-red-50 flex items-center justify-center"><Icons.LogOut /></div>
+            <span className="font-medium text-sm">Sign Out</span>
+          </div>
+        </button>
       </div>
-      <button onClick={() => setCurrentView('coach')} className="w-full flex items-center justify-between p-4 bg-white rounded-xl border border-stone-200 hover:border-stone-300 mb-2">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-lg bg-amber-100 flex items-center justify-center text-amber-600"><Icons.MessageCircle /></div>
-          <span className="font-medium text-stone-800 text-sm">Talk to Coach</span>
-        </div>
-        <Icons.ChevronRight />
-      </button>
-      <button onClick={onSignOut} className="w-full flex items-center justify-between p-4 bg-white rounded-xl border border-stone-200 hover:border-red-200 text-red-600">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-lg bg-red-50 flex items-center justify-center"><Icons.LogOut /></div>
-          <span className="font-medium text-sm">Sign Out</span>
-        </div>
-      </button>
     </div>
   );
 }
@@ -1110,9 +1180,21 @@ export default function DayByDayApp() {
         .line-clamp-1 { display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
         .line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
       `}</style>
+      
+      {/* Desktop Sidebar */}
+      <Sidebar currentView={currentView} setCurrentView={setCurrentView} user={user} onSignOut={handleSignOut} />
+      
+      {/* Mobile Header */}
       <Header streak={streak} />
-      <main className="px-5 py-6 max-w-lg mx-auto pb-24">{renderView()}</main>
+      
+      {/* Main Content - offset on desktop for sidebar */}
+      <main className="px-5 py-6 max-w-lg mx-auto pb-24 lg:ml-64 lg:max-w-4xl lg:pb-8">
+        {renderView()}
+      </main>
+      
+      {/* Mobile Bottom Nav */}
       <BottomNav currentView={currentView} setCurrentView={setCurrentView} />
     </div>
   );
-  }
+}
+
