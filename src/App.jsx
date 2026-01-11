@@ -1196,6 +1196,560 @@ const ACTIVITIES = [
 ];
 
 // ============================================================================
+// SELF-VIEW ASSESSMENTS (From Day, 2024 - Chapter 4)
+// These are the proximal indicators of leader development
+// ============================================================================
+
+const SELF_VIEW_ASSESSMENTS = {
+  leaderIdentity: {
+    id: 'leader_identity',
+    title: 'Leader Identity',
+    subtitle: 'How you see yourself as a leader',
+    description: 'Leader identity reflects the extent to which you see yourself as a leader. Research shows that adopting a leader identity motivates the learning and practice that sustains development over time.',
+    source: 'Day (2024), Chapter 4; Adapted from Day & Sin (2011)',
+    timeToComplete: '3-5 minutes',
+    instructions: 'Rate each statement on how much it describes you currently.',
+    scale: ['Strongly Disagree', 'Disagree', 'Somewhat Disagree', 'Neutral', 'Somewhat Agree', 'Agree', 'Strongly Agree'],
+    items: [
+      { id: 1, text: 'I am a leader.', dimension: 'core' },
+      { id: 2, text: 'I see myself as a leader.', dimension: 'core' },
+      { id: 3, text: 'If I had to describe myself to others, I would include the word "leader."', dimension: 'core' },
+      { id: 4, text: 'I prefer to think of myself as a leader.', dimension: 'core' },
+      { id: 5, text: 'Being a leader is an important part of who I am.', dimension: 'importance' },
+      { id: 6, text: 'I feel like a leader.', dimension: 'affective' },
+      { id: 7, text: 'I have a clear sense of what it means for me to be a leader.', dimension: 'clarity' },
+      { id: 8, text: 'I act like a leader.', dimension: 'behavioral' }
+    ],
+    interpretation: {
+      low: { range: [1, 3], message: 'You may not yet see yourself strongly as a leader. This is a growth opportunity—identity often develops through experience and practice.' },
+      moderate: { range: [3.1, 5], message: 'You have a developing leader identity. Continue seeking leadership experiences to strengthen this self-view.' },
+      high: { range: [5.1, 7], message: 'You have a strong leader identity. This motivates ongoing learning and leadership practice.' }
+    },
+    developmentTips: [
+      'Seek leadership roles, even informal ones, to gain experience',
+      'Reflect on moments when you successfully influenced others',
+      'Ask others how they see you as a leader',
+      'Practice "acting as if" you are a leader in everyday situations'
+    ]
+  },
+  
+  selfAwareness: {
+    id: 'self_awareness',
+    title: 'Leader Self-Awareness',
+    subtitle: 'Understanding your values, tendencies, and impact',
+    description: 'Self-awareness involves understanding your own values, behavioral tendencies, strengths, weaknesses, and the impact you have on others. Day emphasizes that self-awareness is foundational but often overestimated.',
+    source: 'Day (2024), Chapter 4; Based on Eurich (2017) research',
+    timeToComplete: '5-7 minutes',
+    instructions: 'Rate how accurately each statement describes you.',
+    scale: ['Not at All', 'Slightly', 'Moderately', 'Very', 'Extremely'],
+    items: [
+      { id: 1, text: 'I have a clear understanding of my core values.', dimension: 'internal' },
+      { id: 2, text: 'I understand how my behavior affects others.', dimension: 'external' },
+      { id: 3, text: 'I am aware of my emotional triggers.', dimension: 'internal' },
+      { id: 4, text: 'I know my leadership strengths.', dimension: 'internal' },
+      { id: 5, text: 'I am honest about my leadership weaknesses.', dimension: 'internal' },
+      { id: 6, text: 'I regularly seek feedback about my leadership.', dimension: 'external' },
+      { id: 7, text: 'I notice when my assumptions may be wrong.', dimension: 'internal' },
+      { id: 8, text: 'I recognize patterns in my behavior across situations.', dimension: 'internal' },
+      { id: 9, text: 'Others would say I understand how I come across.', dimension: 'external' },
+      { id: 10, text: 'I can accurately predict how others will react to me.', dimension: 'external' }
+    ],
+    interpretation: {
+      low: { range: [1, 2.5], message: 'Developing greater self-awareness is a key growth area. Consider seeking more feedback from others.' },
+      moderate: { range: [2.6, 3.5], message: 'You have moderate self-awareness with room to grow. Focus on both internal reflection and external feedback.' },
+      high: { range: [3.6, 5], message: 'You demonstrate strong self-awareness. Continue validating self-perceptions with feedback from others.' }
+    },
+    developmentTips: [
+      'Keep a leadership journal to track patterns in your behavior',
+      'Ask 3-5 trusted colleagues for candid feedback',
+      'Notice gaps between your intentions and your impact on others',
+      'Practice asking "What" questions rather than "Why" questions about yourself'
+    ]
+  },
+  
+  leadershipSelfEfficacy: {
+    id: 'leadership_self_efficacy',
+    title: 'Leadership Self-Efficacy',
+    subtitle: 'Confidence in your ability to lead',
+    description: 'Leadership self-efficacy (LSE) is your confidence in your ability to lead effectively in various situations. Day presents this as a key proximal indicator of development, adapted from Bandura\'s self-efficacy theory.',
+    source: 'Day (2024), Table 4.1; Adapted from Schwarzer & Jerusalem General Self-Efficacy Scale',
+    timeToComplete: '4-6 minutes',
+    instructions: 'Rate how true each statement is for you in leadership situations.',
+    scale: ['Not at All True', 'Hardly True', 'Moderately True', 'Exactly True'],
+    items: [
+      { id: 1, text: 'I can always manage to solve difficult leadership problems if I try hard enough.', dimension: 'persistence' },
+      { id: 2, text: 'If someone opposes my leadership, I can find the means and ways to get what I need.', dimension: 'resourcefulness' },
+      { id: 3, text: 'It is easy for me to stick to my leadership aims and accomplish my goals.', dimension: 'goal_attainment' },
+      { id: 4, text: 'I am confident that I could deal efficiently with unexpected leadership events.', dimension: 'adaptability' },
+      { id: 5, text: 'Thanks to my resourcefulness, I know how to handle unforeseen leadership situations.', dimension: 'resourcefulness' },
+      { id: 6, text: 'I can solve most leadership problems if I invest the necessary effort.', dimension: 'persistence' },
+      { id: 7, text: 'I can remain calm when facing leadership difficulties because I can rely on my coping abilities.', dimension: 'composure' },
+      { id: 8, text: 'When I am confronted with a leadership problem, I can usually find several solutions.', dimension: 'problem_solving' },
+      { id: 9, text: 'If I am in trouble as a leader, I can usually think of a solution.', dimension: 'problem_solving' },
+      { id: 10, text: 'I can usually handle whatever leadership challenges come my way.', dimension: 'general' }
+    ],
+    interpretation: {
+      low: { range: [1, 2], message: 'Building leadership confidence is important. Start with small wins in low-risk situations.' },
+      moderate: { range: [2.1, 3], message: 'You have moderate confidence with some situations feeling more challenging. Build efficacy through mastery experiences.' },
+      high: { range: [3.1, 4], message: 'You have strong leadership self-efficacy. Use this confidence to take on stretch assignments.' }
+    },
+    developmentTips: [
+      'Seek mastery experiences—successful leadership builds confidence',
+      'Find role models who demonstrate effective leadership',
+      'Reframe anxiety as excitement before leadership challenges',
+      'Celebrate small wins to build a track record of success'
+    ]
+  }
+};
+
+// ============================================================================
+// LEADER DEVELOPMENT INTERVENTIONS (Individual Level - Human Capital)
+// Based on Day (2024) Chapters 3-5
+// ============================================================================
+
+const LEADER_DEVELOPMENT = {
+  title: 'Leader Development',
+  subtitle: 'Building Individual Human Capital',
+  description: 'Leader development focuses on expanding the capacity of individuals to be effective in leadership roles and processes. It targets intrapersonal competence through self-awareness, self-regulation, and self-motivation.',
+  source: 'Day (2024), Chapters 3-5',
+  
+  proximalOutcomes: [
+    { id: 'identity', name: 'Leader Identity', description: 'Seeing yourself as a leader', assessment: 'leaderIdentity' },
+    { id: 'awareness', name: 'Self-Awareness', description: 'Understanding your impact', assessment: 'selfAwareness' },
+    { id: 'efficacy', name: 'Leadership Self-Efficacy', description: 'Confidence to lead', assessment: 'leadershipSelfEfficacy' }
+  ],
+  
+  distalOutcomes: [
+    { id: 'meaning', name: 'Leadership Meaning', description: 'How you make sense of leadership' },
+    { id: 'moral', name: 'Moral Development', description: 'Ethical reasoning and judgment' },
+    { id: 'epistemic', name: 'Epistemic Cognition', description: 'How you know what you know' }
+  ],
+  
+  interventions: [
+    {
+      id: 'identity_work',
+      title: 'Leader Identity Development',
+      targetOutcome: 'identity',
+      duration: '4-6 weeks',
+      description: 'Structured activities to strengthen your sense of self as a leader through identity claiming, granting, and integration.',
+      phases: [
+        {
+          phase: 1,
+          title: 'Identity Awareness',
+          duration: 'Week 1-2',
+          activities: [
+            'Complete the Leader Identity assessment',
+            'Write your leadership autobiography (key moments that shaped you)',
+            'Interview someone who sees you as a leader',
+            'Identify your "possible selves" as a leader'
+          ]
+        },
+        {
+          phase: 2,
+          title: 'Identity Claiming',
+          duration: 'Week 3-4',
+          activities: [
+            'Take on one new informal leadership role',
+            'Introduce yourself as a leader in a new context',
+            'Share a leadership opinion in a meeting',
+            'Volunteer to lead a small initiative'
+          ]
+        },
+        {
+          phase: 3,
+          title: 'Identity Integration',
+          duration: 'Week 5-6',
+          activities: [
+            'Reflect on how leadership fits with other identities',
+            'Seek feedback on your leadership emergence',
+            'Retake the Leader Identity assessment',
+            'Create a leader identity statement'
+          ]
+        }
+      ]
+    },
+    {
+      id: 'self_awareness_360',
+      title: 'Self-Awareness Through Feedback',
+      targetOutcome: 'awareness',
+      duration: '3-4 weeks',
+      description: 'Develop accurate self-awareness by systematically gathering and integrating feedback from multiple sources.',
+      phases: [
+        {
+          phase: 1,
+          title: 'Self-Assessment',
+          duration: 'Week 1',
+          activities: [
+            'Complete the Self-Awareness assessment',
+            'Rate yourself on the KLI competencies',
+            'Identify your perceived strengths and weaknesses',
+            'Document your leadership values'
+          ]
+        },
+        {
+          phase: 2,
+          title: 'Other-Assessment',
+          duration: 'Week 2',
+          activities: [
+            'Ask 5+ colleagues to rate you on the same dimensions',
+            'Conduct "feedforward" conversations (ask for suggestions, not criticism)',
+            'Notice patterns in how others respond to you',
+            'Request specific behavioral examples'
+          ]
+        },
+        {
+          phase: 3,
+          title: 'Gap Analysis',
+          duration: 'Week 3-4',
+          activities: [
+            'Compare self-ratings to others\' ratings',
+            'Identify blind spots (others see, you don\'t)',
+            'Identify hidden strengths (you undervalue, others see)',
+            'Create action plan to address top 1-2 gaps'
+          ]
+        }
+      ]
+    },
+    {
+      id: 'efficacy_building',
+      title: 'Building Leadership Confidence',
+      targetOutcome: 'efficacy',
+      duration: '6-8 weeks',
+      description: 'Systematically build leadership self-efficacy through mastery experiences, vicarious learning, and cognitive reframing.',
+      phases: [
+        {
+          phase: 1,
+          title: 'Mastery Experiences',
+          duration: 'Week 1-3',
+          activities: [
+            'Identify low-risk leadership opportunities',
+            'Set small, achievable leadership goals',
+            'Document successful leadership moments',
+            'Build on small wins progressively'
+          ]
+        },
+        {
+          phase: 2,
+          title: 'Vicarious Learning',
+          duration: 'Week 4-5',
+          activities: [
+            'Identify a leadership role model',
+            'Shadow or observe effective leaders',
+            'Analyze what makes them effective',
+            'Adapt their approaches to your style'
+          ]
+        },
+        {
+          phase: 3,
+          title: 'Verbal Persuasion & Arousal',
+          duration: 'Week 6-8',
+          activities: [
+            'Seek encouragement from mentors',
+            'Reframe anxiety as excitement',
+            'Practice pre-performance routines',
+            'Visualize successful leadership'
+          ]
+        }
+      ]
+    },
+    {
+      id: 'deliberate_practice',
+      title: 'Deliberate Leadership Practice',
+      targetOutcome: 'skills',
+      duration: 'Ongoing',
+      description: 'Apply principles of deliberate practice to systematically develop leadership skills beyond your current level.',
+      phases: [
+        {
+          phase: 1,
+          title: 'Skill Selection',
+          duration: 'Week 1',
+          activities: [
+            'Review KLI competencies and capabilities',
+            'Identify one specific skill to develop',
+            'Define what "good" looks like for this skill',
+            'Set a stretch goal just beyond current ability'
+          ]
+        },
+        {
+          phase: 2,
+          title: 'Focused Practice',
+          duration: 'Week 2-4',
+          activities: [
+            'Practice the skill in real situations',
+            'Get immediate feedback after each attempt',
+            'Reflect on what worked and what didn\'t',
+            'Make micro-adjustments each time'
+          ]
+        },
+        {
+          phase: 3,
+          title: 'Integration',
+          duration: 'Week 5+',
+          activities: [
+            'Apply skill in varied contexts',
+            'Seek more challenging applications',
+            'Coach others on the skill',
+            'Select next skill and repeat'
+          ]
+        }
+      ]
+    }
+  ]
+};
+
+// ============================================================================
+// LEADERSHIP DEVELOPMENT INTERVENTIONS (Collective Level - Social Capital)
+// Based on Day (2024) Chapters 6-7
+// ============================================================================
+
+const LEADERSHIP_DEVELOPMENT = {
+  title: 'Leadership Development',
+  subtitle: 'Building Collective Social Capital',
+  description: 'Leadership development focuses on expanding the collective capacity of organizational members to engage effectively in leadership roles and processes. It builds interpersonal competence and social capital.',
+  source: 'Day (2024), Chapters 6-7',
+  
+  proximalOutcomes: [
+    { id: 'safety', name: 'Psychological Safety', description: 'Team climate for risk-taking', assessment: 'psychologicalSafety' },
+    { id: 'mental_models', name: 'Shared Mental Models', description: 'Aligned understanding', assessment: null },
+    { id: 'collective_efficacy', name: 'Collective Efficacy', description: 'Team confidence', assessment: 'collectiveEfficacy' }
+  ],
+  
+  distalOutcomes: [
+    { id: 'macrocognition', name: 'Macrocognition', description: 'Collective thinking and sense-making' },
+    { id: 'dynamic_capability', name: 'Dynamic Capabilities', description: 'Ability to adapt and reconfigure' },
+    { id: 'complexity', name: 'Requisite Complexity', description: 'Matching environmental complexity' }
+  ],
+  
+  interventions: [
+    {
+      id: 'psych_safety',
+      title: 'Building Psychological Safety',
+      targetOutcome: 'safety',
+      duration: '4-6 weeks',
+      description: 'Create an environment where team members feel safe to take interpersonal risks, speak up, and learn from mistakes.',
+      phases: [
+        {
+          phase: 1,
+          title: 'Assessment & Awareness',
+          duration: 'Week 1-2',
+          activities: [
+            'Have team complete Psychological Safety survey',
+            'Discuss results openly with the team',
+            'Identify specific behaviors that help/hurt safety',
+            'Agree on one improvement focus'
+          ]
+        },
+        {
+          phase: 2,
+          title: 'Leader Modeling',
+          duration: 'Week 3-4',
+          activities: [
+            'Leader shares a personal mistake and learning',
+            'Express appreciation for dissenting views',
+            'Ask questions more than give answers',
+            'Respond constructively to bad news'
+          ]
+        },
+        {
+          phase: 3,
+          title: 'Team Practices',
+          duration: 'Week 5-6',
+          activities: [
+            'Establish "no interruption" norms',
+            'Practice "yes, and" instead of "yes, but"',
+            'Conduct blameless post-mortems',
+            'Celebrate learning from failure'
+          ]
+        }
+      ]
+    },
+    {
+      id: 'shared_models',
+      title: 'Developing Shared Mental Models',
+      targetOutcome: 'mental_models',
+      duration: '3-4 weeks',
+      description: 'Align team understanding of goals, roles, processes, and how you work together effectively.',
+      phases: [
+        {
+          phase: 1,
+          title: 'Mapping Current Models',
+          duration: 'Week 1',
+          activities: [
+            'Have each person diagram "how we work"',
+            'Compare diagrams to identify differences',
+            'Discuss assumptions behind each model',
+            'Identify critical alignment gaps'
+          ]
+        },
+        {
+          phase: 2,
+          title: 'Building Shared Understanding',
+          duration: 'Week 2-3',
+          activities: [
+            'Co-create a team operating model',
+            'Define clear roles and decision rights',
+            'Establish shared vocabulary',
+            'Document "how we do things here"'
+          ]
+        },
+        {
+          phase: 3,
+          title: 'Maintaining Alignment',
+          duration: 'Week 4+',
+          activities: [
+            'Regular check-ins on alignment',
+            'Update models when things change',
+            'Onboard new members to shared models',
+            'Periodically stress-test assumptions'
+          ]
+        }
+      ]
+    },
+    {
+      id: 'network_development',
+      title: 'Leadership Network Development',
+      targetOutcome: 'network',
+      duration: '6-8 weeks',
+      description: 'Intentionally build and leverage social networks that enable collective leadership capacity.',
+      phases: [
+        {
+          phase: 1,
+          title: 'Network Mapping',
+          duration: 'Week 1-2',
+          activities: [
+            'Map your current leadership network',
+            'Identify who provides: advice, support, information',
+            'Find structural holes and gaps',
+            'Assess network density and diversity'
+          ]
+        },
+        {
+          phase: 2,
+          title: 'Strategic Networking',
+          duration: 'Week 3-5',
+          activities: [
+            'Identify 3-5 relationships to develop',
+            'Schedule connection conversations',
+            'Bridge across silos intentionally',
+            'Give before you ask'
+          ]
+        },
+        {
+          phase: 3,
+          title: 'Network Maintenance',
+          duration: 'Week 6-8',
+          activities: [
+            'Establish regular touchpoints',
+            'Look for ways to add value to others',
+            'Connect people in your network to each other',
+            'Re-map network to track changes'
+          ]
+        }
+      ]
+    },
+    {
+      id: 'collective_efficacy_building',
+      title: 'Building Collective Efficacy',
+      targetOutcome: 'collective_efficacy',
+      duration: '4-6 weeks',
+      description: 'Develop the team\'s shared belief in their collective ability to achieve goals and overcome challenges.',
+      phases: [
+        {
+          phase: 1,
+          title: 'Establishing Baseline',
+          duration: 'Week 1',
+          activities: [
+            'Assess current collective efficacy beliefs',
+            'Discuss team\'s past successes',
+            'Identify what the team does well together',
+            'Surface doubts and concerns'
+          ]
+        },
+        {
+          phase: 2,
+          title: 'Mastery Experiences',
+          duration: 'Week 2-4',
+          activities: [
+            'Set challenging but achievable team goals',
+            'Celebrate collective wins visibly',
+            'Attribute success to team effort',
+            'Document "how we did it" stories'
+          ]
+        },
+        {
+          phase: 3,
+          title: 'Sustaining Efficacy',
+          duration: 'Week 5-6',
+          activities: [
+            'Reference past successes when facing challenges',
+            'Avoid attributing failure to the team',
+            'Build resilience through managed setbacks',
+            'Reassess collective efficacy beliefs'
+          ]
+        }
+      ]
+    }
+  ]
+};
+
+// ============================================================================
+// COLLECTIVE ASSESSMENTS (From Day, 2024 - Chapter 6)
+// ============================================================================
+
+const COLLECTIVE_ASSESSMENTS = {
+  psychologicalSafety: {
+    id: 'psychological_safety',
+    title: 'Team Psychological Safety',
+    subtitle: 'Based on Edmondson\'s research',
+    description: 'Psychological safety is a shared belief that the team is safe for interpersonal risk-taking. It enables learning, innovation, and honest communication.',
+    source: 'Day (2024), Chapter 6; Edmondson (1999)',
+    timeToComplete: '3-4 minutes',
+    instructions: 'Rate how accurately each statement describes your team.',
+    scale: ['Strongly Disagree', 'Disagree', 'Neutral', 'Agree', 'Strongly Agree'],
+    items: [
+      { id: 1, text: 'If you make a mistake on this team, it is often held against you.', dimension: 'safety', reversed: true },
+      { id: 2, text: 'Members of this team are able to bring up problems and tough issues.', dimension: 'safety', reversed: false },
+      { id: 3, text: 'People on this team sometimes reject others for being different.', dimension: 'safety', reversed: true },
+      { id: 4, text: 'It is safe to take a risk on this team.', dimension: 'safety', reversed: false },
+      { id: 5, text: 'It is difficult to ask other members of this team for help.', dimension: 'safety', reversed: true },
+      { id: 6, text: 'No one on this team would deliberately act in a way that undermines my efforts.', dimension: 'safety', reversed: false },
+      { id: 7, text: 'Working with members of this team, my unique skills and talents are valued and utilized.', dimension: 'safety', reversed: false }
+    ],
+    interpretation: {
+      low: { range: [1, 2.5], message: 'Your team may need to focus on building psychological safety. Consider discussing these results openly.' },
+      moderate: { range: [2.6, 3.5], message: 'Your team has moderate safety with room to strengthen trust and openness.' },
+      high: { range: [3.6, 5], message: 'Your team demonstrates strong psychological safety. This enables learning and innovation.' }
+    }
+  },
+  
+  collectiveEfficacy: {
+    id: 'collective_efficacy',
+    title: 'Collective Leadership Efficacy',
+    subtitle: 'Team confidence in leading together',
+    description: 'Collective efficacy is the shared belief in a team\'s capability to organize and execute actions required to achieve collective goals.',
+    source: 'Day (2024), Chapter 6; Based on Bandura (1997)',
+    timeToComplete: '4-5 minutes',
+    instructions: 'Rate your team\'s collective capability.',
+    scale: ['Strongly Disagree', 'Disagree', 'Neutral', 'Agree', 'Strongly Agree'],
+    items: [
+      { id: 1, text: 'Our team can effectively set direction together.', dimension: 'direction' },
+      { id: 2, text: 'Our team coordinates well to achieve our goals.', dimension: 'alignment' },
+      { id: 3, text: 'Team members are genuinely committed to our shared goals.', dimension: 'commitment' },
+      { id: 4, text: 'We can handle complex challenges as a team.', dimension: 'capability' },
+      { id: 5, text: 'Leadership is shared appropriately across our team.', dimension: 'distribution' },
+      { id: 6, text: 'We adapt our leadership approach based on the situation.', dimension: 'adaptability' },
+      { id: 7, text: 'Our team learns from both successes and failures.', dimension: 'learning' },
+      { id: 8, text: 'We trust each other to lead when needed.', dimension: 'trust' }
+    ],
+    interpretation: {
+      low: { range: [1, 2.5], message: 'Building collective confidence through shared wins could strengthen your team.' },
+      moderate: { range: [2.6, 3.5], message: 'Your team has moderate collective efficacy. Focus on building through mastery experiences.' },
+      high: { range: [3.6, 5], message: 'Your team has strong collective efficacy. This enables tackling ambitious challenges together.' }
+    }
+  }
+};
+
+// ============================================================================
 // ICONS
 // ============================================================================
 
@@ -1411,6 +1965,7 @@ function VoiceCoach({ coachType, setCurrentView }) {
         dataChannel.current.send(JSON.stringify({
           type: 'session.update',
           session: {
+            modalities: ['audio', 'text'],
             instructions: systemPrompt,
             voice: 'alloy',
             input_audio_transcription: { model: 'whisper-1' },
@@ -1425,7 +1980,7 @@ function VoiceCoach({ coachType, setCurrentView }) {
           }));
           dataChannel.current.send(JSON.stringify({
             type: 'response.create',
-            response: { modalities: ['audio'], instructions: 'Say the greeting exactly as provided, then stop completely.' },
+            response: { modalities: ['audio', 'text'], instructions: 'Say the greeting exactly as provided, then stop completely.' },
           }));
         }, 1000);
       };
@@ -1654,8 +2209,9 @@ function TextCoach({ coachType, setCurrentView, user, setActions, actions }) {
 function Sidebar({ currentView, setCurrentView, user, onSignOut }) {
   const navItems = [
     { id: 'dashboard', label: 'Home', icon: Icons.Home },
+    { id: 'develop', label: 'Develop', icon: Icons.Award },
     { id: 'practice', label: 'Practice', icon: Icons.Target },
-    { id: 'chapters', label: 'Learn', icon: Icons.BookOpen },
+    { id: 'chapters', label: "Day's Book", icon: Icons.BookOpen },
     { id: 'journal', label: 'Journal', icon: Icons.Edit },
     { id: 'actions', label: 'Actions', icon: Icons.CheckSquare },
     { id: 'coaches', label: 'Coaches', icon: Icons.MessageCircle },
@@ -1707,8 +2263,8 @@ function Header({ streak }) {
 function BottomNav({ currentView, setCurrentView }) {
   const navItems = [
     { id: 'dashboard', label: 'Home', icon: Icons.Home },
-    { id: 'practice', label: 'Practice', icon: Icons.Target },
-    { id: 'chapters', label: 'Learn', icon: Icons.BookOpen },
+    { id: 'develop', label: 'Develop', icon: Icons.Award },
+    { id: 'chapters', label: 'Book', icon: Icons.BookOpen },
     { id: 'coaches', label: 'Coach', icon: Icons.MessageCircle },
     { id: 'library', label: 'More', icon: Icons.Book }
   ];
@@ -1824,9 +2380,35 @@ function Dashboard({ setCurrentView, streak, user, actions, journalEntries }) {
         </div>
       </div>
 
+      {/* Leader & Leadership Development */}
       <div className="mb-6">
         <div className="flex items-center justify-between mb-3">
-          <h3 className="font-semibold text-stone-800">Continue Learning</h3>
+          <h3 className="font-semibold text-stone-800">Develop</h3>
+          <button onClick={() => setCurrentView('develop')} className="text-amber-700 text-sm font-medium flex items-center gap-1">All <Icons.ChevronRight /></button>
+        </div>
+        <div className="grid grid-cols-2 gap-3">
+          <button
+            onClick={() => setCurrentView('develop')}
+            className="bg-gradient-to-br from-amber-50 to-amber-100 border border-amber-200 rounded-xl p-4 text-left hover:shadow-md transition-all"
+          >
+            <div className="text-2xl mb-2">👤</div>
+            <p className="font-semibold text-amber-800 text-sm">Leader Development</p>
+            <p className="text-xs text-amber-600">Self-views & assessments</p>
+          </button>
+          <button
+            onClick={() => setCurrentView('develop')}
+            className="bg-gradient-to-br from-teal-50 to-teal-100 border border-teal-200 rounded-xl p-4 text-left hover:shadow-md transition-all"
+          >
+            <div className="text-2xl mb-2">👥</div>
+            <p className="font-semibold text-teal-800 text-sm">Leadership Development</p>
+            <p className="text-xs text-teal-600">Collective capacity</p>
+          </button>
+        </div>
+      </div>
+
+      <div className="mb-6">
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="font-semibold text-stone-800">Day's Book</h3>
           <button onClick={() => setCurrentView('chapters')} className="text-amber-700 text-sm font-medium flex items-center gap-1">All <Icons.ChevronRight /></button>
         </div>
         <button onClick={() => setCurrentView('chapter-1')}
@@ -2033,8 +2615,8 @@ function ChaptersView({ setCurrentView }) {
   return (
     <div className="animate-fadeIn pb-8">
       <div className="mb-6">
-        <h2 className="font-serif text-2xl lg:text-3xl text-stone-800 mb-1">Learn</h2>
-        <p className="text-stone-500 text-sm">8 chapters from "Developing Leaders and Leadership"</p>
+        <h2 className="font-serif text-2xl lg:text-3xl text-stone-800 mb-1">Day's Book</h2>
+        <p className="text-stone-500 text-sm">8 chapters from "Developing Leaders and Leadership" (2024)</p>
       </div>
       <div className="space-y-3">
         {CHAPTERS.map(chapter => (
@@ -2583,6 +3165,467 @@ function DailyPractice({ activityId, setCurrentView, user }) {
 }
 
 // ============================================================================
+// DEVELOP VIEW (Leader & Leadership Development)
+// ============================================================================
+
+function DevelopView({ setCurrentView, user }) {
+  const [activeTab, setActiveTab] = useState('leader');
+
+  return (
+    <div className="animate-fadeIn">
+      <h1 className="text-2xl font-bold text-stone-800 mb-2">Develop</h1>
+      <p className="text-stone-600 mb-6">Evidence-based interventions for leader and leadership development.</p>
+
+      {/* Tab Selector */}
+      <div className="flex gap-2 mb-6">
+        <button
+          onClick={() => setActiveTab('leader')}
+          className={`flex-1 py-3 px-4 rounded-xl font-medium transition-all ${
+            activeTab === 'leader'
+              ? 'bg-amber-100 text-amber-800 border-2 border-amber-300'
+              : 'bg-stone-100 text-stone-600 border-2 border-transparent'
+          }`}
+        >
+          <div className="text-lg mb-1">👤</div>
+          <div className="text-sm">Leader Development</div>
+          <div className="text-xs opacity-70">Individual</div>
+        </button>
+        <button
+          onClick={() => setActiveTab('leadership')}
+          className={`flex-1 py-3 px-4 rounded-xl font-medium transition-all ${
+            activeTab === 'leadership'
+              ? 'bg-teal-100 text-teal-800 border-2 border-teal-300'
+              : 'bg-stone-100 text-stone-600 border-2 border-transparent'
+          }`}
+        >
+          <div className="text-lg mb-1">👥</div>
+          <div className="text-sm">Leadership Development</div>
+          <div className="text-xs opacity-70">Collective</div>
+        </button>
+      </div>
+
+      {activeTab === 'leader' ? (
+        <LeaderDevelopmentTab setCurrentView={setCurrentView} />
+      ) : (
+        <LeadershipDevelopmentTab setCurrentView={setCurrentView} />
+      )}
+    </div>
+  );
+}
+
+function LeaderDevelopmentTab({ setCurrentView }) {
+  return (
+    <div className="space-y-6">
+      <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
+        <h2 className="font-semibold text-amber-800 mb-2">{LEADER_DEVELOPMENT.title}</h2>
+        <p className="text-sm text-stone-600 mb-3">{LEADER_DEVELOPMENT.description}</p>
+        <p className="text-xs text-stone-500">Source: {LEADER_DEVELOPMENT.source}</p>
+      </div>
+
+      {/* Self-View Assessments */}
+      <div>
+        <h3 className="font-semibold text-stone-800 mb-3">Self-View Assessments</h3>
+        <p className="text-sm text-stone-600 mb-4">Measure your proximal indicators of leader development.</p>
+        <div className="space-y-3">
+          {Object.values(SELF_VIEW_ASSESSMENTS).map(assessment => (
+            <button
+              key={assessment.id}
+              onClick={() => setCurrentView(`assessment-${assessment.id}`)}
+              className="w-full bg-white rounded-xl border border-stone-200 p-4 hover:shadow-md transition-all text-left"
+            >
+              <div className="flex justify-between items-start mb-2">
+                <h4 className="font-semibold text-stone-800">{assessment.title}</h4>
+                <span className="text-xs bg-amber-100 text-amber-700 px-2 py-1 rounded-full">{assessment.timeToComplete}</span>
+              </div>
+              <p className="text-sm text-stone-600 mb-2">{assessment.subtitle}</p>
+              <p className="text-xs text-stone-500">{assessment.items.length} items</p>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Development Interventions */}
+      <div>
+        <h3 className="font-semibold text-stone-800 mb-3">Development Interventions</h3>
+        <p className="text-sm text-stone-600 mb-4">Structured programs to build individual leadership capacity.</p>
+        <div className="space-y-3">
+          {LEADER_DEVELOPMENT.interventions.map(intervention => (
+            <button
+              key={intervention.id}
+              onClick={() => setCurrentView(`intervention-${intervention.id}`)}
+              className="w-full bg-white rounded-xl border border-stone-200 p-4 hover:shadow-md transition-all text-left"
+            >
+              <div className="flex justify-between items-start mb-2">
+                <h4 className="font-semibold text-stone-800">{intervention.title}</h4>
+                <span className="text-xs bg-stone-100 text-stone-600 px-2 py-1 rounded-full">{intervention.duration}</span>
+              </div>
+              <p className="text-sm text-stone-600 mb-2">{intervention.description}</p>
+              <p className="text-xs text-stone-500">{intervention.phases.length} phases</p>
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function LeadershipDevelopmentTab({ setCurrentView }) {
+  return (
+    <div className="space-y-6">
+      <div className="bg-teal-50 border border-teal-200 rounded-xl p-4">
+        <h2 className="font-semibold text-teal-800 mb-2">{LEADERSHIP_DEVELOPMENT.title}</h2>
+        <p className="text-sm text-stone-600 mb-3">{LEADERSHIP_DEVELOPMENT.description}</p>
+        <p className="text-xs text-stone-500">Source: {LEADERSHIP_DEVELOPMENT.source}</p>
+      </div>
+
+      {/* Collective Assessments */}
+      <div>
+        <h3 className="font-semibold text-stone-800 mb-3">Collective Assessments</h3>
+        <p className="text-sm text-stone-600 mb-4">Measure your team's collective leadership capacity.</p>
+        <div className="space-y-3">
+          {Object.values(COLLECTIVE_ASSESSMENTS).map(assessment => (
+            <button
+              key={assessment.id}
+              onClick={() => setCurrentView(`assessment-${assessment.id}`)}
+              className="w-full bg-white rounded-xl border border-stone-200 p-4 hover:shadow-md transition-all text-left"
+            >
+              <div className="flex justify-between items-start mb-2">
+                <h4 className="font-semibold text-stone-800">{assessment.title}</h4>
+                <span className="text-xs bg-teal-100 text-teal-700 px-2 py-1 rounded-full">{assessment.timeToComplete}</span>
+              </div>
+              <p className="text-sm text-stone-600 mb-2">{assessment.subtitle}</p>
+              <p className="text-xs text-stone-500">{assessment.items.length} items</p>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Leadership Development Interventions */}
+      <div>
+        <h3 className="font-semibold text-stone-800 mb-3">Development Interventions</h3>
+        <p className="text-sm text-stone-600 mb-4">Structured programs to build collective leadership capacity.</p>
+        <div className="space-y-3">
+          {LEADERSHIP_DEVELOPMENT.interventions.map(intervention => (
+            <button
+              key={intervention.id}
+              onClick={() => setCurrentView(`intervention-${intervention.id}`)}
+              className="w-full bg-white rounded-xl border border-stone-200 p-4 hover:shadow-md transition-all text-left"
+            >
+              <div className="flex justify-between items-start mb-2">
+                <h4 className="font-semibold text-stone-800">{intervention.title}</h4>
+                <span className="text-xs bg-stone-100 text-stone-600 px-2 py-1 rounded-full">{intervention.duration}</span>
+              </div>
+              <p className="text-sm text-stone-600 mb-2">{intervention.description}</p>
+              <p className="text-xs text-stone-500">{intervention.phases.length} phases</p>
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================================
+// ASSESSMENT VIEW (Take Self-View Assessments)
+// ============================================================================
+
+function AssessmentView({ assessmentId, setCurrentView, user }) {
+  const [currentItem, setCurrentItem] = useState(0);
+  const [responses, setResponses] = useState({});
+  const [completed, setCompleted] = useState(false);
+  const [results, setResults] = useState(null);
+
+  // Find the assessment in both SELF_VIEW_ASSESSMENTS and COLLECTIVE_ASSESSMENTS
+  const assessment = SELF_VIEW_ASSESSMENTS[assessmentId] || 
+                     Object.values(SELF_VIEW_ASSESSMENTS).find(a => a.id === assessmentId) ||
+                     COLLECTIVE_ASSESSMENTS[assessmentId] ||
+                     Object.values(COLLECTIVE_ASSESSMENTS).find(a => a.id === assessmentId);
+
+  if (!assessment) {
+    return (
+      <div className="animate-fadeIn">
+        <button onClick={() => setCurrentView('develop')} className="flex items-center gap-1 text-stone-500 hover:text-stone-700 mb-4 text-sm">
+          <Icons.ChevronLeft /> Back
+        </button>
+        <p>Assessment not found.</p>
+      </div>
+    );
+  }
+
+  const isIndividual = Object.keys(SELF_VIEW_ASSESSMENTS).includes(assessmentId) || 
+                       Object.values(SELF_VIEW_ASSESSMENTS).some(a => a.id === assessmentId);
+
+  const handleResponse = (itemId, value) => {
+    const newResponses = { ...responses, [itemId]: value };
+    setResponses(newResponses);
+    
+    if (currentItem < assessment.items.length - 1) {
+      setTimeout(() => setCurrentItem(currentItem + 1), 300);
+    }
+  };
+
+  const calculateResults = () => {
+    const scores = assessment.items.map(item => {
+      const response = responses[item.id] || 0;
+      const score = item.reversed ? (assessment.scale.length - response) : response + 1;
+      return score;
+    });
+    
+    const average = scores.reduce((a, b) => a + b, 0) / scores.length;
+    const maxScore = assessment.scale.length;
+    const normalizedScore = average;
+    
+    let interpretation = '';
+    if (normalizedScore <= assessment.interpretation.low.range[1]) {
+      interpretation = assessment.interpretation.low.message;
+    } else if (normalizedScore <= assessment.interpretation.moderate.range[1]) {
+      interpretation = assessment.interpretation.moderate.message;
+    } else {
+      interpretation = assessment.interpretation.high.message;
+    }
+    
+    return {
+      average: average.toFixed(2),
+      maxScore,
+      interpretation,
+      responses: { ...responses }
+    };
+  };
+
+  const handleComplete = async () => {
+    const calculatedResults = calculateResults();
+    setResults(calculatedResults);
+    setCompleted(true);
+    
+    // Save to database if user is logged in
+    if (user) {
+      try {
+        await supabase.from('assessment_responses').insert({
+          user_id: user.id,
+          assessment_id: assessment.id,
+          responses: responses,
+          results: calculatedResults,
+          completed_at: new Date().toISOString()
+        });
+      } catch (e) {
+        console.error('Error saving assessment:', e);
+      }
+    }
+  };
+
+  const allAnswered = Object.keys(responses).length === assessment.items.length;
+
+  if (completed && results) {
+    return (
+      <div className="animate-fadeIn">
+        <button onClick={() => setCurrentView('develop')} className="flex items-center gap-1 text-stone-500 hover:text-stone-700 mb-4 text-sm">
+          <Icons.ChevronLeft /> Back to Develop
+        </button>
+
+        <div className={`${isIndividual ? 'bg-amber-50 border-amber-200' : 'bg-teal-50 border-teal-200'} border rounded-xl p-6 mb-6`}>
+          <div className="text-4xl mb-4 text-center">📊</div>
+          <h1 className={`text-xl font-bold ${isIndividual ? 'text-amber-800' : 'text-teal-800'} mb-2 text-center`}>
+            {assessment.title} Results
+          </h1>
+          <div className="text-center mb-4">
+            <span className="text-3xl font-bold text-stone-800">{results.average}</span>
+            <span className="text-stone-500"> / {results.maxScore}</span>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-xl border border-stone-200 p-4 mb-6">
+          <h2 className="font-semibold text-stone-800 mb-3">Interpretation</h2>
+          <p className="text-stone-600">{results.interpretation}</p>
+        </div>
+
+        {assessment.developmentTips && (
+          <div className="bg-white rounded-xl border border-stone-200 p-4 mb-6">
+            <h2 className="font-semibold text-stone-800 mb-3">Development Tips</h2>
+            <ul className="space-y-2">
+              {assessment.developmentTips.map((tip, idx) => (
+                <li key={idx} className="flex items-start gap-2 text-sm text-stone-600">
+                  <span className={`${isIndividual ? 'text-amber-500' : 'text-teal-500'}`}>•</span>
+                  {tip}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        <button
+          onClick={() => setCurrentView('develop')}
+          className={`w-full ${isIndividual ? 'bg-amber-600' : 'bg-teal-600'} text-white py-3 rounded-xl font-medium`}
+        >
+          Continue Developing
+        </button>
+      </div>
+    );
+  }
+
+  const item = assessment.items[currentItem];
+  const progress = ((currentItem + 1) / assessment.items.length) * 100;
+
+  return (
+    <div className="animate-fadeIn">
+      <button onClick={() => setCurrentView('develop')} className="flex items-center gap-1 text-stone-500 hover:text-stone-700 mb-4 text-sm">
+        <Icons.ChevronLeft /> Back
+      </button>
+
+      <div className={`${isIndividual ? 'bg-amber-50 border-amber-200' : 'bg-teal-50 border-teal-200'} border rounded-xl p-4 mb-4`}>
+        <h1 className={`text-lg font-bold ${isIndividual ? 'text-amber-800' : 'text-teal-800'} mb-1`}>{assessment.title}</h1>
+        <p className="text-sm text-stone-600">{assessment.subtitle}</p>
+      </div>
+
+      {/* Progress */}
+      <div className="mb-6">
+        <div className="flex justify-between text-xs text-stone-500 mb-2">
+          <span>Question {currentItem + 1} of {assessment.items.length}</span>
+          <span>{Math.round(progress)}%</span>
+        </div>
+        <div className="h-2 bg-stone-200 rounded-full overflow-hidden">
+          <div
+            className={`h-full ${isIndividual ? 'bg-amber-500' : 'bg-teal-500'} transition-all duration-300`}
+            style={{ width: `${progress}%` }}
+          />
+        </div>
+      </div>
+
+      {/* Current Item */}
+      <div className="bg-white rounded-xl border border-stone-200 p-5 mb-6">
+        <p className="text-lg text-stone-800 mb-6 leading-relaxed">{item.text}</p>
+        
+        <div className="space-y-2">
+          {assessment.scale.map((label, idx) => (
+            <button
+              key={idx}
+              onClick={() => handleResponse(item.id, idx)}
+              className={`w-full p-3 rounded-lg border text-left transition-all ${
+                responses[item.id] === idx
+                  ? isIndividual 
+                    ? 'border-amber-500 bg-amber-50 text-amber-800'
+                    : 'border-teal-500 bg-teal-50 text-teal-800'
+                  : 'border-stone-200 hover:border-stone-300 text-stone-700'
+              }`}
+            >
+              <span className="text-sm">{label}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Navigation */}
+      <div className="flex gap-3">
+        {currentItem > 0 && (
+          <button
+            onClick={() => setCurrentItem(currentItem - 1)}
+            className="px-4 py-3 border border-stone-300 rounded-xl text-stone-600"
+          >
+            <Icons.ChevronLeft />
+          </button>
+        )}
+        {allAnswered && (
+          <button
+            onClick={handleComplete}
+            className={`flex-1 ${isIndividual ? 'bg-amber-600' : 'bg-teal-600'} text-white py-3 rounded-xl font-medium`}
+          >
+            See Results
+          </button>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ============================================================================
+// INTERVENTION VIEW (Development Programs)
+// ============================================================================
+
+function InterventionView({ interventionId, setCurrentView, user }) {
+  const [expandedPhase, setExpandedPhase] = useState(0);
+
+  // Find intervention in both LEADER and LEADERSHIP development
+  const intervention = LEADER_DEVELOPMENT.interventions.find(i => i.id === interventionId) ||
+                       LEADERSHIP_DEVELOPMENT.interventions.find(i => i.id === interventionId);
+
+  if (!intervention) {
+    return (
+      <div className="animate-fadeIn">
+        <button onClick={() => setCurrentView('develop')} className="flex items-center gap-1 text-stone-500 hover:text-stone-700 mb-4 text-sm">
+          <Icons.ChevronLeft /> Back
+        </button>
+        <p>Intervention not found.</p>
+      </div>
+    );
+  }
+
+  const isIndividual = LEADER_DEVELOPMENT.interventions.some(i => i.id === interventionId);
+
+  return (
+    <div className="animate-fadeIn">
+      <button onClick={() => setCurrentView('develop')} className="flex items-center gap-1 text-stone-500 hover:text-stone-700 mb-4 text-sm">
+        <Icons.ChevronLeft /> Back to Develop
+      </button>
+
+      <div className={`${isIndividual ? 'bg-amber-50 border-amber-200' : 'bg-teal-50 border-teal-200'} border rounded-xl p-5 mb-6`}>
+        <div className="flex justify-between items-start mb-2">
+          <h1 className={`text-xl font-bold ${isIndividual ? 'text-amber-800' : 'text-teal-800'}`}>{intervention.title}</h1>
+          <span className={`text-xs ${isIndividual ? 'bg-amber-100 text-amber-700' : 'bg-teal-100 text-teal-700'} px-2 py-1 rounded-full`}>
+            {intervention.duration}
+          </span>
+        </div>
+        <p className="text-stone-600">{intervention.description}</p>
+      </div>
+
+      {/* Phases */}
+      <div className="space-y-4">
+        {intervention.phases.map((phase, idx) => (
+          <div key={idx} className="bg-white rounded-xl border border-stone-200 overflow-hidden">
+            <button
+              onClick={() => setExpandedPhase(expandedPhase === idx ? -1 : idx)}
+              className="w-full p-4 flex items-center justify-between text-left"
+            >
+              <div className="flex items-center gap-3">
+                <div className={`w-8 h-8 rounded-full ${isIndividual ? 'bg-amber-100 text-amber-700' : 'bg-teal-100 text-teal-700'} flex items-center justify-center font-semibold text-sm`}>
+                  {phase.phase}
+                </div>
+                <div>
+                  <h3 className="font-semibold text-stone-800">{phase.title}</h3>
+                  <p className="text-xs text-stone-500">{phase.duration}</p>
+                </div>
+              </div>
+              <Icons.ChevronDown className={`transition-transform ${expandedPhase === idx ? 'rotate-180' : ''}`} />
+            </button>
+            
+            {expandedPhase === idx && (
+              <div className="px-4 pb-4 border-t border-stone-100 pt-3">
+                <h4 className="text-sm font-medium text-stone-700 mb-3">Activities</h4>
+                <ul className="space-y-2">
+                  {phase.activities.map((activity, actIdx) => (
+                    <li key={actIdx} className="flex items-start gap-2 text-sm text-stone-600">
+                      <span className={`mt-1 w-4 h-4 rounded border ${isIndividual ? 'border-amber-300' : 'border-teal-300'} flex-shrink-0`} />
+                      {activity}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+
+      <div className="mt-6">
+        <button
+          onClick={() => setCurrentView('coaches')}
+          className={`w-full ${isIndividual ? 'bg-amber-600' : 'bg-teal-600'} text-white py-3 rounded-xl font-medium`}
+        >
+          Discuss with Coach
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================================
 // MAIN APP
 // ============================================================================
 
@@ -2625,9 +3668,18 @@ export default function DayByDayApp() {
       const activityId = currentView.replace('practice-', '');
       return <DailyPractice activityId={activityId} setCurrentView={setCurrentView} user={user} />;
     }
+    if (currentView.startsWith('assessment-')) {
+      const assessmentId = currentView.replace('assessment-', '');
+      return <AssessmentView assessmentId={assessmentId} setCurrentView={setCurrentView} user={user} />;
+    }
+    if (currentView.startsWith('intervention-')) {
+      const interventionId = currentView.replace('intervention-', '');
+      return <InterventionView interventionId={interventionId} setCurrentView={setCurrentView} user={user} />;
+    }
     
     switch (currentView) {
       case 'dashboard': return <Dashboard setCurrentView={setCurrentView} streak={streak} user={user} actions={actions} journalEntries={journalEntries} />;
+      case 'develop': return <DevelopView setCurrentView={setCurrentView} user={user} />;
       case 'practice': return <PracticeView setCurrentView={setCurrentView} user={user} />;
       case 'chapters': return <ChaptersView setCurrentView={setCurrentView} />;
       case 'journal': return <JournalView user={user} journalEntries={journalEntries} setJournalEntries={setJournalEntries} />;
@@ -2658,6 +3710,5 @@ export default function DayByDayApp() {
     </div>
   );
 }
-
 
 
