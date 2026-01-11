@@ -3710,5 +3710,3 @@ export default function DayByDayApp() {
     </div>
   );
 }
-
-
