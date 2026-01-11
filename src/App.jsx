@@ -1790,6 +1790,309 @@ const SELF_VIEW_ASSESSMENTS = {
 };
 
 // ============================================================================
+// BIG FIVE PERSONALITY ASSESSMENT (From Day, 2024 - Table 2.1)
+// Based on IPIP (International Personality Item Pool) - Public Domain
+// ============================================================================
+
+const BIG_FIVE_ASSESSMENT = {
+  id: 'big_five',
+  title: 'Big Five Personality Assessment',
+  subtitle: 'Understanding your personality traits',
+  description: 'The Big Five is the most scientifically validated personality framework. Day (2024) emphasizes personality assessment as foundational for leader development, helping you understand your natural tendencies and how they affect your leadership.',
+  source: 'Day (2024), Table 2.1; Based on IPIP-NEO (Goldberg, 1999)',
+  timeToComplete: '10-15 minutes',
+  instructions: 'Rate how accurately each statement describes you as you generally are now, not as you wish to be.',
+  scale: ['Very Inaccurate', 'Moderately Inaccurate', 'Neither', 'Moderately Accurate', 'Very Accurate'],
+  
+  factors: [
+    {
+      id: 'openness',
+      name: 'Openness to Experience',
+      description: 'Reflects imagination, creativity, intellectual curiosity, and preference for variety.',
+      color: 'violet',
+      facets: ['Imagination', 'Artistic Interests', 'Emotionality', 'Adventurousness', 'Intellect', 'Liberalism'],
+      leadershipImplication: 'High openness supports innovation, vision, and adaptability. May need to balance with practical execution.'
+    },
+    {
+      id: 'conscientiousness',
+      name: 'Conscientiousness',
+      description: 'Reflects organization, dependability, self-discipline, and achievement orientation.',
+      color: 'amber',
+      facets: ['Self-Efficacy', 'Orderliness', 'Dutifulness', 'Achievement-Striving', 'Self-Discipline', 'Cautiousness'],
+      leadershipImplication: 'High conscientiousness predicts leadership effectiveness. Supports reliability and follow-through.'
+    },
+    {
+      id: 'extraversion',
+      name: 'Extraversion',
+      description: 'Reflects sociability, assertiveness, positive emotions, and energy from social interaction.',
+      color: 'orange',
+      facets: ['Friendliness', 'Gregariousness', 'Assertiveness', 'Activity Level', 'Excitement-Seeking', 'Cheerfulness'],
+      leadershipImplication: 'Extraversion predicts leadership emergence. Introverts can lead effectively through preparation and selective engagement.'
+    },
+    {
+      id: 'agreeableness',
+      name: 'Agreeableness',
+      description: 'Reflects cooperation, trust, empathy, and concern for social harmony.',
+      color: 'teal',
+      facets: ['Trust', 'Morality', 'Altruism', 'Cooperation', 'Modesty', 'Sympathy'],
+      leadershipImplication: 'Moderate agreeableness balances collaboration with ability to make tough decisions and give critical feedback.'
+    },
+    {
+      id: 'neuroticism',
+      name: 'Emotional Stability',
+      description: 'Reflects emotional resilience, stress tolerance, and mood stability. (Scored as stability, not neuroticism)',
+      color: 'blue',
+      facets: ['Anxiety (R)', 'Anger (R)', 'Depression (R)', 'Self-Consciousness (R)', 'Immoderation (R)', 'Vulnerability (R)'],
+      leadershipImplication: 'Emotional stability supports resilience under pressure and consistent leadership presence.'
+    }
+  ],
+  
+  items: [
+    // OPENNESS (10 items)
+    { id: 1, text: 'I have a vivid imagination.', factor: 'openness', facet: 'Imagination', reversed: false },
+    { id: 2, text: 'I am not interested in abstract ideas.', factor: 'openness', facet: 'Intellect', reversed: true },
+    { id: 3, text: 'I have difficulty understanding abstract ideas.', factor: 'openness', facet: 'Intellect', reversed: true },
+    { id: 4, text: 'I enjoy hearing new ideas.', factor: 'openness', facet: 'Intellect', reversed: false },
+    { id: 5, text: 'I like to solve complex problems.', factor: 'openness', facet: 'Intellect', reversed: false },
+    { id: 6, text: 'I enjoy thinking about things.', factor: 'openness', facet: 'Intellect', reversed: false },
+    { id: 7, text: 'I prefer variety to routine.', factor: 'openness', facet: 'Adventurousness', reversed: false },
+    { id: 8, text: 'I am open to new experiences.', factor: 'openness', facet: 'Adventurousness', reversed: false },
+    { id: 9, text: 'I appreciate art and beauty.', factor: 'openness', facet: 'Artistic Interests', reversed: false },
+    { id: 10, text: 'I tend to vote for liberal political candidates.', factor: 'openness', facet: 'Liberalism', reversed: false },
+    
+    // CONSCIENTIOUSNESS (10 items)
+    { id: 11, text: 'I am always prepared.', factor: 'conscientiousness', facet: 'Orderliness', reversed: false },
+    { id: 12, text: 'I pay attention to details.', factor: 'conscientiousness', facet: 'Orderliness', reversed: false },
+    { id: 13, text: 'I get chores done right away.', factor: 'conscientiousness', facet: 'Self-Discipline', reversed: false },
+    { id: 14, text: 'I often forget to put things back in their proper place.', factor: 'conscientiousness', facet: 'Orderliness', reversed: true },
+    { id: 15, text: 'I make a mess of things.', factor: 'conscientiousness', facet: 'Orderliness', reversed: true },
+    { id: 16, text: 'I follow through on my commitments.', factor: 'conscientiousness', facet: 'Dutifulness', reversed: false },
+    { id: 17, text: 'I work hard to achieve my goals.', factor: 'conscientiousness', facet: 'Achievement-Striving', reversed: false },
+    { id: 18, text: 'I complete tasks successfully.', factor: 'conscientiousness', facet: 'Self-Efficacy', reversed: false },
+    { id: 19, text: 'I shirk my duties.', factor: 'conscientiousness', facet: 'Dutifulness', reversed: true },
+    { id: 20, text: 'I think before I act.', factor: 'conscientiousness', facet: 'Cautiousness', reversed: false },
+    
+    // EXTRAVERSION (10 items)
+    { id: 21, text: 'I feel comfortable around people.', factor: 'extraversion', facet: 'Friendliness', reversed: false },
+    { id: 22, text: 'I make friends easily.', factor: 'extraversion', facet: 'Friendliness', reversed: false },
+    { id: 23, text: 'I am skilled in handling social situations.', factor: 'extraversion', facet: 'Gregariousness', reversed: false },
+    { id: 24, text: 'I am the life of the party.', factor: 'extraversion', facet: 'Gregariousness', reversed: false },
+    { id: 25, text: 'I keep in the background.', factor: 'extraversion', facet: 'Assertiveness', reversed: true },
+    { id: 26, text: 'I have little to say.', factor: 'extraversion', facet: 'Assertiveness', reversed: true },
+    { id: 27, text: 'I start conversations.', factor: 'extraversion', facet: 'Assertiveness', reversed: false },
+    { id: 28, text: 'I talk to a lot of different people at parties.', factor: 'extraversion', facet: 'Gregariousness', reversed: false },
+    { id: 29, text: 'I am full of energy.', factor: 'extraversion', facet: 'Activity Level', reversed: false },
+    { id: 30, text: 'I radiate joy.', factor: 'extraversion', facet: 'Cheerfulness', reversed: false },
+    
+    // AGREEABLENESS (10 items)
+    { id: 31, text: 'I am interested in people.', factor: 'agreeableness', facet: 'Friendliness', reversed: false },
+    { id: 32, text: 'I sympathize with others\' feelings.', factor: 'agreeableness', facet: 'Sympathy', reversed: false },
+    { id: 33, text: 'I have a soft heart.', factor: 'agreeableness', facet: 'Sympathy', reversed: false },
+    { id: 34, text: 'I take time out for others.', factor: 'agreeableness', facet: 'Altruism', reversed: false },
+    { id: 35, text: 'I feel others\' emotions.', factor: 'agreeableness', facet: 'Sympathy', reversed: false },
+    { id: 36, text: 'I make people feel at ease.', factor: 'agreeableness', facet: 'Trust', reversed: false },
+    { id: 37, text: 'I am not really interested in others.', factor: 'agreeableness', facet: 'Altruism', reversed: true },
+    { id: 38, text: 'I insult people.', factor: 'agreeableness', facet: 'Cooperation', reversed: true },
+    { id: 39, text: 'I believe that others have good intentions.', factor: 'agreeableness', facet: 'Trust', reversed: false },
+    { id: 40, text: 'I respect others.', factor: 'agreeableness', facet: 'Morality', reversed: false },
+    
+    // EMOTIONAL STABILITY (Reverse-scored Neuroticism) (10 items)
+    { id: 41, text: 'I am relaxed most of the time.', factor: 'neuroticism', facet: 'Anxiety', reversed: false },
+    { id: 42, text: 'I seldom feel blue.', factor: 'neuroticism', facet: 'Depression', reversed: false },
+    { id: 43, text: 'I get stressed out easily.', factor: 'neuroticism', facet: 'Vulnerability', reversed: true },
+    { id: 44, text: 'I worry about things.', factor: 'neuroticism', facet: 'Anxiety', reversed: true },
+    { id: 45, text: 'I am easily disturbed.', factor: 'neuroticism', facet: 'Vulnerability', reversed: true },
+    { id: 46, text: 'I get upset easily.', factor: 'neuroticism', facet: 'Anger', reversed: true },
+    { id: 47, text: 'I change my mood a lot.', factor: 'neuroticism', facet: 'Depression', reversed: true },
+    { id: 48, text: 'I have frequent mood swings.', factor: 'neuroticism', facet: 'Depression', reversed: true },
+    { id: 49, text: 'I get irritated easily.', factor: 'neuroticism', facet: 'Anger', reversed: true },
+    { id: 50, text: 'I often feel blue.', factor: 'neuroticism', facet: 'Depression', reversed: true }
+  ],
+  
+  interpretation: {
+    low: { range: [1, 2.5], label: 'Low' },
+    moderate: { range: [2.6, 3.5], label: 'Moderate' },
+    high: { range: [3.6, 5], label: 'High' }
+  }
+};
+
+// ============================================================================
+// KLI COMPETENCY SELF-ASSESSMENT (From Day, 2024 - Table 2.2)
+// Based on Kravis Leadership Institute Competency Model
+// ============================================================================
+
+const KLI_COMPETENCY_ASSESSMENT = {
+  id: 'kli_competency',
+  title: 'KLI Leadership Competency Assessment',
+  subtitle: 'Assessing your leadership capabilities',
+  description: 'The KLI Competency Model identifies three core competencies (Courage, Creativity, Collaboration), each with three capabilities. This self-assessment helps you identify strengths and development areas across all nine capabilities.',
+  source: 'Day (2024), Table 2.2 & Figure 2.2; Kravis Leadership Institute',
+  timeToComplete: '12-15 minutes',
+  instructions: 'Rate how accurately each statement describes your typical behavior.',
+  scale: ['Strongly Disagree', 'Disagree', 'Neutral', 'Agree', 'Strongly Agree'],
+  
+  competencies: [
+    {
+      id: 'courage',
+      name: 'Courage',
+      color: 'amber',
+      description: 'Leading courageously through resilience, entrepreneurial mindset, and responsible action.',
+      capabilities: [
+        { id: 'resilience', name: 'Resilience', attributes: ['Persistence', 'Adaptability', 'Growth mindset', 'Optimism', 'Emotion management'] },
+        { id: 'entrepreneurial', name: 'Entrepreneurial Mindset', attributes: ['Enterprising', 'Resourceful', 'Initiative', 'Bold', 'Challenge-seeking'] },
+        { id: 'responsible', name: 'Responsible Action', attributes: ['Insight', 'Modeling', 'Integrity', 'Convictions', 'Advocacy'] }
+      ]
+    },
+    {
+      id: 'creativity',
+      name: 'Creativity',
+      color: 'violet',
+      description: 'Leading creatively through innovation, communication, and problem-solving.',
+      capabilities: [
+        { id: 'innovation', name: 'Innovation', attributes: ['Generating ideas', 'Openness', 'Visioning', 'Challenge status quo', 'Flexibility'] },
+        { id: 'communication', name: 'Communication', attributes: ['Expressive', 'Active listening', 'Persuasive', 'Inquiry', 'Dialogue'] },
+        { id: 'problemsolving', name: 'Problem Solving', attributes: ['Information seeking', 'Analyzing', 'Anticipating', 'Decision making', 'Solution driven'] }
+      ]
+    },
+    {
+      id: 'collaboration',
+      name: 'Collaboration',
+      color: 'teal',
+      description: 'Leading collaboratively through empathy, social learning, and teamwork.',
+      capabilities: [
+        { id: 'empathy', name: 'Empathy', attributes: ['Perceptive', 'Curious', 'Diversity', 'Inclusive', 'Sensitivity'] },
+        { id: 'sociallearning', name: 'Social Learning', attributes: ['Social awareness', 'Engages others', 'Networking', 'Nurturing relationships', 'Situational learning'] },
+        { id: 'teamwork', name: 'Teamwork', attributes: ['Participative', 'Accountable', 'Supportive', 'Respectful', 'Conflict management'] }
+      ]
+    }
+  ],
+  
+  items: [
+    // COURAGE - Resilience (6 items)
+    { id: 1, text: 'I persist in the face of obstacles and setbacks.', competency: 'courage', capability: 'resilience', attribute: 'Persistence' },
+    { id: 2, text: 'I adapt quickly when circumstances change.', competency: 'courage', capability: 'resilience', attribute: 'Adaptability' },
+    { id: 3, text: 'I view challenges as opportunities to learn and grow.', competency: 'courage', capability: 'resilience', attribute: 'Growth mindset' },
+    { id: 4, text: 'I maintain a positive outlook even in difficult situations.', competency: 'courage', capability: 'resilience', attribute: 'Optimism' },
+    { id: 5, text: 'I manage my emotions effectively under pressure.', competency: 'courage', capability: 'resilience', attribute: 'Emotion management' },
+    { id: 6, text: 'I bounce back quickly from disappointments.', competency: 'courage', capability: 'resilience', attribute: 'Persistence' },
+    
+    // COURAGE - Entrepreneurial Mindset (6 items)
+    { id: 7, text: 'I actively seek out new opportunities.', competency: 'courage', capability: 'entrepreneurial', attribute: 'Enterprising' },
+    { id: 8, text: 'I find creative ways to work with limited resources.', competency: 'courage', capability: 'entrepreneurial', attribute: 'Resourceful' },
+    { id: 9, text: 'I take initiative without waiting to be asked.', competency: 'courage', capability: 'entrepreneurial', attribute: 'Initiative' },
+    { id: 10, text: 'I am willing to take calculated risks.', competency: 'courage', capability: 'entrepreneurial', attribute: 'Bold' },
+    { id: 11, text: 'I embrace challenges rather than avoid them.', competency: 'courage', capability: 'entrepreneurial', attribute: 'Challenge-seeking' },
+    { id: 12, text: 'I act on opportunities before others recognize them.', competency: 'courage', capability: 'entrepreneurial', attribute: 'Initiative' },
+    
+    // COURAGE - Responsible Action (6 items)
+    { id: 13, text: 'I understand how my actions affect others.', competency: 'courage', capability: 'responsible', attribute: 'Insight' },
+    { id: 14, text: 'I model the behavior I expect from others.', competency: 'courage', capability: 'responsible', attribute: 'Modeling' },
+    { id: 15, text: 'I act with integrity even when no one is watching.', competency: 'courage', capability: 'responsible', attribute: 'Integrity' },
+    { id: 16, text: 'I stand up for my beliefs even when it\'s unpopular.', competency: 'courage', capability: 'responsible', attribute: 'Convictions' },
+    { id: 17, text: 'I speak up about issues that matter.', competency: 'courage', capability: 'responsible', attribute: 'Advocacy' },
+    { id: 18, text: 'I take responsibility for my mistakes.', competency: 'courage', capability: 'responsible', attribute: 'Integrity' },
+    
+    // CREATIVITY - Innovation (6 items)
+    { id: 19, text: 'I regularly generate new ideas and approaches.', competency: 'creativity', capability: 'innovation', attribute: 'Generating ideas' },
+    { id: 20, text: 'I am open to unconventional solutions.', competency: 'creativity', capability: 'innovation', attribute: 'Openness' },
+    { id: 21, text: 'I can articulate a compelling vision of the future.', competency: 'creativity', capability: 'innovation', attribute: 'Visioning' },
+    { id: 22, text: 'I question assumptions and the status quo.', competency: 'creativity', capability: 'innovation', attribute: 'Challenge status quo' },
+    { id: 23, text: 'I adapt my approach based on new information.', competency: 'creativity', capability: 'innovation', attribute: 'Flexibility' },
+    { id: 24, text: 'I connect ideas from different domains.', competency: 'creativity', capability: 'innovation', attribute: 'Generating ideas' },
+    
+    // CREATIVITY - Communication (6 items)
+    { id: 25, text: 'I express my ideas clearly and compellingly.', competency: 'creativity', capability: 'communication', attribute: 'Expressive' },
+    { id: 26, text: 'I listen carefully to understand others\' perspectives.', competency: 'creativity', capability: 'communication', attribute: 'Active listening' },
+    { id: 27, text: 'I can persuade others to support my ideas.', competency: 'creativity', capability: 'communication', attribute: 'Persuasive' },
+    { id: 28, text: 'I ask thoughtful questions to deepen understanding.', competency: 'creativity', capability: 'communication', attribute: 'Inquiry' },
+    { id: 29, text: 'I facilitate productive conversations among diverse views.', competency: 'creativity', capability: 'communication', attribute: 'Dialogue' },
+    { id: 30, text: 'I tailor my communication style to my audience.', competency: 'creativity', capability: 'communication', attribute: 'Expressive' },
+    
+    // CREATIVITY - Problem Solving (6 items)
+    { id: 31, text: 'I gather relevant information before making decisions.', competency: 'creativity', capability: 'problemsolving', attribute: 'Information seeking' },
+    { id: 32, text: 'I analyze situations thoroughly before acting.', competency: 'creativity', capability: 'problemsolving', attribute: 'Analyzing' },
+    { id: 33, text: 'I anticipate potential problems before they occur.', competency: 'creativity', capability: 'problemsolving', attribute: 'Anticipating' },
+    { id: 34, text: 'I make timely decisions even with incomplete information.', competency: 'creativity', capability: 'problemsolving', attribute: 'Decision making' },
+    { id: 35, text: 'I focus on finding solutions rather than assigning blame.', competency: 'creativity', capability: 'problemsolving', attribute: 'Solution driven' },
+    { id: 36, text: 'I break complex problems into manageable parts.', competency: 'creativity', capability: 'problemsolving', attribute: 'Analyzing' },
+    
+    // COLLABORATION - Empathy (6 items)
+    { id: 37, text: 'I notice subtle cues about how others are feeling.', competency: 'collaboration', capability: 'empathy', attribute: 'Perceptive' },
+    { id: 38, text: 'I am genuinely curious about others\' experiences.', competency: 'collaboration', capability: 'empathy', attribute: 'Curious' },
+    { id: 39, text: 'I value diverse perspectives and backgrounds.', competency: 'collaboration', capability: 'empathy', attribute: 'Diversity' },
+    { id: 40, text: 'I ensure everyone feels included and heard.', competency: 'collaboration', capability: 'empathy', attribute: 'Inclusive' },
+    { id: 41, text: 'I am sensitive to others\' needs and concerns.', competency: 'collaboration', capability: 'empathy', attribute: 'Sensitivity' },
+    { id: 42, text: 'I try to understand situations from others\' viewpoints.', competency: 'collaboration', capability: 'empathy', attribute: 'Perceptive' },
+    
+    // COLLABORATION - Social Learning (6 items)
+    { id: 43, text: 'I am aware of social dynamics in groups.', competency: 'collaboration', capability: 'sociallearning', attribute: 'Social awareness' },
+    { id: 44, text: 'I actively engage others in learning opportunities.', competency: 'collaboration', capability: 'sociallearning', attribute: 'Engages others' },
+    { id: 45, text: 'I build and maintain a strong professional network.', competency: 'collaboration', capability: 'sociallearning', attribute: 'Networking' },
+    { id: 46, text: 'I invest in relationships over time.', competency: 'collaboration', capability: 'sociallearning', attribute: 'Nurturing relationships' },
+    { id: 47, text: 'I learn from observing others in different situations.', competency: 'collaboration', capability: 'sociallearning', attribute: 'Situational learning' },
+    { id: 48, text: 'I seek out people who can help me grow.', competency: 'collaboration', capability: 'sociallearning', attribute: 'Networking' },
+    
+    // COLLABORATION - Teamwork (6 items)
+    { id: 49, text: 'I contribute actively to team efforts.', competency: 'collaboration', capability: 'teamwork', attribute: 'Participative' },
+    { id: 50, text: 'I follow through on my commitments to the team.', competency: 'collaboration', capability: 'teamwork', attribute: 'Accountable' },
+    { id: 51, text: 'I support my teammates in achieving their goals.', competency: 'collaboration', capability: 'teamwork', attribute: 'Supportive' },
+    { id: 52, text: 'I treat all team members with respect.', competency: 'collaboration', capability: 'teamwork', attribute: 'Respectful' },
+    { id: 53, text: 'I address conflicts constructively.', competency: 'collaboration', capability: 'teamwork', attribute: 'Conflict management' },
+    { id: 54, text: 'I put team success above personal recognition.', competency: 'collaboration', capability: 'teamwork', attribute: 'Supportive' }
+  ],
+  
+  interpretation: {
+    low: { range: [1, 2.5], label: 'Development Priority', message: 'This is an area for focused development.' },
+    moderate: { range: [2.6, 3.5], label: 'Developing', message: 'You have a foundation to build on.' },
+    high: { range: [3.6, 5], label: 'Strength', message: 'This is a strength you can leverage.' }
+  }
+};
+
+// ============================================================================
+// LEARNING ORIENTATION ASSESSMENT (Growth Mindset - Based on Dweck)
+// ============================================================================
+
+const LEARNING_ORIENTATION_ASSESSMENT = {
+  id: 'learning_orientation',
+  title: 'Learning Orientation Assessment',
+  subtitle: 'Growth mindset and learning agility',
+  description: 'This assessment measures your orientation toward learning and growth. Day (2024) emphasizes that a growth mindset—believing abilities can be developed through effort—is essential for sustained leader development.',
+  source: 'Based on Dweck (2006) Mindset research; Day (2024) Chapter 5',
+  timeToComplete: '5-7 minutes',
+  instructions: 'Rate how much you agree with each statement.',
+  scale: ['Strongly Disagree', 'Disagree', 'Somewhat Disagree', 'Somewhat Agree', 'Agree', 'Strongly Agree'],
+  
+  items: [
+    { id: 1, text: 'Your leadership ability is something you can develop significantly.', dimension: 'growth', reversed: false },
+    { id: 2, text: 'You can learn new things, but you can\'t really change your basic leadership ability.', dimension: 'fixed', reversed: true },
+    { id: 3, text: 'No matter who you are, you can substantially change your leadership capabilities.', dimension: 'growth', reversed: false },
+    { id: 4, text: 'You can always greatly change how much leadership talent you have.', dimension: 'growth', reversed: false },
+    { id: 5, text: 'You have a certain amount of leadership ability, and you can\'t do much to change it.', dimension: 'fixed', reversed: true },
+    { id: 6, text: 'Leadership skills are mostly something you\'re born with.', dimension: 'fixed', reversed: true },
+    { id: 7, text: 'I seek out feedback, even when it might be critical.', dimension: 'behavior', reversed: false },
+    { id: 8, text: 'I view mistakes as opportunities to learn.', dimension: 'behavior', reversed: false },
+    { id: 9, text: 'I embrace challenges that stretch my abilities.', dimension: 'behavior', reversed: false },
+    { id: 10, text: 'I persist when things get difficult.', dimension: 'behavior', reversed: false },
+    { id: 11, text: 'I am inspired by others\' success rather than threatened by it.', dimension: 'behavior', reversed: false },
+    { id: 12, text: 'I believe effort is the path to mastery.', dimension: 'growth', reversed: false }
+  ],
+  
+  interpretation: {
+    low: { range: [1, 3], message: 'You may have a more fixed view of leadership ability. The good news: mindset itself can be developed! Focus on the process of learning, not just outcomes.' },
+    moderate: { range: [3.1, 4.5], message: 'You show a mix of fixed and growth mindset thinking. Notice when fixed mindset thoughts arise and challenge them.' },
+    high: { range: [4.6, 6], message: 'You have a strong growth mindset. This supports sustained development. Continue embracing challenges and learning from setbacks.' }
+  },
+  
+  developmentTips: [
+    'Add "yet" to fixed statements: "I can\'t do this... yet"',
+    'Focus on process and effort, not just outcomes',
+    'Celebrate learning and growth, not just success',
+    'View feedback as a gift, not a threat',
+    'Study how experts developed their abilities over time'
+  ]
+};
+
+// ============================================================================
 // LEADER DEVELOPMENT INTERVENTIONS (Individual Level - Human Capital)
 // Based on Day (2024) Chapters 3-5
 // ============================================================================
@@ -2525,6 +2828,7 @@ const Icons = {
   PhoneOff: () => (<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M10.68 13.31a16 16 0 0 0 3.41 2.6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7 2 2 0 0 1 1.72 2v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.42 19.42 0 0 1-3.33-2.67m-2.67-3.34a19.79 19.79 0 0 1-3.07-8.63A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91"/><line x1="23" y1="1" x2="1" y2="23"/></svg>),
   Volume2: () => (<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>),
   VolumeX: () => (<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>),
+  ExternalLink: ({ className }) => (<svg className={className} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>),
   BookOpen: () => (<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>),
   Heart: () => (<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>),
   Keyboard: () => (<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="2" y="4" width="20" height="16" rx="2" ry="2"/><path d="M6 8h.001M10 8h.001M14 8h.001M18 8h.001M8 12h.001M12 12h.001M16 12h.001M6 16h12"/></svg>),
@@ -3965,10 +4269,107 @@ function LeaderDevelopmentTab({ setCurrentView }) {
         <p className="text-xs text-stone-500">Source: {LEADER_DEVELOPMENT.source}</p>
       </div>
 
+      {/* Foundational Assessments */}
+      <div>
+        <h3 className="font-semibold text-stone-800 mb-2">📊 Foundational Assessments</h3>
+        <p className="text-sm text-stone-600 mb-4">Start here to understand your personality and learning orientation.</p>
+        <div className="space-y-3">
+          <button
+            onClick={() => setCurrentView('assessment-big_five')}
+            className="w-full bg-gradient-to-r from-violet-50 to-amber-50 rounded-xl border border-violet-200 p-4 hover:shadow-md transition-all text-left"
+          >
+            <div className="flex justify-between items-start mb-2">
+              <h4 className="font-semibold text-stone-800">{BIG_FIVE_ASSESSMENT.title}</h4>
+              <span className="text-xs bg-violet-100 text-violet-700 px-2 py-1 rounded-full">{BIG_FIVE_ASSESSMENT.timeToComplete}</span>
+            </div>
+            <p className="text-sm text-stone-600 mb-2">{BIG_FIVE_ASSESSMENT.subtitle}</p>
+            <div className="flex flex-wrap gap-1">
+              {BIG_FIVE_ASSESSMENT.factors.map(f => (
+                <span key={f.id} className="text-xs bg-white/80 text-stone-600 px-2 py-0.5 rounded">{f.name.split(' ')[0]}</span>
+              ))}
+            </div>
+          </button>
+          
+          <button
+            onClick={() => setCurrentView('assessment-kli_competency')}
+            className="w-full bg-gradient-to-r from-amber-50 to-teal-50 rounded-xl border border-amber-200 p-4 hover:shadow-md transition-all text-left"
+          >
+            <div className="flex justify-between items-start mb-2">
+              <h4 className="font-semibold text-stone-800">{KLI_COMPETENCY_ASSESSMENT.title}</h4>
+              <span className="text-xs bg-amber-100 text-amber-700 px-2 py-1 rounded-full">{KLI_COMPETENCY_ASSESSMENT.timeToComplete}</span>
+            </div>
+            <p className="text-sm text-stone-600 mb-2">{KLI_COMPETENCY_ASSESSMENT.subtitle}</p>
+            <div className="flex gap-2">
+              {KLI_COMPETENCY_ASSESSMENT.competencies.map(c => (
+                <span key={c.id} className={`text-xs px-2 py-0.5 rounded ${c.color === 'amber' ? 'bg-amber-100 text-amber-700' : c.color === 'violet' ? 'bg-violet-100 text-violet-700' : 'bg-teal-100 text-teal-700'}`}>{c.name}</span>
+              ))}
+            </div>
+          </button>
+          
+          <button
+            onClick={() => setCurrentView('assessment-learning_orientation')}
+            className="w-full bg-white rounded-xl border border-stone-200 p-4 hover:shadow-md transition-all text-left"
+          >
+            <div className="flex justify-between items-start mb-2">
+              <h4 className="font-semibold text-stone-800">{LEARNING_ORIENTATION_ASSESSMENT.title}</h4>
+              <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full">{LEARNING_ORIENTATION_ASSESSMENT.timeToComplete}</span>
+            </div>
+            <p className="text-sm text-stone-600 mb-2">{LEARNING_ORIENTATION_ASSESSMENT.subtitle}</p>
+            <p className="text-xs text-stone-500">{LEARNING_ORIENTATION_ASSESSMENT.items.length} items • Growth Mindset</p>
+          </button>
+        </div>
+      </div>
+
+      {/* External Assessments */}
+      <div>
+        <h3 className="font-semibold text-stone-800 mb-2">🔗 Recommended External Assessments</h3>
+        <p className="text-sm text-stone-600 mb-4">Free, scientifically-validated assessments from leading researchers.</p>
+        <div className="space-y-3">
+          <a
+            href="https://principlesyou.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block w-full bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-200 p-4 hover:shadow-md transition-all"
+          >
+            <div className="flex justify-between items-start mb-2">
+              <div className="flex items-center gap-2">
+                <h4 className="font-semibold text-stone-800">PrinciplesYou</h4>
+                <Icons.ExternalLink className="w-4 h-4 text-blue-500" />
+              </div>
+              <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full">30-40 min</span>
+            </div>
+            <p className="text-sm text-stone-600 mb-2">Comprehensive personality assessment by Adam Grant & Ray Dalio</p>
+            <p className="text-xs text-stone-500 mb-2">Combines Big Five with 17 traits important for personal and professional success. Free to take with detailed results.</p>
+            <div className="flex flex-wrap gap-1">
+              <span className="text-xs bg-white/80 text-stone-600 px-2 py-0.5 rounded">Big Five+</span>
+              <span className="text-xs bg-white/80 text-stone-600 px-2 py-0.5 rounded">17 Traits</span>
+              <span className="text-xs bg-white/80 text-stone-600 px-2 py-0.5 rounded">Compare with Others</span>
+            </div>
+          </a>
+          
+          <a
+            href="https://www.outofservice.com/bigfive/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block w-full bg-white rounded-xl border border-stone-200 p-4 hover:shadow-md transition-all"
+          >
+            <div className="flex justify-between items-start mb-2">
+              <div className="flex items-center gap-2">
+                <h4 className="font-semibold text-stone-800">Big Five (FiveThirtyEight)</h4>
+                <Icons.ExternalLink className="w-4 h-4 text-stone-400" />
+              </div>
+              <span className="text-xs bg-stone-100 text-stone-600 px-2 py-1 rounded-full">~10 min</span>
+            </div>
+            <p className="text-sm text-stone-600 mb-2">Quick, validated Big Five personality test</p>
+            <p className="text-xs text-stone-500">Shorter alternative if you want a quick personality snapshot.</p>
+          </a>
+        </div>
+      </div>
+
       {/* Self-View Assessments */}
       <div>
-        <h3 className="font-semibold text-stone-800 mb-3">Self-View Assessments</h3>
-        <p className="text-sm text-stone-600 mb-4">Measure your proximal indicators of leader development.</p>
+        <h3 className="font-semibold text-stone-800 mb-2">🪞 Self-View Assessments</h3>
+        <p className="text-sm text-stone-600 mb-4">Measure your proximal indicators of leader development (Day, Ch. 4).</p>
         <div className="space-y-3">
           {Object.values(SELF_VIEW_ASSESSMENTS).map(assessment => (
             <button
@@ -3989,7 +4390,7 @@ function LeaderDevelopmentTab({ setCurrentView }) {
 
       {/* Development Interventions */}
       <div>
-        <h3 className="font-semibold text-stone-800 mb-3">Development Interventions</h3>
+        <h3 className="font-semibold text-stone-800 mb-2">🎯 Development Interventions</h3>
         <p className="text-sm text-stone-600 mb-4">Structured programs to build individual leadership capacity.</p>
         <div className="space-y-3">
           {LEADER_DEVELOPMENT.interventions.map(intervention => (
@@ -4078,11 +4479,25 @@ function AssessmentView({ assessmentId, setCurrentView, user }) {
   const [completed, setCompleted] = useState(false);
   const [results, setResults] = useState(null);
 
-  // Find the assessment in both SELF_VIEW_ASSESSMENTS and COLLECTIVE_ASSESSMENTS
-  const assessment = SELF_VIEW_ASSESSMENTS[assessmentId] || 
-                     Object.values(SELF_VIEW_ASSESSMENTS).find(a => a.id === assessmentId) ||
-                     COLLECTIVE_ASSESSMENTS[assessmentId] ||
-                     Object.values(COLLECTIVE_ASSESSMENTS).find(a => a.id === assessmentId);
+  // Find the assessment in all assessment sources
+  let assessment = null;
+  let assessmentType = 'simple'; // simple, bigfive, kli
+  
+  if (assessmentId === 'big_five') {
+    assessment = BIG_FIVE_ASSESSMENT;
+    assessmentType = 'bigfive';
+  } else if (assessmentId === 'kli_competency') {
+    assessment = KLI_COMPETENCY_ASSESSMENT;
+    assessmentType = 'kli';
+  } else if (assessmentId === 'learning_orientation') {
+    assessment = LEARNING_ORIENTATION_ASSESSMENT;
+    assessmentType = 'simple';
+  } else {
+    assessment = SELF_VIEW_ASSESSMENTS[assessmentId] || 
+                 Object.values(SELF_VIEW_ASSESSMENTS).find(a => a.id === assessmentId) ||
+                 COLLECTIVE_ASSESSMENTS[assessmentId] ||
+                 Object.values(COLLECTIVE_ASSESSMENTS).find(a => a.id === assessmentId);
+  }
 
   if (!assessment) {
     return (
@@ -4095,7 +4510,8 @@ function AssessmentView({ assessmentId, setCurrentView, user }) {
     );
   }
 
-  const isIndividual = Object.keys(SELF_VIEW_ASSESSMENTS).includes(assessmentId) || 
+  const isIndividual = assessmentType !== 'simple' || 
+                       Object.keys(SELF_VIEW_ASSESSMENTS).includes(assessmentId) || 
                        Object.values(SELF_VIEW_ASSESSMENTS).some(a => a.id === assessmentId);
 
   const handleResponse = (itemId, value) => {
@@ -4108,31 +4524,77 @@ function AssessmentView({ assessmentId, setCurrentView, user }) {
   };
 
   const calculateResults = () => {
-    const scores = assessment.items.map(item => {
-      const response = responses[item.id] || 0;
-      const score = item.reversed ? (assessment.scale.length - response) : response + 1;
-      return score;
-    });
-    
-    const average = scores.reduce((a, b) => a + b, 0) / scores.length;
-    const maxScore = assessment.scale.length;
-    const normalizedScore = average;
-    
-    let interpretation = '';
-    if (normalizedScore <= assessment.interpretation.low.range[1]) {
-      interpretation = assessment.interpretation.low.message;
-    } else if (normalizedScore <= assessment.interpretation.moderate.range[1]) {
-      interpretation = assessment.interpretation.moderate.message;
+    if (assessmentType === 'bigfive') {
+      // Calculate factor scores for Big Five
+      const factorScores = {};
+      assessment.factors.forEach(factor => {
+        const factorItems = assessment.items.filter(item => item.factor === factor.id);
+        const scores = factorItems.map(item => {
+          const response = responses[item.id] || 0;
+          return item.reversed ? (assessment.scale.length - 1 - response) : response;
+        });
+        const avg = (scores.reduce((a, b) => a + b, 0) / scores.length) + 1;
+        factorScores[factor.id] = {
+          score: avg.toFixed(2),
+          label: avg <= 2.5 ? 'Low' : avg <= 3.5 ? 'Moderate' : 'High',
+          name: factor.name,
+          color: factor.color,
+          implication: factor.leadershipImplication
+        };
+      });
+      return { type: 'bigfive', factorScores, responses: { ...responses } };
+    } else if (assessmentType === 'kli') {
+      // Calculate competency and capability scores for KLI
+      const competencyScores = {};
+      assessment.competencies.forEach(comp => {
+        const capabilityScores = {};
+        comp.capabilities.forEach(cap => {
+          const capItems = assessment.items.filter(item => item.capability === cap.id);
+          const scores = capItems.map(item => {
+            const response = responses[item.id] || 0;
+            return response + 1;
+          });
+          const avg = scores.reduce((a, b) => a + b, 0) / scores.length;
+          capabilityScores[cap.id] = {
+            score: avg.toFixed(2),
+            label: avg <= 2.5 ? 'Development Priority' : avg <= 3.5 ? 'Developing' : 'Strength',
+            name: cap.name
+          };
+        });
+        // Calculate overall competency score
+        const allCompItems = assessment.items.filter(item => item.competency === comp.id);
+        const allScores = allCompItems.map(item => (responses[item.id] || 0) + 1);
+        const compAvg = allScores.reduce((a, b) => a + b, 0) / allScores.length;
+        competencyScores[comp.id] = {
+          score: compAvg.toFixed(2),
+          label: compAvg <= 2.5 ? 'Development Priority' : compAvg <= 3.5 ? 'Developing' : 'Strength',
+          name: comp.name,
+          color: comp.color,
+          capabilities: capabilityScores
+        };
+      });
+      return { type: 'kli', competencyScores, responses: { ...responses } };
     } else {
-      interpretation = assessment.interpretation.high.message;
+      // Simple assessment scoring
+      const scores = assessment.items.map(item => {
+        const response = responses[item.id] || 0;
+        const score = item.reversed ? (assessment.scale.length - response) : response + 1;
+        return score;
+      });
+      const average = scores.reduce((a, b) => a + b, 0) / scores.length;
+      const maxScore = assessment.scale.length;
+      
+      let interpretation = '';
+      if (average <= assessment.interpretation.low.range[1]) {
+        interpretation = assessment.interpretation.low.message;
+      } else if (average <= assessment.interpretation.moderate.range[1]) {
+        interpretation = assessment.interpretation.moderate.message;
+      } else {
+        interpretation = assessment.interpretation.high.message;
+      }
+      
+      return { type: 'simple', average: average.toFixed(2), maxScore, interpretation, responses: { ...responses } };
     }
-    
-    return {
-      average: average.toFixed(2),
-      maxScore,
-      interpretation,
-      responses: { ...responses }
-    };
   };
 
   const handleComplete = async () => {
@@ -4140,7 +4602,6 @@ function AssessmentView({ assessmentId, setCurrentView, user }) {
     setResults(calculatedResults);
     setCompleted(true);
     
-    // Save to database if user is logged in
     if (user) {
       try {
         await supabase.from('assessment_responses').insert({
@@ -4158,6 +4619,7 @@ function AssessmentView({ assessmentId, setCurrentView, user }) {
 
   const allAnswered = Object.keys(responses).length === assessment.items.length;
 
+  // RESULTS VIEW
   if (completed && results) {
     return (
       <div className="animate-fadeIn">
@@ -4165,21 +4627,96 @@ function AssessmentView({ assessmentId, setCurrentView, user }) {
           <Icons.ChevronLeft /> Back to Develop
         </button>
 
-        <div className={`${isIndividual ? 'bg-amber-50 border-amber-200' : 'bg-teal-50 border-teal-200'} border rounded-xl p-6 mb-6`}>
+        <div className="bg-gradient-to-br from-violet-50 to-amber-50 border border-violet-200 rounded-xl p-6 mb-6">
           <div className="text-4xl mb-4 text-center">📊</div>
-          <h1 className={`text-xl font-bold ${isIndividual ? 'text-amber-800' : 'text-teal-800'} mb-2 text-center`}>
-            {assessment.title} Results
-          </h1>
-          <div className="text-center mb-4">
-            <span className="text-3xl font-bold text-stone-800">{results.average}</span>
-            <span className="text-stone-500"> / {results.maxScore}</span>
-          </div>
+          <h1 className="text-xl font-bold text-stone-800 mb-2 text-center">{assessment.title} Results</h1>
         </div>
 
-        <div className="bg-white rounded-xl border border-stone-200 p-4 mb-6">
-          <h2 className="font-semibold text-stone-800 mb-3">Interpretation</h2>
-          <p className="text-stone-600">{results.interpretation}</p>
-        </div>
+        {/* Big Five Results */}
+        {results.type === 'bigfive' && (
+          <div className="space-y-4 mb-6">
+            {Object.values(results.factorScores).map((factor, idx) => (
+              <div key={idx} className="bg-white rounded-xl border border-stone-200 p-4">
+                <div className="flex justify-between items-center mb-2">
+                  <h3 className="font-semibold text-stone-800">{factor.name}</h3>
+                  <span className={`text-xs px-2 py-1 rounded-full ${
+                    factor.label === 'High' ? 'bg-green-100 text-green-700' :
+                    factor.label === 'Low' ? 'bg-orange-100 text-orange-700' :
+                    'bg-blue-100 text-blue-700'
+                  }`}>{factor.label}</span>
+                </div>
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="flex-1 h-3 bg-stone-100 rounded-full overflow-hidden">
+                    <div 
+                      className={`h-full rounded-full ${
+                        factor.color === 'violet' ? 'bg-violet-500' :
+                        factor.color === 'amber' ? 'bg-amber-500' :
+                        factor.color === 'orange' ? 'bg-orange-500' :
+                        factor.color === 'teal' ? 'bg-teal-500' :
+                        'bg-blue-500'
+                      }`}
+                      style={{ width: `${(factor.score / 5) * 100}%` }}
+                    />
+                  </div>
+                  <span className="text-sm font-medium text-stone-700 w-12">{factor.score}/5</span>
+                </div>
+                <p className="text-xs text-stone-500">{factor.implication}</p>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* KLI Competency Results */}
+        {results.type === 'kli' && (
+          <div className="space-y-6 mb-6">
+            {Object.values(results.competencyScores).map((comp, idx) => (
+              <div key={idx} className={`rounded-xl border p-4 ${
+                comp.color === 'amber' ? 'bg-amber-50 border-amber-200' :
+                comp.color === 'violet' ? 'bg-violet-50 border-violet-200' :
+                'bg-teal-50 border-teal-200'
+              }`}>
+                <div className="flex justify-between items-center mb-3">
+                  <h3 className="font-semibold text-stone-800">{comp.name}</h3>
+                  <div className="flex items-center gap-2">
+                    <span className="text-lg font-bold text-stone-800">{comp.score}</span>
+                    <span className={`text-xs px-2 py-1 rounded-full ${
+                      comp.label === 'Strength' ? 'bg-green-100 text-green-700' :
+                      comp.label === 'Development Priority' ? 'bg-orange-100 text-orange-700' :
+                      'bg-blue-100 text-blue-700'
+                    }`}>{comp.label}</span>
+                  </div>
+                </div>
+                <div className="grid grid-cols-3 gap-2">
+                  {Object.values(comp.capabilities).map((cap, capIdx) => (
+                    <div key={capIdx} className="bg-white/60 rounded-lg p-2 text-center">
+                      <p className="text-xs font-medium text-stone-700">{cap.name}</p>
+                      <p className="text-lg font-bold text-stone-800">{cap.score}</p>
+                      <p className={`text-xs ${
+                        cap.label === 'Strength' ? 'text-green-600' :
+                        cap.label === 'Development Priority' ? 'text-orange-600' :
+                        'text-blue-600'
+                      }`}>{cap.label}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Simple Assessment Results */}
+        {results.type === 'simple' && (
+          <>
+            <div className="bg-white rounded-xl border border-stone-200 p-4 mb-6 text-center">
+              <span className="text-4xl font-bold text-stone-800">{results.average}</span>
+              <span className="text-stone-500 text-xl"> / {results.maxScore}</span>
+            </div>
+            <div className="bg-white rounded-xl border border-stone-200 p-4 mb-6">
+              <h2 className="font-semibold text-stone-800 mb-3">Interpretation</h2>
+              <p className="text-stone-600">{results.interpretation}</p>
+            </div>
+          </>
+        )}
 
         {assessment.developmentTips && (
           <div className="bg-white rounded-xl border border-stone-200 p-4 mb-6">
@@ -4187,7 +4724,7 @@ function AssessmentView({ assessmentId, setCurrentView, user }) {
             <ul className="space-y-2">
               {assessment.developmentTips.map((tip, idx) => (
                 <li key={idx} className="flex items-start gap-2 text-sm text-stone-600">
-                  <span className={`${isIndividual ? 'text-amber-500' : 'text-teal-500'}`}>•</span>
+                  <span className="text-amber-500">•</span>
                   {tip}
                 </li>
               ))}
@@ -4197,7 +4734,7 @@ function AssessmentView({ assessmentId, setCurrentView, user }) {
 
         <button
           onClick={() => setCurrentView('develop')}
-          className={`w-full ${isIndividual ? 'bg-amber-600' : 'bg-teal-600'} text-white py-3 rounded-xl font-medium`}
+          className="w-full bg-amber-600 text-white py-3 rounded-xl font-medium"
         >
           Continue Developing
         </button>
@@ -4205,8 +4742,20 @@ function AssessmentView({ assessmentId, setCurrentView, user }) {
     );
   }
 
+  // ASSESSMENT TAKING VIEW
   const item = assessment.items[currentItem];
   const progress = ((currentItem + 1) / assessment.items.length) * 100;
+
+  // Get context info for the current item (factor for Big Five, competency for KLI)
+  let contextInfo = null;
+  if (assessmentType === 'bigfive') {
+    const factor = assessment.factors.find(f => f.id === item.factor);
+    contextInfo = { label: factor?.name, color: factor?.color };
+  } else if (assessmentType === 'kli') {
+    const comp = assessment.competencies.find(c => c.id === item.competency);
+    const cap = comp?.capabilities.find(cap => cap.id === item.capability);
+    contextInfo = { label: `${comp?.name} → ${cap?.name}`, color: comp?.color };
+  }
 
   return (
     <div className="animate-fadeIn">
@@ -4214,8 +4763,12 @@ function AssessmentView({ assessmentId, setCurrentView, user }) {
         <Icons.ChevronLeft /> Back
       </button>
 
-      <div className={`${isIndividual ? 'bg-amber-50 border-amber-200' : 'bg-teal-50 border-teal-200'} border rounded-xl p-4 mb-4`}>
-        <h1 className={`text-lg font-bold ${isIndividual ? 'text-amber-800' : 'text-teal-800'} mb-1`}>{assessment.title}</h1>
+      <div className={`${
+        assessmentType === 'bigfive' ? 'bg-gradient-to-r from-violet-50 to-amber-50 border-violet-200' :
+        assessmentType === 'kli' ? 'bg-gradient-to-r from-amber-50 to-teal-50 border-amber-200' :
+        isIndividual ? 'bg-amber-50 border-amber-200' : 'bg-teal-50 border-teal-200'
+      } border rounded-xl p-4 mb-4`}>
+        <h1 className="text-lg font-bold text-stone-800 mb-1">{assessment.title}</h1>
         <p className="text-sm text-stone-600">{assessment.subtitle}</p>
       </div>
 
@@ -4227,10 +4780,25 @@ function AssessmentView({ assessmentId, setCurrentView, user }) {
         </div>
         <div className="h-2 bg-stone-200 rounded-full overflow-hidden">
           <div
-            className={`h-full ${isIndividual ? 'bg-amber-500' : 'bg-teal-500'} transition-all duration-300`}
+            className={`h-full transition-all duration-300 ${
+              assessmentType === 'bigfive' ? 'bg-violet-500' :
+              assessmentType === 'kli' ? 'bg-amber-500' :
+              'bg-amber-500'
+            }`}
             style={{ width: `${progress}%` }}
           />
         </div>
+        {contextInfo && (
+          <div className="mt-2">
+            <span className={`text-xs px-2 py-1 rounded-full ${
+              contextInfo.color === 'amber' ? 'bg-amber-100 text-amber-700' :
+              contextInfo.color === 'violet' ? 'bg-violet-100 text-violet-700' :
+              contextInfo.color === 'teal' ? 'bg-teal-100 text-teal-700' :
+              contextInfo.color === 'orange' ? 'bg-orange-100 text-orange-700' :
+              'bg-blue-100 text-blue-700'
+            }`}>{contextInfo.label}</span>
+          </div>
+        )}
       </div>
 
       {/* Current Item */}
@@ -4244,9 +4812,7 @@ function AssessmentView({ assessmentId, setCurrentView, user }) {
               onClick={() => handleResponse(item.id, idx)}
               className={`w-full p-3 rounded-lg border text-left transition-all ${
                 responses[item.id] === idx
-                  ? isIndividual 
-                    ? 'border-amber-500 bg-amber-50 text-amber-800'
-                    : 'border-teal-500 bg-teal-50 text-teal-800'
+                  ? 'border-amber-500 bg-amber-50 text-amber-800'
                   : 'border-stone-200 hover:border-stone-300 text-stone-700'
               }`}
             >
@@ -4269,7 +4835,7 @@ function AssessmentView({ assessmentId, setCurrentView, user }) {
         {allAnswered && (
           <button
             onClick={handleComplete}
-            className={`flex-1 ${isIndividual ? 'bg-amber-600' : 'bg-teal-600'} text-white py-3 rounded-xl font-medium`}
+            className="flex-1 bg-amber-600 text-white py-3 rounded-xl font-medium"
           >
             See Results
           </button>
@@ -4502,5 +5068,6 @@ export default function DayByDayApp() {
     </div>
   );
 }
+
 
 
