@@ -4416,15 +4416,6 @@ function InterventionView({ interventionId, setCurrentView, user }) {
     </div>
   );
 }
-          onClick={() => setCurrentView('coaches')}
-          className={`w-full ${isIndividual ? 'bg-amber-600' : 'bg-teal-600'} text-white py-3 rounded-xl font-medium`}
-        >
-          Discuss with Coach
-        </button>
-      </div>
-    </div>
-  );
-}
 
 // ============================================================================
 // MAIN APP
@@ -4511,4 +4502,5 @@ export default function DayByDayApp() {
     </div>
   );
 }
+
 
