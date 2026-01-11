@@ -4261,210 +4261,414 @@ function DevelopView({ setCurrentView, user }) {
 }
 
 function LeaderDevelopmentTab({ setCurrentView }) {
+  const [expandedSection, setExpandedSection] = useState('self-views');
+  
+  const toggleSection = (section) => {
+    setExpandedSection(expandedSection === section ? null : section);
+  };
+
+  // Development sections organized by Day's book structure
+  const sections = [
+    {
+      id: 'self-views',
+      title: 'Self-Views',
+      subtitle: 'Proximal Indicators of Leader Development',
+      source: 'Day (2024), Chapter 4',
+      icon: '🪞',
+      color: 'amber',
+      description: 'How you see yourself as a leader. These self-views are the most direct indicators of leader development.',
+      subsections: [
+        {
+          id: 'leader-identity',
+          title: 'Leader Identity',
+          description: 'The extent to which you see yourself as a leader',
+          assessment: SELF_VIEW_ASSESSMENTS.leaderIdentity,
+          intervention: LEADER_DEVELOPMENT.interventions.find(i => i.id === 'identity_work'),
+          keyInsight: 'Identity motivates the learning and practice that sustains development over time.'
+        },
+        {
+          id: 'self-awareness',
+          title: 'Self-Awareness',
+          description: 'Understanding your values, tendencies, and impact on others',
+          assessment: SELF_VIEW_ASSESSMENTS.selfAwareness,
+          intervention: LEADER_DEVELOPMENT.interventions.find(i => i.id === 'self_awareness_360'),
+          keyInsight: 'Most people overestimate their self-awareness. External feedback is essential.'
+        },
+        {
+          id: 'self-efficacy',
+          title: 'Leadership Self-Efficacy',
+          description: 'Confidence in your ability to lead effectively',
+          assessment: SELF_VIEW_ASSESSMENTS.leadershipSelfEfficacy,
+          intervention: LEADER_DEVELOPMENT.interventions.find(i => i.id === 'efficacy_building'),
+          keyInsight: 'Self-efficacy is built through mastery experiences, role models, and reframing anxiety.'
+        },
+        {
+          id: 'self-regulation',
+          title: 'Self-Regulation',
+          description: 'Managing your behavior through deliberate practice',
+          assessment: null,
+          intervention: LEADER_DEVELOPMENT.interventions.find(i => i.id === 'deliberate_practice'),
+          keyInsight: 'Expert performance comes from focused practice at the edge of your ability.'
+        }
+      ]
+    },
+    {
+      id: 'foundations',
+      title: 'Foundational Assessments',
+      subtitle: 'Personality & Competencies',
+      source: 'Day (2024), Chapter 2',
+      icon: '📊',
+      color: 'violet',
+      description: 'Understand your personality traits and leadership competencies as the foundation for development.',
+      subsections: [
+        {
+          id: 'personality',
+          title: 'Personality (Big Five)',
+          description: 'Your core personality traits and their leadership implications',
+          assessment: BIG_FIVE_ASSESSMENT,
+          intervention: null,
+          keyInsight: 'Personality is relatively stable but you can adapt your behaviors.'
+        },
+        {
+          id: 'competencies',
+          title: 'KLI Competencies',
+          description: 'Courage, Creativity, and Collaboration capabilities',
+          assessment: KLI_COMPETENCY_ASSESSMENT,
+          intervention: null,
+          keyInsight: 'The 3Cs provide a framework for targeted skill development.'
+        },
+        {
+          id: 'learning',
+          title: 'Learning Orientation',
+          description: 'Your growth mindset and approach to development',
+          assessment: LEARNING_ORIENTATION_ASSESSMENT,
+          intervention: null,
+          keyInsight: 'A growth mindset believes leadership ability can be developed through effort.'
+        }
+      ]
+    },
+    {
+      id: 'external',
+      title: 'External Assessments',
+      subtitle: 'Recommended Free Tools',
+      source: 'Grant & Dalio',
+      icon: '🔗',
+      color: 'blue',
+      description: 'Additional scientifically-validated assessments from leading researchers.',
+      external: true,
+      subsections: [
+        {
+          id: 'principlesyou',
+          title: 'PrinciplesYou',
+          description: 'Comprehensive 17-trait assessment by Adam Grant & Ray Dalio',
+          url: 'https://principlesyou.com',
+          duration: '30-40 min',
+          keyInsight: 'Combines Big Five with traits important for personal and professional success.'
+        },
+        {
+          id: 'bigfive-short',
+          title: 'Big Five (Short Version)',
+          description: 'Quick validated personality assessment',
+          url: 'https://www.outofservice.com/bigfive/',
+          duration: '~10 min',
+          keyInsight: 'Faster alternative if you want a quick personality snapshot.'
+        }
+      ]
+    }
+  ];
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
+      {/* Header */}
       <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
         <h2 className="font-semibold text-amber-800 mb-2">{LEADER_DEVELOPMENT.title}</h2>
-        <p className="text-sm text-stone-600 mb-3">{LEADER_DEVELOPMENT.description}</p>
+        <p className="text-sm text-stone-600 mb-2">{LEADER_DEVELOPMENT.description}</p>
         <p className="text-xs text-stone-500">Source: {LEADER_DEVELOPMENT.source}</p>
       </div>
 
-      {/* Foundational Assessments */}
-      <div>
-        <h3 className="font-semibold text-stone-800 mb-2">📊 Foundational Assessments</h3>
-        <p className="text-sm text-stone-600 mb-4">Start here to understand your personality and learning orientation.</p>
-        <div className="space-y-3">
+      {/* Collapsible Sections */}
+      {sections.map(section => (
+        <div key={section.id} className="bg-white rounded-xl border border-stone-200 overflow-hidden">
+          {/* Section Header - Clickable */}
           <button
-            onClick={() => setCurrentView('assessment-big_five')}
-            className="w-full bg-gradient-to-r from-violet-50 to-amber-50 rounded-xl border border-violet-200 p-4 hover:shadow-md transition-all text-left"
+            onClick={() => toggleSection(section.id)}
+            className={`w-full p-4 flex items-center justify-between text-left transition-colors ${
+              expandedSection === section.id 
+                ? section.color === 'amber' ? 'bg-amber-50' : section.color === 'violet' ? 'bg-violet-50' : 'bg-blue-50'
+                : 'hover:bg-stone-50'
+            }`}
           >
-            <div className="flex justify-between items-start mb-2">
-              <h4 className="font-semibold text-stone-800">{BIG_FIVE_ASSESSMENT.title}</h4>
-              <span className="text-xs bg-violet-100 text-violet-700 px-2 py-1 rounded-full">{BIG_FIVE_ASSESSMENT.timeToComplete}</span>
+            <div className="flex items-center gap-3">
+              <span className="text-2xl">{section.icon}</span>
+              <div>
+                <h3 className="font-semibold text-stone-800">{section.title}</h3>
+                <p className="text-xs text-stone-500">{section.subtitle}</p>
+              </div>
             </div>
-            <p className="text-sm text-stone-600 mb-2">{BIG_FIVE_ASSESSMENT.subtitle}</p>
-            <div className="flex flex-wrap gap-1">
-              {BIG_FIVE_ASSESSMENT.factors.map(f => (
-                <span key={f.id} className="text-xs bg-white/80 text-stone-600 px-2 py-0.5 rounded">{f.name.split(' ')[0]}</span>
-              ))}
+            <div className="flex items-center gap-2">
+              <span className={`text-xs px-2 py-1 rounded-full ${
+                section.color === 'amber' ? 'bg-amber-100 text-amber-700' :
+                section.color === 'violet' ? 'bg-violet-100 text-violet-700' :
+                'bg-blue-100 text-blue-700'
+              }`}>{section.subsections.length} areas</span>
+              <Icons.ChevronDown className={`transition-transform ${expandedSection === section.id ? 'rotate-180' : ''}`} />
             </div>
           </button>
-          
-          <button
-            onClick={() => setCurrentView('assessment-kli_competency')}
-            className="w-full bg-gradient-to-r from-amber-50 to-teal-50 rounded-xl border border-amber-200 p-4 hover:shadow-md transition-all text-left"
-          >
-            <div className="flex justify-between items-start mb-2">
-              <h4 className="font-semibold text-stone-800">{KLI_COMPETENCY_ASSESSMENT.title}</h4>
-              <span className="text-xs bg-amber-100 text-amber-700 px-2 py-1 rounded-full">{KLI_COMPETENCY_ASSESSMENT.timeToComplete}</span>
-            </div>
-            <p className="text-sm text-stone-600 mb-2">{KLI_COMPETENCY_ASSESSMENT.subtitle}</p>
-            <div className="flex gap-2">
-              {KLI_COMPETENCY_ASSESSMENT.competencies.map(c => (
-                <span key={c.id} className={`text-xs px-2 py-0.5 rounded ${c.color === 'amber' ? 'bg-amber-100 text-amber-700' : c.color === 'violet' ? 'bg-violet-100 text-violet-700' : 'bg-teal-100 text-teal-700'}`}>{c.name}</span>
-              ))}
-            </div>
-          </button>
-          
-          <button
-            onClick={() => setCurrentView('assessment-learning_orientation')}
-            className="w-full bg-white rounded-xl border border-stone-200 p-4 hover:shadow-md transition-all text-left"
-          >
-            <div className="flex justify-between items-start mb-2">
-              <h4 className="font-semibold text-stone-800">{LEARNING_ORIENTATION_ASSESSMENT.title}</h4>
-              <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full">{LEARNING_ORIENTATION_ASSESSMENT.timeToComplete}</span>
-            </div>
-            <p className="text-sm text-stone-600 mb-2">{LEARNING_ORIENTATION_ASSESSMENT.subtitle}</p>
-            <p className="text-xs text-stone-500">{LEARNING_ORIENTATION_ASSESSMENT.items.length} items • Growth Mindset</p>
-          </button>
-        </div>
-      </div>
 
-      {/* External Assessments */}
-      <div>
-        <h3 className="font-semibold text-stone-800 mb-2">🔗 Recommended External Assessments</h3>
-        <p className="text-sm text-stone-600 mb-4">Free, scientifically-validated assessments from leading researchers.</p>
-        <div className="space-y-3">
-          <a
-            href="https://principlesyou.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="block w-full bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-200 p-4 hover:shadow-md transition-all"
-          >
-            <div className="flex justify-between items-start mb-2">
-              <div className="flex items-center gap-2">
-                <h4 className="font-semibold text-stone-800">PrinciplesYou</h4>
-                <Icons.ExternalLink className="w-4 h-4 text-blue-500" />
-              </div>
-              <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full">30-40 min</span>
-            </div>
-            <p className="text-sm text-stone-600 mb-2">Comprehensive personality assessment by Adam Grant & Ray Dalio</p>
-            <p className="text-xs text-stone-500 mb-2">Combines Big Five with 17 traits important for personal and professional success. Free to take with detailed results.</p>
-            <div className="flex flex-wrap gap-1">
-              <span className="text-xs bg-white/80 text-stone-600 px-2 py-0.5 rounded">Big Five+</span>
-              <span className="text-xs bg-white/80 text-stone-600 px-2 py-0.5 rounded">17 Traits</span>
-              <span className="text-xs bg-white/80 text-stone-600 px-2 py-0.5 rounded">Compare with Others</span>
-            </div>
-          </a>
-          
-          <a
-            href="https://www.outofservice.com/bigfive/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="block w-full bg-white rounded-xl border border-stone-200 p-4 hover:shadow-md transition-all"
-          >
-            <div className="flex justify-between items-start mb-2">
-              <div className="flex items-center gap-2">
-                <h4 className="font-semibold text-stone-800">Big Five (FiveThirtyEight)</h4>
-                <Icons.ExternalLink className="w-4 h-4 text-stone-400" />
-              </div>
-              <span className="text-xs bg-stone-100 text-stone-600 px-2 py-1 rounded-full">~10 min</span>
-            </div>
-            <p className="text-sm text-stone-600 mb-2">Quick, validated Big Five personality test</p>
-            <p className="text-xs text-stone-500">Shorter alternative if you want a quick personality snapshot.</p>
-          </a>
-        </div>
-      </div>
+          {/* Section Content - Expandable */}
+          {expandedSection === section.id && (
+            <div className="border-t border-stone-100 p-4">
+              <p className="text-sm text-stone-600 mb-4">{section.description}</p>
+              
+              {/* Subsection Cards */}
+              <div className="space-y-3">
+                {section.subsections.map(sub => (
+                  <div 
+                    key={sub.id} 
+                    className={`rounded-xl border p-4 ${
+                      section.color === 'amber' ? 'border-amber-200 bg-amber-50/50' :
+                      section.color === 'violet' ? 'border-violet-200 bg-violet-50/50' :
+                      'border-blue-200 bg-blue-50/50'
+                    }`}
+                  >
+                    <div className="flex justify-between items-start mb-2">
+                      <h4 className="font-semibold text-stone-800">{sub.title}</h4>
+                      {sub.url && <Icons.ExternalLink className="w-4 h-4 text-stone-400" />}
+                    </div>
+                    <p className="text-sm text-stone-600 mb-3">{sub.description}</p>
+                    
+                    {/* Key Insight */}
+                    <div className={`text-xs p-2 rounded-lg mb-3 ${
+                      section.color === 'amber' ? 'bg-amber-100/50 text-amber-800' :
+                      section.color === 'violet' ? 'bg-violet-100/50 text-violet-800' :
+                      'bg-blue-100/50 text-blue-800'
+                    }`}>
+                      💡 {sub.keyInsight}
+                    </div>
 
-      {/* Self-View Assessments */}
-      <div>
-        <h3 className="font-semibold text-stone-800 mb-2">🪞 Self-View Assessments</h3>
-        <p className="text-sm text-stone-600 mb-4">Measure your proximal indicators of leader development (Day, Ch. 4).</p>
-        <div className="space-y-3">
-          {Object.values(SELF_VIEW_ASSESSMENTS).map(assessment => (
-            <button
-              key={assessment.id}
-              onClick={() => setCurrentView(`assessment-${assessment.id}`)}
-              className="w-full bg-white rounded-xl border border-stone-200 p-4 hover:shadow-md transition-all text-left"
-            >
-              <div className="flex justify-between items-start mb-2">
-                <h4 className="font-semibold text-stone-800">{assessment.title}</h4>
-                <span className="text-xs bg-amber-100 text-amber-700 px-2 py-1 rounded-full">{assessment.timeToComplete}</span>
+                    {/* Action Buttons */}
+                    <div className="flex flex-wrap gap-2">
+                      {/* External Link */}
+                      {sub.url && (
+                        <a
+                          href={sub.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-1 px-3 py-2 bg-white border border-stone-200 rounded-lg text-sm font-medium text-stone-700 hover:bg-stone-50"
+                        >
+                          <Icons.ExternalLink className="w-4 h-4" />
+                          Take Assessment ({sub.duration})
+                        </a>
+                      )}
+                      
+                      {/* Assessment Button */}
+                      {sub.assessment && (
+                        <button
+                          onClick={() => setCurrentView(`assessment-${sub.assessment.id}`)}
+                          className={`flex items-center gap-1 px-3 py-2 rounded-lg text-sm font-medium text-white ${
+                            section.color === 'amber' ? 'bg-amber-600 hover:bg-amber-700' :
+                            section.color === 'violet' ? 'bg-violet-600 hover:bg-violet-700' :
+                            'bg-blue-600 hover:bg-blue-700'
+                          }`}
+                        >
+                          📋 Take Assessment
+                          <span className="text-xs opacity-80">({sub.assessment.timeToComplete})</span>
+                        </button>
+                      )}
+                      
+                      {/* Intervention Button */}
+                      {sub.intervention && (
+                        <button
+                          onClick={() => setCurrentView(`intervention-${sub.intervention.id}`)}
+                          className="flex items-center gap-1 px-3 py-2 bg-white border border-stone-300 rounded-lg text-sm font-medium text-stone-700 hover:bg-stone-50"
+                        >
+                          🎯 Development Program
+                          <span className="text-xs text-stone-500">({sub.intervention.duration})</span>
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                ))}
               </div>
-              <p className="text-sm text-stone-600 mb-2">{assessment.subtitle}</p>
-              <p className="text-xs text-stone-500">{assessment.items.length} items</p>
-            </button>
-          ))}
+            </div>
+          )}
         </div>
-      </div>
-
-      {/* Development Interventions */}
-      <div>
-        <h3 className="font-semibold text-stone-800 mb-2">🎯 Development Interventions</h3>
-        <p className="text-sm text-stone-600 mb-4">Structured programs to build individual leadership capacity.</p>
-        <div className="space-y-3">
-          {LEADER_DEVELOPMENT.interventions.map(intervention => (
-            <button
-              key={intervention.id}
-              onClick={() => setCurrentView(`intervention-${intervention.id}`)}
-              className="w-full bg-white rounded-xl border border-stone-200 p-4 hover:shadow-md transition-all text-left"
-            >
-              <div className="flex justify-between items-start mb-2">
-                <h4 className="font-semibold text-stone-800">{intervention.title}</h4>
-                <span className="text-xs bg-stone-100 text-stone-600 px-2 py-1 rounded-full">{intervention.duration}</span>
-              </div>
-              <p className="text-sm text-stone-600 mb-2">{intervention.description}</p>
-              <p className="text-xs text-stone-500">{intervention.phases.length} phases</p>
-            </button>
-          ))}
-        </div>
-      </div>
+      ))}
     </div>
   );
 }
 
 function LeadershipDevelopmentTab({ setCurrentView }) {
+  const [expandedSection, setExpandedSection] = useState('collective-capacity');
+  
+  const toggleSection = (section) => {
+    setExpandedSection(expandedSection === section ? null : section);
+  };
+
+  // Development sections organized by Day's book structure (Chapters 6-7)
+  const sections = [
+    {
+      id: 'collective-capacity',
+      title: 'Collective Capacity',
+      subtitle: 'Team & Organizational Climate',
+      source: 'Day (2024), Chapter 6',
+      icon: '👥',
+      color: 'teal',
+      description: 'Building the collective capacity of teams to engage in leadership processes together.',
+      subsections: [
+        {
+          id: 'psych-safety',
+          title: 'Psychological Safety',
+          description: 'Creating a climate where people feel safe to take interpersonal risks',
+          assessment: COLLECTIVE_ASSESSMENTS.psychologicalSafety,
+          intervention: LEADERSHIP_DEVELOPMENT.interventions.find(i => i.id === 'psych_safety'),
+          keyInsight: 'Without psychological safety, team members won\'t speak up, take risks, or learn from mistakes.'
+        },
+        {
+          id: 'collective-efficacy',
+          title: 'Collective Efficacy',
+          description: 'Team\'s shared belief in their ability to succeed together',
+          assessment: COLLECTIVE_ASSESSMENTS.collectiveEfficacy,
+          intervention: LEADERSHIP_DEVELOPMENT.interventions.find(i => i.id === 'collective_efficacy_building'),
+          keyInsight: 'Teams that believe they can succeed together are more likely to persist through challenges.'
+        },
+        {
+          id: 'shared-models',
+          title: 'Shared Mental Models',
+          description: 'Aligned understanding of goals, roles, and processes',
+          assessment: null,
+          intervention: LEADERSHIP_DEVELOPMENT.interventions.find(i => i.id === 'shared_models'),
+          keyInsight: 'When team members have aligned mental models, they can anticipate each other\'s actions.'
+        }
+      ]
+    },
+    {
+      id: 'social-capital',
+      title: 'Social Capital',
+      subtitle: 'Networks & Relationships',
+      source: 'Day (2024), Chapter 7',
+      icon: '🔗',
+      color: 'indigo',
+      description: 'Building and leveraging relationships that enable collective leadership.',
+      subsections: [
+        {
+          id: 'network-dev',
+          title: 'Network Development',
+          description: 'Intentionally building relationships that enable leadership',
+          assessment: null,
+          intervention: LEADERSHIP_DEVELOPMENT.interventions.find(i => i.id === 'network_development'),
+          keyInsight: 'Leadership happens through networks. Structural holes limit your influence.'
+        },
+        {
+          id: 'boundary-spanning',
+          title: 'Boundary Spanning',
+          description: 'Connecting across teams, functions, and organizations',
+          assessment: null,
+          intervention: null,
+          keyInsight: 'Leaders who span boundaries access diverse information and resources.'
+        }
+      ]
+    }
+  ];
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
+      {/* Header */}
       <div className="bg-teal-50 border border-teal-200 rounded-xl p-4">
         <h2 className="font-semibold text-teal-800 mb-2">{LEADERSHIP_DEVELOPMENT.title}</h2>
-        <p className="text-sm text-stone-600 mb-3">{LEADERSHIP_DEVELOPMENT.description}</p>
+        <p className="text-sm text-stone-600 mb-2">{LEADERSHIP_DEVELOPMENT.description}</p>
         <p className="text-xs text-stone-500">Source: {LEADERSHIP_DEVELOPMENT.source}</p>
       </div>
 
-      {/* Collective Assessments */}
-      <div>
-        <h3 className="font-semibold text-stone-800 mb-3">Collective Assessments</h3>
-        <p className="text-sm text-stone-600 mb-4">Measure your team's collective leadership capacity.</p>
-        <div className="space-y-3">
-          {Object.values(COLLECTIVE_ASSESSMENTS).map(assessment => (
-            <button
-              key={assessment.id}
-              onClick={() => setCurrentView(`assessment-${assessment.id}`)}
-              className="w-full bg-white rounded-xl border border-stone-200 p-4 hover:shadow-md transition-all text-left"
-            >
-              <div className="flex justify-between items-start mb-2">
-                <h4 className="font-semibold text-stone-800">{assessment.title}</h4>
-                <span className="text-xs bg-teal-100 text-teal-700 px-2 py-1 rounded-full">{assessment.timeToComplete}</span>
+      {/* Collapsible Sections */}
+      {sections.map(section => (
+        <div key={section.id} className="bg-white rounded-xl border border-stone-200 overflow-hidden">
+          {/* Section Header - Clickable */}
+          <button
+            onClick={() => toggleSection(section.id)}
+            className={`w-full p-4 flex items-center justify-between text-left transition-colors ${
+              expandedSection === section.id 
+                ? section.color === 'teal' ? 'bg-teal-50' : 'bg-indigo-50'
+                : 'hover:bg-stone-50'
+            }`}
+          >
+            <div className="flex items-center gap-3">
+              <span className="text-2xl">{section.icon}</span>
+              <div>
+                <h3 className="font-semibold text-stone-800">{section.title}</h3>
+                <p className="text-xs text-stone-500">{section.subtitle}</p>
               </div>
-              <p className="text-sm text-stone-600 mb-2">{assessment.subtitle}</p>
-              <p className="text-xs text-stone-500">{assessment.items.length} items</p>
-            </button>
-          ))}
-        </div>
-      </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className={`text-xs px-2 py-1 rounded-full ${
+                section.color === 'teal' ? 'bg-teal-100 text-teal-700' : 'bg-indigo-100 text-indigo-700'
+              }`}>{section.subsections.length} areas</span>
+              <Icons.ChevronDown className={`transition-transform ${expandedSection === section.id ? 'rotate-180' : ''}`} />
+            </div>
+          </button>
 
-      {/* Leadership Development Interventions */}
-      <div>
-        <h3 className="font-semibold text-stone-800 mb-3">Development Interventions</h3>
-        <p className="text-sm text-stone-600 mb-4">Structured programs to build collective leadership capacity.</p>
-        <div className="space-y-3">
-          {LEADERSHIP_DEVELOPMENT.interventions.map(intervention => (
-            <button
-              key={intervention.id}
-              onClick={() => setCurrentView(`intervention-${intervention.id}`)}
-              className="w-full bg-white rounded-xl border border-stone-200 p-4 hover:shadow-md transition-all text-left"
-            >
-              <div className="flex justify-between items-start mb-2">
-                <h4 className="font-semibold text-stone-800">{intervention.title}</h4>
-                <span className="text-xs bg-stone-100 text-stone-600 px-2 py-1 rounded-full">{intervention.duration}</span>
+          {/* Section Content - Expandable */}
+          {expandedSection === section.id && (
+            <div className="border-t border-stone-100 p-4">
+              <p className="text-sm text-stone-600 mb-4">{section.description}</p>
+              
+              {/* Subsection Cards */}
+              <div className="space-y-3">
+                {section.subsections.map(sub => (
+                  <div 
+                    key={sub.id} 
+                    className={`rounded-xl border p-4 ${
+                      section.color === 'teal' ? 'border-teal-200 bg-teal-50/50' : 'border-indigo-200 bg-indigo-50/50'
+                    }`}
+                  >
+                    <h4 className="font-semibold text-stone-800 mb-1">{sub.title}</h4>
+                    <p className="text-sm text-stone-600 mb-3">{sub.description}</p>
+                    
+                    {/* Key Insight */}
+                    <div className={`text-xs p-2 rounded-lg mb-3 ${
+                      section.color === 'teal' ? 'bg-teal-100/50 text-teal-800' : 'bg-indigo-100/50 text-indigo-800'
+                    }`}>
+                      💡 {sub.keyInsight}
+                    </div>
+
+                    {/* Action Buttons */}
+                    <div className="flex flex-wrap gap-2">
+                      {/* Assessment Button */}
+                      {sub.assessment && (
+                        <button
+                          onClick={() => setCurrentView(`assessment-${sub.assessment.id}`)}
+                          className={`flex items-center gap-1 px-3 py-2 rounded-lg text-sm font-medium text-white ${
+                            section.color === 'teal' ? 'bg-teal-600 hover:bg-teal-700' : 'bg-indigo-600 hover:bg-indigo-700'
+                          }`}
+                        >
+                          📋 Take Assessment
+                          <span className="text-xs opacity-80">({sub.assessment.timeToComplete})</span>
+                        </button>
+                      )}
+                      
+                      {/* Intervention Button */}
+                      {sub.intervention && (
+                        <button
+                          onClick={() => setCurrentView(`intervention-${sub.intervention.id}`)}
+                          className="flex items-center gap-1 px-3 py-2 bg-white border border-stone-300 rounded-lg text-sm font-medium text-stone-700 hover:bg-stone-50"
+                        >
+                          🎯 Development Program
+                          <span className="text-xs text-stone-500">({sub.intervention.duration})</span>
+                        </button>
+                      )}
+                      
+                      {/* Coming Soon */}
+                      {!sub.assessment && !sub.intervention && (
+                        <span className="text-xs text-stone-500 italic">Development content coming soon</span>
+                      )}
+                    </div>
+                  </div>
+                ))}
               </div>
-              <p className="text-sm text-stone-600 mb-2">{intervention.description}</p>
-              <p className="text-xs text-stone-500">{intervention.phases.length} phases</p>
-            </button>
-          ))}
+            </div>
+          )}
         </div>
-      </div>
+      ))}
     </div>
   );
 }
@@ -5068,6 +5272,7 @@ export default function DayByDayApp() {
     </div>
   );
 }
+
 
 
 
