@@ -124,7 +124,7 @@ Turn 2: Brief reflection + "Why is this important to you right now?" [STOP]
 Turn 3: Brief reflection + "What would make this conversation valuable for you?" [STOP]
 Then continue exploring with ONE question per turn until action emerges.`;
 
-const getDayMentorVoicePrompt = () => `You are a Leadership Development Mentor based on Dr. David V. Day's research from "Developing Leaders and Leadership" (2024). You are having a VOICE conversation.
+const getDayAdvisorVoicePrompt = () => `You are a Leadership Development Advisor based on Dr. David V. Day's research from "Developing Leaders and Leadership" (2024). You are having a VOICE conversation.
 
 ## MULTILINGUAL SUPPORT
 - Detect what language the user is speaking
@@ -844,7 +844,11 @@ const READING_LIBRARY = {
       books: [
         { title: 'Leadership: Theory and Practice', author: 'Peter G. Northouse', year: 2021, description: 'The most widely used leadership textbook, covering all major leadership theories.', keyTopics: ['Trait approach', 'Skills approach', 'Transformational leadership'], evidenceLevel: 'High', recommended: true },
         { title: 'The Bass Handbook of Leadership', author: 'Bernard M. Bass & Ruth Bass', year: 2008, description: 'The most comprehensive reference work on leadership.', keyTopics: ['Leadership theories', 'Leadership styles', 'Cross-cultural leadership'], evidenceLevel: 'High', recommended: true },
-        { title: 'The Nature of Leadership', author: 'John Antonakis & David V. Day', year: 2018, description: 'Collection of chapters by leading scholars on cutting-edge research.', keyTopics: ['Leader traits', 'Charisma', 'Ethical leadership'], evidenceLevel: 'High', recommended: true }
+        { title: 'The Nature of Leadership', author: 'John Antonakis & David V. Day', year: 2018, description: 'Collection of chapters by leading scholars on cutting-edge research.', keyTopics: ['Leader traits', 'Charisma', 'Ethical leadership'], evidenceLevel: 'High', recommended: true },
+        { title: 'Leadership in Organizations', author: 'Gary Yukl', year: 2013, description: 'Comprehensive academic text integrating theory and research.', keyTopics: ['Influence processes', 'Leadership behavior', 'Power'], evidenceLevel: 'High', recommended: false },
+        { title: 'The Leadership Challenge', author: 'James Kouzes & Barry Posner', year: 2017, description: 'Five practices of exemplary leadership based on extensive research.', keyTopics: ['Model the Way', 'Inspire a Shared Vision', 'Enable Others'], evidenceLevel: 'Medium', recommended: true },
+        { title: 'Leadership on the Line', author: 'Ronald Heifetz & Marty Linsky', year: 2017, description: 'Adaptive leadership and the dangers of leading change.', keyTopics: ['Adaptive challenges', 'Technical vs adaptive', 'Political dynamics'], evidenceLevel: 'Medium', recommended: true },
+        { title: 'Leaders Eat Last', author: 'Simon Sinek', year: 2014, description: 'Why some teams pull together and others do not.', keyTopics: ['Trust', 'Circle of Safety', 'Neurochemistry of leadership'], evidenceLevel: 'Low', recommended: false }
       ]
     },
     {
@@ -854,7 +858,11 @@ const READING_LIBRARY = {
       books: [
         { title: 'Developing Leaders and Leadership', author: 'David V. Day', year: 2024, description: 'The book this app is based on. Distinguishes leader from leadership development.', keyTopics: ['Five first principles', 'ACS framework', 'Self-views', 'Networks'], evidenceLevel: 'High', recommended: true, primary: true },
         { title: 'CCL Handbook of Leadership Development', author: 'Van Velsor, McCauley, & Ruderman', year: 2010, description: 'Comprehensive guide from the leading leadership development organization.', keyTopics: ['Assessment', 'Challenge', 'Support', '360 feedback'], evidenceLevel: 'High', recommended: true },
-        { title: 'Experience-Driven Leader Development', author: 'McCauley, DeRue, Yost, & Taylor', year: 2014, description: 'How to maximize learning from leadership experiences.', keyTopics: ['Developmental experiences', 'Learning agility'], evidenceLevel: 'High', recommended: false }
+        { title: 'Experience-Driven Leader Development', author: 'McCauley, DeRue, Yost, & Taylor', year: 2014, description: 'How to maximize learning from leadership experiences.', keyTopics: ['Developmental experiences', 'Learning agility'], evidenceLevel: 'High', recommended: false },
+        { title: 'An Integrative Approach to Leader Development', author: 'David V. Day, Michelle Harrison, & Stanley Halpin', year: 2009, description: 'Connecting adult development, identity, and expertise.', keyTopics: ['Identity development', 'Expert performance', 'Adult development'], evidenceLevel: 'High', recommended: true },
+        { title: 'The Lessons of Experience', author: 'McCall, Lombardo, & Morrison', year: 1988, description: 'CCL classic on what executives learn from their experiences.', keyTopics: ['Developmental experiences', 'Learning from adversity', 'Career derailment'], evidenceLevel: 'High', recommended: true },
+        { title: 'Using Experience to Develop Leadership Talent', author: 'McCauley & McCall', year: 2014, description: 'How organizations use experiences to develop leaders.', keyTopics: ['Job assignments', 'Developmental relationships', 'Hardships'], evidenceLevel: 'High', recommended: false },
+        { title: 'The Oxford Handbook of Leader Development', author: 'David V. Day', year: 2014, description: 'Comprehensive academic handbook on all aspects of leader development.', keyTopics: ['Theory', 'Research methods', 'Interventions'], evidenceLevel: 'High', recommended: false }
       ]
     },
     {
@@ -864,7 +872,23 @@ const READING_LIBRARY = {
       books: [
         { title: 'Insight', author: 'Tasha Eurich', year: 2017, description: 'Research-based exploration of self-awareness and how to develop it.', keyTopics: ['Internal self-awareness', 'External self-awareness', 'Feedback'], evidenceLevel: 'High', recommended: true },
         { title: 'An Everyone Culture', author: 'Robert Kegan & Lisa Lahey', year: 2016, description: 'How organizations can become deliberately developmental.', keyTopics: ['Adult development', 'Immunity to change'], evidenceLevel: 'Medium', recommended: true },
-        { title: 'Immunity to Change', author: 'Robert Kegan & Lisa Lahey', year: 2009, description: 'Why change is hard and how to overcome psychological barriers.', keyTopics: ['Competing commitments', 'Big assumptions'], evidenceLevel: 'Medium', recommended: false }
+        { title: 'Immunity to Change', author: 'Robert Kegan & Lisa Lahey', year: 2009, description: 'Why change is hard and how to overcome psychological barriers.', keyTopics: ['Competing commitments', 'Big assumptions'], evidenceLevel: 'Medium', recommended: false },
+        { title: 'In Over Our Heads', author: 'Robert Kegan', year: 1994, description: 'The mental demands of modern life and adult development.', keyTopics: ['Orders of consciousness', 'Subject-object shifts', 'Mental complexity'], evidenceLevel: 'High', recommended: true },
+        { title: 'Emotional Intelligence', author: 'Daniel Goleman', year: 1995, description: 'Why EQ can matter more than IQ.', keyTopics: ['Self-awareness', 'Self-regulation', 'Social skills'], evidenceLevel: 'Medium', recommended: false },
+        { title: 'The EQ Edge', author: 'Steven Stein & Howard Book', year: 2011, description: 'Practical guide to emotional intelligence at work.', keyTopics: ['EQ competencies', 'Assessment', 'Development strategies'], evidenceLevel: 'Medium', recommended: false },
+        { title: 'Mindset', author: 'Carol Dweck', year: 2006, description: 'The power of fixed versus growth mindset.', keyTopics: ['Growth mindset', 'Fixed mindset', 'Praise and criticism'], evidenceLevel: 'High', recommended: true },
+        { title: 'Peak', author: 'Anders Ericsson & Robert Pool', year: 2016, description: 'The science of expertise and deliberate practice.', keyTopics: ['Deliberate practice', 'Mental representations', 'Expert performance'], evidenceLevel: 'High', recommended: true }
+      ]
+    },
+    {
+      id: 'identity',
+      name: 'Leader Identity & Self-Concept',
+      description: 'How we see ourselves as leaders',
+      books: [
+        { title: 'Act Like a Leader, Think Like a Leader', author: 'Herminia Ibarra', year: 2015, description: 'Why action precedes thinking in leadership transitions.', keyTopics: ['Identity transition', 'Outsight', 'Experimenting'], evidenceLevel: 'Medium', recommended: true },
+        { title: 'Working Identity', author: 'Herminia Ibarra', year: 2003, description: 'Unconventional strategies for reinventing your career.', keyTopics: ['Identity change', 'Possible selves', 'Career transition'], evidenceLevel: 'Medium', recommended: true },
+        { title: 'Possible Selves', author: 'Hazel Markus & Paula Nurius', year: 1986, description: 'Seminal article on how we envision future selves.', keyTopics: ['Hoped-for selves', 'Feared selves', 'Motivation'], evidenceLevel: 'High', recommended: false },
+        { title: 'Transitions', author: 'William Bridges', year: 2004, description: 'Making sense of life\'s changes.', keyTopics: ['Endings', 'Neutral zone', 'New beginnings'], evidenceLevel: 'Low', recommended: false }
       ]
     },
     {
@@ -874,7 +898,11 @@ const READING_LIBRARY = {
       books: [
         { title: 'The Fearless Organization', author: 'Amy Edmondson', year: 2019, description: 'Creating psychological safety in the workplace.', keyTopics: ['Psychological safety', 'Learning from failure', 'Speaking up'], evidenceLevel: 'High', recommended: true },
         { title: 'Team of Teams', author: 'Stanley McChrystal', year: 2015, description: 'Building adaptable organizations through shared consciousness.', keyTopics: ['Adaptability', 'Shared consciousness', 'Decentralized decision-making'], evidenceLevel: 'Medium', recommended: true },
-        { title: 'The Five Dysfunctions of a Team', author: 'Patrick Lencioni', year: 2002, description: 'A fable exploring what makes teams fail and succeed.', keyTopics: ['Trust', 'Conflict', 'Accountability'], evidenceLevel: 'Low', recommended: false }
+        { title: 'The Five Dysfunctions of a Team', author: 'Patrick Lencioni', year: 2002, description: 'A fable exploring what makes teams fail and succeed.', keyTopics: ['Trust', 'Conflict', 'Accountability'], evidenceLevel: 'Low', recommended: false },
+        { title: 'Teaming', author: 'Amy Edmondson', year: 2012, description: 'How organizations learn, innovate, and compete.', keyTopics: ['Dynamic teaming', 'Execution-as-learning', 'Organizing to learn'], evidenceLevel: 'High', recommended: true },
+        { title: 'The Wisdom of Teams', author: 'Jon Katzenbach & Douglas Smith', year: 1993, description: 'Classic on what makes teams work.', keyTopics: ['Team basics', 'High-performance teams', 'Team discipline'], evidenceLevel: 'Medium', recommended: false },
+        { title: 'Senior Leadership Teams', author: 'Ruth Wageman, Debra Nunes, James Burruss, & Richard Hackman', year: 2008, description: 'What it takes to make them great.', keyTopics: ['Executive teams', 'Real teams', 'Enabling conditions'], evidenceLevel: 'High', recommended: true },
+        { title: 'Collaborative Intelligence', author: 'J. Richard Hackman', year: 2011, description: 'Using teams to solve hard problems.', keyTopics: ['Team intelligence', 'Collective cognition', 'Team design'], evidenceLevel: 'High', recommended: false }
       ]
     },
     {
@@ -884,7 +912,22 @@ const READING_LIBRARY = {
       books: [
         { title: 'Co-Active Coaching', author: 'Kimsey-House, Sandahl, & Whitworth', year: 2018, description: 'Foundational coaching text with practical tools.', keyTopics: ['Coaching model', 'Powerful questions', 'Listening'], evidenceLevel: 'Medium', recommended: true },
         { title: 'Thanks for the Feedback', author: 'Douglas Stone & Sheila Heen', year: 2014, description: 'The science of receiving feedback well.', keyTopics: ['Receiving feedback', 'Feedback triggers'], evidenceLevel: 'Medium', recommended: true },
-        { title: 'Helping People Change', author: 'Boyatzis, Smith, & Van Oosten', year: 2019, description: 'Coaching with compassion rather than compliance.', keyTopics: ['Coaching with compassion', 'Intentional change'], evidenceLevel: 'High', recommended: true }
+        { title: 'Helping People Change', author: 'Boyatzis, Smith, & Van Oosten', year: 2019, description: 'Coaching with compassion rather than compliance.', keyTopics: ['Coaching with compassion', 'Intentional change'], evidenceLevel: 'High', recommended: true },
+        { title: 'The Coaching Habit', author: 'Michael Bungay Stanier', year: 2016, description: 'Seven questions to tame your advice monster.', keyTopics: ['Powerful questions', 'Coaching mindset', 'AWE question'], evidenceLevel: 'Low', recommended: true },
+        { title: 'Radical Candor', author: 'Kim Scott', year: 2017, description: 'Being a kick-ass boss without losing your humanity.', keyTopics: ['Care personally', 'Challenge directly', 'Feedback culture'], evidenceLevel: 'Low', recommended: false },
+        { title: 'Difficult Conversations', author: 'Douglas Stone, Bruce Patton, & Sheila Heen', year: 2010, description: 'How to discuss what matters most.', keyTopics: ['Three conversations', 'Learning conversations', 'Identity'], evidenceLevel: 'Medium', recommended: true }
+      ]
+    },
+    {
+      id: 'networks',
+      name: 'Networks & Social Capital',
+      description: 'Building and leveraging relationships for leadership',
+      books: [
+        { title: 'The Hidden Power of Social Networks', author: 'Rob Cross & Andrew Parker', year: 2004, description: 'Understanding and nurturing networks in organizations.', keyTopics: ['Network analysis', 'Central connectors', 'Boundary spanners'], evidenceLevel: 'High', recommended: true },
+        { title: 'Achieving Success Through Social Capital', author: 'Wayne Baker', year: 2000, description: 'Tapping into the hidden resources in your personal networks.', keyTopics: ['Social capital', 'Network building', 'Reciprocity'], evidenceLevel: 'Medium', recommended: false },
+        { title: 'Give and Take', author: 'Adam Grant', year: 2013, description: 'Why helping others drives our success.', keyTopics: ['Givers', 'Takers', 'Matchers', 'Generalized reciprocity'], evidenceLevel: 'Medium', recommended: true },
+        { title: 'Never Eat Alone', author: 'Keith Ferrazzi', year: 2014, description: 'Secrets to success through relationship building.', keyTopics: ['Networking', 'Relationship building', 'Generosity'], evidenceLevel: 'Low', recommended: false },
+        { title: 'Connected', author: 'Nicholas Christakis & James Fowler', year: 2009, description: 'The surprising power of social networks.', keyTopics: ['Network effects', 'Three degrees', 'Social contagion'], evidenceLevel: 'High', recommended: true }
       ]
     },
     {
@@ -893,7 +936,34 @@ const READING_LIBRARY = {
       description: 'Using research to inform management practice',
       books: [
         { title: 'Hard Facts, Dangerous Half-Truths, and Total Nonsense', author: 'Jeffrey Pfeffer & Robert Sutton', year: 2006, description: 'A call for evidence-based management.', keyTopics: ['Evidence-based practice', 'Management myths'], evidenceLevel: 'High', recommended: true },
-        { title: 'Thinking, Fast and Slow', author: 'Daniel Kahneman', year: 2011, description: 'Nobel laureate summary of judgment and decision-making research.', keyTopics: ['Cognitive biases', 'System 1 and 2', 'Decision-making'], evidenceLevel: 'High', recommended: true }
+        { title: 'Thinking, Fast and Slow', author: 'Daniel Kahneman', year: 2011, description: 'Nobel laureate summary of judgment and decision-making research.', keyTopics: ['Cognitive biases', 'System 1 and 2', 'Decision-making'], evidenceLevel: 'High', recommended: true },
+        { title: 'The Halo Effect', author: 'Phil Rosenzweig', year: 2007, description: 'Why so much of what we know about business success is wrong.', keyTopics: ['Delusions', 'Business performance', 'Research quality'], evidenceLevel: 'High', recommended: true },
+        { title: 'Predictably Irrational', author: 'Dan Ariely', year: 2008, description: 'The hidden forces that shape our decisions.', keyTopics: ['Behavioral economics', 'Decision-making', 'Irrationality'], evidenceLevel: 'High', recommended: false },
+        { title: 'Nudge', author: 'Richard Thaler & Cass Sunstein', year: 2008, description: 'Improving decisions about health, wealth, and happiness.', keyTopics: ['Choice architecture', 'Libertarian paternalism', 'Defaults'], evidenceLevel: 'High', recommended: true }
+      ]
+    },
+    {
+      id: 'ethics',
+      name: 'Ethical Leadership & Moral Development',
+      description: 'Leading with integrity and developing moral reasoning',
+      books: [
+        { title: 'Moral Development and Reality', author: 'John Gibbs', year: 2013, description: 'Beyond the theories of Kohlberg and Hoffman.', keyTopics: ['Moral stages', 'Moral reasoning', 'Empathy'], evidenceLevel: 'High', recommended: true },
+        { title: 'Blind Spots', author: 'Max Bazerman & Ann Tenbrunsel', year: 2011, description: 'Why we fail to do what\'s right and what to do about it.', keyTopics: ['Ethical blind spots', 'Bounded ethicality', 'Ethical fading'], evidenceLevel: 'High', recommended: true },
+        { title: 'The Righteous Mind', author: 'Jonathan Haidt', year: 2012, description: 'Why good people are divided by politics and religion.', keyTopics: ['Moral foundations', 'Intuition', 'Moral psychology'], evidenceLevel: 'High', recommended: true },
+        { title: 'Authentic Leadership', author: 'Bill George', year: 2003, description: 'Rediscovering the secrets to creating lasting value.', keyTopics: ['Authenticity', 'Values', 'Purpose'], evidenceLevel: 'Low', recommended: false },
+        { title: 'Servant Leadership', author: 'Robert Greenleaf', year: 1977, description: 'A journey into the nature of legitimate power.', keyTopics: ['Service', 'Stewardship', 'Community'], evidenceLevel: 'Low', recommended: false }
+      ]
+    },
+    {
+      id: 'change',
+      name: 'Leading Change & Transformation',
+      description: 'Managing organizational and personal change',
+      books: [
+        { title: 'Leading Change', author: 'John Kotter', year: 2012, description: 'The eight-step process for leading change.', keyTopics: ['Urgency', 'Coalition', 'Vision', 'Quick wins'], evidenceLevel: 'Medium', recommended: true },
+        { title: 'Switch', author: 'Chip Heath & Dan Heath', year: 2010, description: 'How to change things when change is hard.', keyTopics: ['Rider', 'Elephant', 'Path', 'Bright spots'], evidenceLevel: 'Medium', recommended: true },
+        { title: 'The Heart of Change', author: 'John Kotter & Dan Cohen', year: 2002, description: 'Real-life stories of how people change organizations.', keyTopics: ['See-feel-change', 'Emotional engagement'], evidenceLevel: 'Medium', recommended: false },
+        { title: 'Organizational Culture and Leadership', author: 'Edgar Schein', year: 2010, description: 'The definitive resource on organizational culture.', keyTopics: ['Culture levels', 'Artifacts', 'Basic assumptions'], evidenceLevel: 'High', recommended: true },
+        { title: 'The Culture Code', author: 'Daniel Coyle', year: 2018, description: 'The secrets of highly successful groups.', keyTopics: ['Safety', 'Vulnerability', 'Purpose'], evidenceLevel: 'Low', recommended: false }
       ]
     }
   ]
@@ -1192,6 +1262,423 @@ const ACTIVITIES = [
       apply: 'Share your appreciation directly—be specific about what they did and why it mattered.',
       reflect: 'How did they respond? How did it feel to give recognition?'
     }
+  },
+  // ============================================================================
+  // ADDITIONAL VCoL ACTIVITIES
+  // ============================================================================
+  // COURAGE - Additional Resilience Activities
+  {
+    id: 'stress_recovery',
+    competency: 'courage',
+    capability: 'resilience',
+    title: 'Stress Recovery Routine',
+    description: 'Develop a practice for recovering from stressful events',
+    duration: '15 min',
+    level: 'Foundation',
+    vcol: {
+      set_goal: 'Create a personal recovery routine you can use after stressful leadership moments.',
+      gather_info: 'What currently helps you decompress? What activities restore your energy?',
+      apply: 'After a stressful event today, deliberately use your recovery routine.',
+      reflect: 'How effective was your routine? What would you add or change?'
+    }
+  },
+  {
+    id: 'failure_analysis',
+    competency: 'courage',
+    capability: 'resilience',
+    title: 'Learning from Failure',
+    description: 'Extract lessons from a recent setback or failure',
+    duration: '20 min',
+    level: 'Growth',
+    vcol: {
+      set_goal: 'Analyze a recent failure or setback to extract valuable lessons.',
+      gather_info: 'What happened? What was in your control? What assumptions were wrong?',
+      apply: 'Write down 3 specific lessons and one action you will take differently.',
+      reflect: 'How does reframing failure as learning change your relationship to risk?'
+    }
+  },
+  {
+    id: 'optimism_practice',
+    competency: 'courage',
+    capability: 'resilience',
+    title: 'Realistic Optimism',
+    description: 'Practice seeing possibilities while acknowledging challenges',
+    duration: '10 min',
+    level: 'Foundation',
+    vcol: {
+      set_goal: 'Find the opportunity within a current challenge you\'re facing.',
+      gather_info: 'What is the challenge? What are the facts vs. your interpretations?',
+      apply: 'Identify one genuine opportunity or silver lining, then share it with someone.',
+      reflect: 'Did this shift your energy around the challenge? How?'
+    }
+  },
+  // COURAGE - Additional Entrepreneurial Activities
+  {
+    id: 'opportunity_scan',
+    competency: 'courage',
+    capability: 'entrepreneurial',
+    title: 'Opportunity Scanning',
+    description: 'Actively look for improvement opportunities around you',
+    duration: '15 min',
+    level: 'Foundation',
+    vcol: {
+      set_goal: 'Identify 3 opportunities for improvement in your work environment.',
+      gather_info: 'What processes are inefficient? What complaints keep recurring? What could be better?',
+      apply: 'Pick the most promising opportunity and outline a simple proposal.',
+      reflect: 'What made you see these opportunities now? What would help you notice them regularly?'
+    }
+  },
+  {
+    id: 'calculated_risk',
+    competency: 'courage',
+    capability: 'entrepreneurial',
+    title: 'Take a Calculated Risk',
+    description: 'Practice taking smart risks outside your comfort zone',
+    duration: '15 min',
+    level: 'Growth',
+    vcol: {
+      set_goal: 'Identify one calculated risk you could take this week.',
+      gather_info: 'What is the potential upside? Downside? How can you minimize the downside?',
+      apply: 'Commit to taking the risk. Set a specific date and time.',
+      reflect: 'What happened? What did you learn about your risk tolerance?'
+    }
+  },
+  {
+    id: 'first_follower',
+    competency: 'courage',
+    capability: 'entrepreneurial',
+    title: 'Find Your First Follower',
+    description: 'Practice enrolling others in your ideas',
+    duration: '20 min',
+    level: 'Mastery',
+    vcol: {
+      set_goal: 'Share an idea you\'ve been holding back and recruit at least one supporter.',
+      gather_info: 'Who might be open to this idea? What\'s in it for them?',
+      apply: 'Have a conversation to share your idea and gauge interest. Listen for feedback.',
+      reflect: 'How did it feel to share? What feedback did you get? Who might be your first follower?'
+    }
+  },
+  // COURAGE - Additional Responsible Action Activities
+  {
+    id: 'values_audit',
+    competency: 'courage',
+    capability: 'responsible',
+    title: 'Values Audit',
+    description: 'Check alignment between your stated and lived values',
+    duration: '20 min',
+    level: 'Growth',
+    vcol: {
+      set_goal: 'Examine whether your recent actions align with your stated values.',
+      gather_info: 'What are your top 3 values? Review your calendar and decisions this week.',
+      apply: 'Identify one gap and make a specific plan to close it.',
+      reflect: 'What causes the gap between stated and lived values? How can you close it?'
+    }
+  },
+  {
+    id: 'ethical_dilemma',
+    competency: 'courage',
+    capability: 'responsible',
+    title: 'Ethical Dilemma Practice',
+    description: 'Practice reasoning through complex ethical situations',
+    duration: '25 min',
+    level: 'Mastery',
+    vcol: {
+      set_goal: 'Work through a real or hypothetical ethical dilemma systematically.',
+      gather_info: 'What are the facts? Who are the stakeholders? What values are in tension?',
+      apply: 'Apply at least two ethical frameworks (e.g., utilitarian, duty-based, virtue ethics).',
+      reflect: 'How did systematic analysis change your initial intuition? What did you learn?'
+    }
+  },
+  {
+    id: 'courageous_conversation',
+    competency: 'courage',
+    capability: 'responsible',
+    title: 'Have a Courageous Conversation',
+    description: 'Address something important that you\'ve been avoiding',
+    duration: '30 min',
+    level: 'Mastery',
+    vcol: {
+      set_goal: 'Have a conversation you\'ve been avoiding because it feels risky.',
+      gather_info: 'Why have you been avoiding this? What\'s the cost of not having it?',
+      apply: 'Schedule and have the conversation. Focus on being honest AND respectful.',
+      reflect: 'What happened? Was it as hard as you anticipated? What did you learn?'
+    }
+  },
+  // CREATIVITY - Additional Innovation Activities
+  {
+    id: 'reverse_brainstorm',
+    competency: 'creativity',
+    capability: 'innovation',
+    title: 'Reverse Brainstorming',
+    description: 'Generate ideas by asking "How could we make this worse?"',
+    duration: '15 min',
+    level: 'Growth',
+    vcol: {
+      set_goal: 'Use reverse brainstorming to find creative solutions to a challenge.',
+      gather_info: 'Pick a problem. List all the ways you could make it WORSE.',
+      apply: 'Flip each "worse" idea to find a potential solution. Pick the best 2-3.',
+      reflect: 'How did this technique unlock different thinking? When might you use it again?'
+    }
+  },
+  {
+    id: 'assumption_busting',
+    competency: 'creativity',
+    capability: 'innovation',
+    title: 'Assumption Busting',
+    description: 'Identify and challenge hidden assumptions',
+    duration: '20 min',
+    level: 'Mastery',
+    vcol: {
+      set_goal: 'Uncover and challenge the hidden assumptions in a current project or decision.',
+      gather_info: 'List everything you\'re assuming is true. Which assumptions are actually facts?',
+      apply: 'Pick the riskiest assumption. What would change if it were wrong? Test it.',
+      reflect: 'How many assumptions were you unaware of? How does challenging them open new possibilities?'
+    }
+  },
+  {
+    id: 'creative_constraints',
+    competency: 'creativity',
+    capability: 'innovation',
+    title: 'Creative Constraints',
+    description: 'Use limitations to spark innovation',
+    duration: '15 min',
+    level: 'Growth',
+    vcol: {
+      set_goal: 'Use artificial constraints to generate more creative solutions.',
+      gather_info: 'Pick a challenge. Add a constraint: half the budget, half the time, no technology, etc.',
+      apply: 'Generate at least 5 solutions that work within the constraint.',
+      reflect: 'How did constraints help your creativity? Which ideas might actually be better?'
+    }
+  },
+  // CREATIVITY - Additional Communication Activities
+  {
+    id: 'story_crafting',
+    competency: 'creativity',
+    capability: 'communication',
+    title: 'Craft Your Leadership Story',
+    description: 'Develop a compelling narrative about your leadership journey',
+    duration: '25 min',
+    level: 'Growth',
+    vcol: {
+      set_goal: 'Create a 2-minute story about a pivotal moment in your leadership development.',
+      gather_info: 'What was the situation? What did you do? What did you learn?',
+      apply: 'Practice telling the story out loud. Refine it for clarity and impact.',
+      reflect: 'How does having your story ready help you connect with others?'
+    }
+  },
+  {
+    id: 'metaphor_thinking',
+    competency: 'creativity',
+    capability: 'communication',
+    title: 'Communicate with Metaphors',
+    description: 'Use metaphors to make complex ideas memorable',
+    duration: '15 min',
+    level: 'Growth',
+    vcol: {
+      set_goal: 'Explain a complex idea using a compelling metaphor.',
+      gather_info: 'What concept do you need to communicate? What familiar thing shares similar patterns?',
+      apply: 'Create a metaphor and use it in a real conversation or presentation.',
+      reflect: 'How did the metaphor land? Did it help understanding?'
+    }
+  },
+  {
+    id: 'socratic_questions',
+    competency: 'creativity',
+    capability: 'communication',
+    title: 'Socratic Questioning',
+    description: 'Use questions to help others think more deeply',
+    duration: '20 min',
+    level: 'Mastery',
+    vcol: {
+      set_goal: 'Practice using questions rather than statements to lead a discussion.',
+      gather_info: 'What types of questions probe assumptions, reasons, evidence, and implications?',
+      apply: 'In your next meeting, rely primarily on questions to guide thinking.',
+      reflect: 'How did this affect the quality of discussion? What types of questions worked best?'
+    }
+  },
+  // CREATIVITY - Additional Problem Solving Activities
+  {
+    id: 'root_cause',
+    competency: 'creativity',
+    capability: 'problemsolving',
+    title: 'Five Whys Analysis',
+    description: 'Get to the root cause by asking "why" repeatedly',
+    duration: '15 min',
+    level: 'Foundation',
+    vcol: {
+      set_goal: 'Use the Five Whys technique to uncover the root cause of a problem.',
+      gather_info: 'State the problem. Ask "why?" five times, each time going deeper.',
+      apply: 'Address the root cause you discovered, not just the symptoms.',
+      reflect: 'How deep did you have to go? What did you learn about this technique?'
+    }
+  },
+  {
+    id: 'decision_matrix',
+    competency: 'creativity',
+    capability: 'problemsolving',
+    title: 'Decision Matrix',
+    description: 'Make better decisions by weighting multiple criteria',
+    duration: '20 min',
+    level: 'Growth',
+    vcol: {
+      set_goal: 'Use a decision matrix to make a pending decision more systematically.',
+      gather_info: 'What are your options? What criteria matter? How do you weight them?',
+      apply: 'Build the matrix, score each option, and compare to your intuition.',
+      reflect: 'Did the matrix change your decision? What did you learn about your decision-making?'
+    }
+  },
+  {
+    id: 'scenario_planning',
+    competency: 'creativity',
+    capability: 'problemsolving',
+    title: 'Scenario Planning',
+    description: 'Prepare for multiple possible futures',
+    duration: '25 min',
+    level: 'Mastery',
+    vcol: {
+      set_goal: 'Develop 3 scenarios for how a current situation might unfold.',
+      gather_info: 'What are the key uncertainties? What are the best/worst/most likely cases?',
+      apply: 'For each scenario, identify early warning signs and your response strategy.',
+      reflect: 'How does thinking in scenarios change your preparedness?'
+    }
+  },
+  // COLLABORATION - Additional Empathy Activities
+  {
+    id: 'empathy_interview',
+    competency: 'collaboration',
+    capability: 'empathy',
+    title: 'Empathy Interview',
+    description: 'Deeply understand another person\'s experience',
+    duration: '30 min',
+    level: 'Growth',
+    vcol: {
+      set_goal: 'Conduct a genuine empathy interview with someone different from you.',
+      gather_info: 'What do you want to understand? What open questions will you ask?',
+      apply: 'Have the conversation. Listen without judgment. Ask follow-up questions.',
+      reflect: 'What surprised you? How did deep listening change your understanding?'
+    }
+  },
+  {
+    id: 'bias_check',
+    competency: 'collaboration',
+    capability: 'empathy',
+    title: 'Bias Self-Check',
+    description: 'Examine your automatic judgments about others',
+    duration: '15 min',
+    level: 'Growth',
+    vcol: {
+      set_goal: 'Notice and examine a bias or quick judgment you made about someone.',
+      gather_info: 'What was the judgment? What triggered it? What evidence do you actually have?',
+      apply: 'Challenge the bias. Seek disconfirming evidence. Behave as if the bias is wrong.',
+      reflect: 'How often do you make quick judgments? What might you be missing?'
+    }
+  },
+  {
+    id: 'inclusive_language',
+    competency: 'collaboration',
+    capability: 'empathy',
+    title: 'Inclusive Communication',
+    description: 'Practice using language that includes everyone',
+    duration: '15 min',
+    level: 'Foundation',
+    vcol: {
+      set_goal: 'Review your recent communications for inclusive vs. exclusive language.',
+      gather_info: 'Who might feel excluded? What assumptions does your language make?',
+      apply: 'Revise one communication to be more inclusive. Notice language in meetings.',
+      reflect: 'How does attention to language affect how included people feel?'
+    }
+  },
+  // COLLABORATION - Additional Social Learning Activities
+  {
+    id: 'learning_from_failure_others',
+    competency: 'collaboration',
+    capability: 'sociallearning',
+    title: 'Learn from Others\' Failures',
+    description: 'Extract lessons from failures shared by others',
+    duration: '20 min',
+    level: 'Growth',
+    vcol: {
+      set_goal: 'Ask someone to share a failure and the lessons they learned.',
+      gather_info: 'Who has relevant experience? What can you learn without making the same mistakes?',
+      apply: 'Have the conversation. Ask: What happened? What would you do differently?',
+      reflect: 'What lessons can you apply? How can you create more of these conversations?'
+    }
+  },
+  {
+    id: 'reverse_mentoring',
+    competency: 'collaboration',
+    capability: 'sociallearning',
+    title: 'Reverse Mentoring',
+    description: 'Learn from someone with less experience but different expertise',
+    duration: '30 min',
+    level: 'Growth',
+    vcol: {
+      set_goal: 'Arrange a reverse mentoring session with someone younger or less senior.',
+      gather_info: 'What do they know that you don\'t? What perspectives might they have?',
+      apply: 'Have the session. Come as a genuine learner, not to share your wisdom.',
+      reflect: 'What did you learn? How did it feel to be the learner?'
+    }
+  },
+  {
+    id: 'peer_coaching',
+    competency: 'collaboration',
+    capability: 'sociallearning',
+    title: 'Peer Coaching Exchange',
+    description: 'Practice coaching a peer on a challenge',
+    duration: '30 min',
+    level: 'Mastery',
+    vcol: {
+      set_goal: 'Conduct a peer coaching exchange where you each coach the other on a challenge.',
+      gather_info: 'What\'s a challenge you\'d benefit from thinking through? What about your peer?',
+      apply: 'Take turns. As coach: ask questions, don\'t advise. As coachee: think out loud.',
+      reflect: 'What was it like to coach vs. be coached? What questions were most powerful?'
+    }
+  },
+  // COLLABORATION - Additional Teamwork Activities
+  {
+    id: 'meeting_design',
+    competency: 'collaboration',
+    capability: 'teamwork',
+    title: 'Design a Better Meeting',
+    description: 'Improve how your team meets and collaborates',
+    duration: '20 min',
+    level: 'Growth',
+    vcol: {
+      set_goal: 'Redesign an upcoming meeting to be more effective and inclusive.',
+      gather_info: 'What\'s working in your meetings? What\'s not? What do you actually need to accomplish?',
+      apply: 'Implement at least two design changes in your next meeting.',
+      reflect: 'What impact did the changes have? What else might you try?'
+    }
+  },
+  {
+    id: 'conflict_approach',
+    competency: 'collaboration',
+    capability: 'teamwork',
+    title: 'Productive Conflict Practice',
+    description: 'Turn a disagreement into a productive conversation',
+    duration: '25 min',
+    level: 'Mastery',
+    vcol: {
+      set_goal: 'Address a current disagreement in a way that strengthens the relationship.',
+      gather_info: 'What is the real disagreement? What do you both actually want?',
+      apply: 'Have the conversation. Start with curiosity, seek to understand before being understood.',
+      reflect: 'What was the outcome? How did your approach affect the conversation?'
+    }
+  },
+  {
+    id: 'delegate_develop',
+    competency: 'collaboration',
+    capability: 'teamwork',
+    title: 'Delegate to Develop',
+    description: 'Delegate a task with development in mind',
+    duration: '15 min',
+    level: 'Growth',
+    vcol: {
+      set_goal: 'Delegate something in a way that develops the other person.',
+      gather_info: 'What could you delegate? Who would benefit from the stretch? What support do they need?',
+      apply: 'Delegate the task. Provide context and support, but not the answers.',
+      reflect: 'How did it go? What did they learn? What did you learn about letting go?'
+    }
   }
 ];
 
@@ -1332,38 +1819,102 @@ const LEADER_DEVELOPMENT = {
       targetOutcome: 'identity',
       duration: '4-6 weeks',
       description: 'Structured activities to strengthen your sense of self as a leader through identity claiming, granting, and integration.',
+      researchBasis: 'Based on Day & Harrison (2007) identity-based approach to leader development, and Ibarra\'s (2015) work on acting into new identities.',
       phases: [
         {
           phase: 1,
           title: 'Identity Awareness',
           duration: 'Week 1-2',
+          overview: 'Before you can develop your leader identity, you need to understand where you currently are and what has shaped your self-concept.',
           activities: [
-            'Complete the Leader Identity assessment',
-            'Write your leadership autobiography (key moments that shaped you)',
-            'Interview someone who sees you as a leader',
-            'Identify your "possible selves" as a leader'
+            {
+              title: 'Complete Leader Identity Assessment',
+              duration: '10 minutes',
+              instructions: 'Take the Leader Identity assessment in this app. Record your overall score and note which items you rated lowest.',
+              reflection: 'What does your score tell you about how strongly you currently see yourself as a leader?'
+            },
+            {
+              title: 'Write Your Leadership Autobiography',
+              duration: '45 minutes',
+              instructions: 'Write 2-3 pages describing key moments that shaped your view of yourself as a leader (or non-leader). Include: earliest leadership memory, a time you succeeded as a leader, a time you failed or avoided leadership, people who influenced how you see yourself.',
+              reflection: 'What patterns do you notice? What stories do you tell yourself about your leadership?'
+            },
+            {
+              title: 'Interview Someone Who Sees You as a Leader',
+              duration: '30 minutes',
+              instructions: 'Ask someone who has seen you lead: "When have you seen me act as a leader? What did I do? What impact did it have?" Take notes without defending or explaining.',
+              reflection: 'How does their perception match or differ from your self-perception?'
+            },
+            {
+              title: 'Map Your Possible Selves',
+              duration: '30 minutes',
+              instructions: 'Draw or describe three versions of yourself as a leader: (1) Your hoped-for leader self in 5 years, (2) Your feared leader self, (3) Your expected leader self. Be specific about behaviors, not just titles.',
+              reflection: 'What separates your hoped-for self from your expected self? What would it take to close that gap?'
+            }
           ]
         },
         {
           phase: 2,
           title: 'Identity Claiming',
           duration: 'Week 3-4',
+          overview: 'Identity develops through action, not just reflection. You become a leader by doing leader-like things and having others recognize you as a leader.',
           activities: [
-            'Take on one new informal leadership role',
-            'Introduce yourself as a leader in a new context',
-            'Share a leadership opinion in a meeting',
-            'Volunteer to lead a small initiative'
+            {
+              title: 'Take on an Informal Leadership Role',
+              duration: 'Ongoing',
+              instructions: 'Volunteer to lead something small: a meeting, a project, a discussion, a social event. Choose something with low stakes but real responsibility.',
+              reflection: 'How did it feel to step into the role? How did others respond to you?'
+            },
+            {
+              title: 'Introduce Yourself as a Leader',
+              duration: '5 minutes per instance',
+              instructions: 'In a new context (networking event, new team, social situation), include leadership in how you describe yourself. Example: "I lead the X initiative" or "I\'m developing as a leader in Y area."',
+              reflection: 'What happens when you claim the leader label? Does it feel authentic or forced?'
+            },
+            {
+              title: 'Share a Leadership Opinion',
+              duration: '15 minutes',
+              instructions: 'In a meeting or discussion, share a perspective on direction, strategy, or how the team should proceed. Don\'t wait to be asked. Speak with conviction while remaining open to other views.',
+              reflection: 'What was the response? How did it feel to express a leadership point of view?'
+            },
+            {
+              title: 'Lead a Small Initiative',
+              duration: '2-4 weeks',
+              instructions: 'Propose and lead a small improvement project. It should be something you care about, that benefits others, and that you can complete in 2-4 weeks.',
+              reflection: 'What did you learn about yourself as a leader through this initiative?'
+            }
           ]
         },
         {
           phase: 3,
           title: 'Identity Integration',
           duration: 'Week 5-6',
+          overview: 'The goal is not just to claim a leader identity, but to integrate it with your other identities so it feels authentic and sustainable.',
           activities: [
-            'Reflect on how leadership fits with other identities',
-            'Seek feedback on your leadership emergence',
-            'Retake the Leader Identity assessment',
-            'Create a leader identity statement'
+            {
+              title: 'Reflect on Identity Fit',
+              duration: '30 minutes',
+              instructions: 'Write about how "being a leader" fits with other important identities (parent, professional, community member, etc.). Where do they reinforce each other? Where might they conflict?',
+              reflection: 'How can you be a leader in a way that\'s consistent with who you are?'
+            },
+            {
+              title: 'Gather Feedback on Your Emergence',
+              duration: '30 minutes',
+              instructions: 'Ask 3 people: "Have you noticed any changes in how I show up as a leader recently? What have you observed?" Listen without defending.',
+              reflection: 'Are others noticing your identity shift? What are they seeing?'
+            },
+            {
+              title: 'Retake Leader Identity Assessment',
+              duration: '10 minutes',
+              instructions: 'Take the Leader Identity assessment again. Compare your scores to your baseline from Phase 1.',
+              reflection: 'What changed? What might account for any shifts?'
+            },
+            {
+              title: 'Craft Your Leader Identity Statement',
+              duration: '45 minutes',
+              instructions: 'Write a 1-paragraph statement that captures who you are as a leader. Include: your leadership values, how you lead, what you\'re developing, and why leadership matters to you.',
+              reflection: 'Does this statement feel true? How might you live into it more fully?'
+            }
           ]
         }
       ]
@@ -1374,38 +1925,102 @@ const LEADER_DEVELOPMENT = {
       targetOutcome: 'awareness',
       duration: '3-4 weeks',
       description: 'Develop accurate self-awareness by systematically gathering and integrating feedback from multiple sources.',
+      researchBasis: 'Based on Eurich (2017) research distinguishing internal and external self-awareness, and 360-feedback best practices from CCL.',
       phases: [
         {
           phase: 1,
           title: 'Self-Assessment',
           duration: 'Week 1',
+          overview: 'Start by documenting your own perceptions before gathering external feedback. This creates a baseline for comparison.',
           activities: [
-            'Complete the Self-Awareness assessment',
-            'Rate yourself on the KLI competencies',
-            'Identify your perceived strengths and weaknesses',
-            'Document your leadership values'
+            {
+              title: 'Complete Self-Awareness Assessment',
+              duration: '15 minutes',
+              instructions: 'Take the Self-Awareness assessment in this app. Note your scores on internal vs. external self-awareness.',
+              reflection: 'Which dimension is stronger for you? What specific areas feel less clear?'
+            },
+            {
+              title: 'Self-Rate on KLI Competencies',
+              duration: '20 minutes',
+              instructions: 'Rate yourself 1-5 on each of the 9 KLI capabilities (Resilience, Entrepreneurial Mindset, Responsible Action, Innovation, Communication, Problem-Solving, Empathy, Social Learning, Teamwork). Write a sentence justifying each rating.',
+              reflection: 'Which ratings were easiest to make? Which were hardest? What does that tell you?'
+            },
+            {
+              title: 'Document Perceived Strengths & Weaknesses',
+              duration: '20 minutes',
+              instructions: 'List your top 3 leadership strengths and top 3 development areas. For each, write a specific example that illustrates it.',
+              reflection: 'How confident are you in this assessment? What evidence is it based on?'
+            },
+            {
+              title: 'Articulate Your Leadership Values',
+              duration: '30 minutes',
+              instructions: 'Identify your top 5 leadership values (e.g., integrity, collaboration, excellence). For each, write what it means to you and how you try to live it.',
+              reflection: 'Do others know these are your values? Would they say you live them consistently?'
+            }
           ]
         },
         {
           phase: 2,
           title: 'Other-Assessment',
           duration: 'Week 2',
+          overview: 'Now gather external perspectives to compare against your self-assessment.',
           activities: [
-            'Ask 5+ colleagues to rate you on the same dimensions',
-            'Conduct "feedforward" conversations (ask for suggestions, not criticism)',
-            'Notice patterns in how others respond to you',
-            'Request specific behavioral examples'
+            {
+              title: 'Request Peer Ratings',
+              duration: '1 hour (gathering)',
+              instructions: 'Ask 5+ colleagues to rate you on the same KLI capabilities you self-rated. Use a simple survey or have conversations. Include people who work with you in different contexts.',
+              reflection: 'Was it hard to ask? How did people respond to the request?'
+            },
+            {
+              title: 'Conduct Feedforward Conversations',
+              duration: '20 minutes each',
+              instructions: 'With 3 people, use the "feedforward" approach: "I\'m working on X. What suggestions do you have for how I could be more effective?" Focus on future, not past.',
+              reflection: 'What suggestions came up repeatedly? What surprised you?'
+            },
+            {
+              title: 'Observe How Others Respond to You',
+              duration: 'Ongoing',
+              instructions: 'For one week, consciously notice how others react to you. When do they lean in? Pull back? Who seeks you out vs. avoids you?',
+              reflection: 'What patterns do you notice? What might be causing these reactions?'
+            },
+            {
+              title: 'Request Specific Behavioral Examples',
+              duration: '15 minutes each',
+              instructions: 'With 2-3 people, ask: "Can you give me a specific example of when I demonstrated [strength]? And when I could have been better at [development area]?"',
+              reflection: 'How do specific examples land differently than general feedback?'
+            }
           ]
         },
         {
           phase: 3,
-          title: 'Gap Analysis',
+          title: 'Gap Analysis & Action',
           duration: 'Week 3-4',
+          overview: 'The power of feedback comes from identifying gaps between self-perception and others\' perception, then taking action.',
           activities: [
-            'Compare self-ratings to others\' ratings',
-            'Identify blind spots (others see, you don\'t)',
-            'Identify hidden strengths (you undervalue, others see)',
-            'Create action plan to address top 1-2 gaps'
+            {
+              title: 'Compare Self vs. Other Ratings',
+              duration: '30 minutes',
+              instructions: 'Create a simple chart comparing your self-ratings to others\' ratings on each capability. Calculate the gap (self minus other).',
+              reflection: 'Where are the biggest gaps? Do you over-estimate or under-estimate yourself?'
+            },
+            {
+              title: 'Identify Blind Spots',
+              duration: '20 minutes',
+              instructions: 'Blind spots = others see it, you don\'t. Look for capabilities where others rated you lower than you rated yourself. These are areas where you may be unaware of your impact.',
+              reflection: 'Why might you have these blind spots? What would help you see more clearly?'
+            },
+            {
+              title: 'Identify Hidden Strengths',
+              duration: '20 minutes',
+              instructions: 'Hidden strengths = others see it, you undervalue it. Look for capabilities where others rated you higher than you rated yourself.',
+              reflection: 'Why might you undervalue these strengths? How could you leverage them more?'
+            },
+            {
+              title: 'Create Development Action Plan',
+              duration: '45 minutes',
+              instructions: 'Pick your top 1-2 gaps to address. For each, write: (1) What specifically will you do differently? (2) How will you get ongoing feedback? (3) How will you know you\'ve improved?',
+              reflection: 'What support do you need to make these changes? Who can help?'
+            }
           ]
         }
       ]
@@ -1416,38 +2031,102 @@ const LEADER_DEVELOPMENT = {
       targetOutcome: 'efficacy',
       duration: '6-8 weeks',
       description: 'Systematically build leadership self-efficacy through mastery experiences, vicarious learning, and cognitive reframing.',
+      researchBasis: 'Based on Bandura\'s (1997) four sources of self-efficacy: mastery experiences, vicarious learning, verbal persuasion, and physiological states.',
       phases: [
         {
           phase: 1,
           title: 'Mastery Experiences',
           duration: 'Week 1-3',
+          overview: 'The most powerful source of self-efficacy is your own experience of success. Start small and build progressively.',
           activities: [
-            'Identify low-risk leadership opportunities',
-            'Set small, achievable leadership goals',
-            'Document successful leadership moments',
-            'Build on small wins progressively'
+            {
+              title: 'Audit Past Leadership Successes',
+              duration: '30 minutes',
+              instructions: 'List 5-10 times you successfully influenced, guided, or led others. Include informal leadership. For each, note what you did and what made it work.',
+              reflection: 'What patterns do you see? What conditions help you lead successfully?'
+            },
+            {
+              title: 'Identify Low-Risk Opportunities',
+              duration: '20 minutes',
+              instructions: 'List 5 upcoming opportunities to practice leadership where the stakes are relatively low. Prioritize by: likelihood of success AND developmental value.',
+              reflection: 'Which opportunity offers the best balance of likely success and meaningful challenge?'
+            },
+            {
+              title: 'Set a Progressive Challenge Ladder',
+              duration: '30 minutes',
+              instructions: 'Create a "ladder" of 5 leadership challenges, from easiest to hardest. Your goal is to succeed at each level before moving up. Level 1 should feel achievable; Level 5 should feel like a stretch.',
+              reflection: 'What does success look like at each level? How will you know you\'re ready to move up?'
+            },
+            {
+              title: 'Document Your Wins',
+              duration: '10 minutes daily',
+              instructions: 'Each day for three weeks, write down one leadership "win" - any moment where you successfully influenced or guided others, no matter how small.',
+              reflection: 'After three weeks, what patterns do you notice? How does documenting wins affect your confidence?'
+            }
           ]
         },
         {
           phase: 2,
           title: 'Vicarious Learning',
           duration: 'Week 4-5',
+          overview: 'Watching similar others succeed ("If they can do it, maybe I can too") builds efficacy without the risk of personal failure.',
           activities: [
-            'Identify a leadership role model',
-            'Shadow or observe effective leaders',
-            'Analyze what makes them effective',
-            'Adapt their approaches to your style'
+            {
+              title: 'Identify a Leadership Role Model',
+              duration: '20 minutes',
+              instructions: 'Choose someone whose leadership you admire who is similar enough to you that you could imagine being like them. Ideally, someone you can observe directly.',
+              reflection: 'What specifically do you admire? What makes you believe you could develop similar capabilities?'
+            },
+            {
+              title: 'Shadow or Observe Effective Leaders',
+              duration: '2-3 hours total',
+              instructions: 'Observe your role model (or other effective leaders) in action. Attend their meetings, watch how they handle challenges, notice their micro-behaviors.',
+              reflection: 'What do they do that you could do? What seems beyond your reach for now?'
+            },
+            {
+              title: 'Analyze Their Effectiveness',
+              duration: '30 minutes',
+              instructions: 'Interview your role model: "What makes you effective as a leader? What was hardest to learn? What mistakes did you make along the way?"',
+              reflection: 'What did you learn about the path to their effectiveness? What\'s encouraging? What\'s daunting?'
+            },
+            {
+              title: 'Adapt One Approach',
+              duration: 'Ongoing',
+              instructions: 'Choose one specific behavior or approach from your role model that you want to adopt. Practice it in your own context, adapting it to your style.',
+              reflection: 'How did it work when you tried it? What adjustments did you need to make?'
+            }
           ]
         },
         {
           phase: 3,
-          title: 'Verbal Persuasion & Arousal',
+          title: 'Verbal Persuasion & Arousal Management',
           duration: 'Week 6-8',
+          overview: 'What others say about you and how you manage your physiological state both affect your confidence.',
           activities: [
-            'Seek encouragement from mentors',
-            'Reframe anxiety as excitement',
-            'Practice pre-performance routines',
-            'Visualize successful leadership'
+            {
+              title: 'Seek Encouragement Strategically',
+              duration: '30 minutes',
+              instructions: 'Identify 2-3 people who believe in your leadership potential. Ask them: "What leadership strengths do you see in me? Why do you think I can grow as a leader?"',
+              reflection: 'How does hearing their confidence in you affect your own confidence?'
+            },
+            {
+              title: 'Reframe Anxiety as Excitement',
+              duration: 'Practice before each challenge',
+              instructions: 'Before leadership challenges, notice your anxiety. Say to yourself: "I\'m feeling excited" instead of "I\'m feeling anxious." The physiological state is similar; the interpretation matters.',
+              reflection: 'Does reframing change your experience? Your performance?'
+            },
+            {
+              title: 'Develop a Pre-Performance Routine',
+              duration: '45 minutes to design, then ongoing',
+              instructions: 'Create a short routine (3-5 minutes) to do before important leadership moments. Include: breathing, posture, visualization, and a confidence anchor (phrase or gesture).',
+              reflection: 'What elements work best for you? How does having a routine affect your readiness?'
+            },
+            {
+              title: 'Visualize Successful Leadership',
+              duration: '10 minutes daily',
+              instructions: 'Spend 10 minutes visualizing yourself succeeding in an upcoming leadership situation. See yourself being calm, capable, and effective. Include sensory detail.',
+              reflection: 'How does visualization affect your confidence going into real situations?'
+            }
           ]
         }
       ]
@@ -1458,38 +2137,102 @@ const LEADER_DEVELOPMENT = {
       targetOutcome: 'skills',
       duration: 'Ongoing',
       description: 'Apply principles of deliberate practice to systematically develop leadership skills beyond your current level.',
+      researchBasis: 'Based on Ericsson\'s deliberate practice research and its application to leadership by Day (2010).',
       phases: [
         {
           phase: 1,
           title: 'Skill Selection',
           duration: 'Week 1',
+          overview: 'Deliberate practice requires focused attention on a specific skill, practiced at the edge of your current ability.',
           activities: [
-            'Review KLI competencies and capabilities',
-            'Identify one specific skill to develop',
-            'Define what "good" looks like for this skill',
-            'Set a stretch goal just beyond current ability'
+            {
+              title: 'Review Your Development Needs',
+              duration: '20 minutes',
+              instructions: 'Review your self-awareness work, feedback, and assessments. Identify 3-5 specific skills that are important for your leadership effectiveness and are currently underdeveloped.',
+              reflection: 'Which skill, if improved, would have the biggest impact on your effectiveness?'
+            },
+            {
+              title: 'Define "Good" Performance',
+              duration: '30 minutes',
+              instructions: 'For your chosen skill, define what excellent looks like. Find examples, models, or descriptions. Write specific behavioral indicators of skill mastery.',
+              reflection: 'How will you know when you\'ve improved? What would others observe?'
+            },
+            {
+              title: 'Assess Your Current Level',
+              duration: '20 minutes',
+              instructions: 'Honestly assess your current level on the skill. Where are you on a 1-10 scale? What specific aspects are weakest?',
+              reflection: 'What\'s the gap between current and desired? Which aspects need most work?'
+            },
+            {
+              title: 'Set a Stretch Goal',
+              duration: '15 minutes',
+              instructions: 'Set a specific, measurable goal for improving this skill in the next month. It should be challenging but achievable with focused effort.',
+              reflection: 'Is this goal stretching you beyond your comfort zone? Is it realistic?'
+            }
           ]
         },
         {
           phase: 2,
           title: 'Focused Practice',
           duration: 'Week 2-4',
+          overview: 'Deliberate practice means practicing with full attention, getting immediate feedback, and making adjustments.',
           activities: [
-            'Practice the skill in real situations',
-            'Get immediate feedback after each attempt',
-            'Reflect on what worked and what didn\'t',
-            'Make micro-adjustments each time'
+            {
+              title: 'Create Practice Opportunities',
+              duration: 'Ongoing',
+              instructions: 'Identify or create opportunities to practice your target skill. Don\'t wait for them to happen naturally. Seek out or manufacture chances to practice.',
+              reflection: 'How can you increase your "reps" on this skill? What opportunities are you missing?'
+            },
+            {
+              title: 'Practice with Full Attention',
+              duration: 'During each practice',
+              instructions: 'When practicing, give full attention to your performance. Notice what you\'re doing, how it\'s landing, what\'s working and not working.',
+              reflection: 'What did you notice during this practice? What would you do differently?'
+            },
+            {
+              title: 'Get Immediate Feedback',
+              duration: 'After each practice',
+              instructions: 'After each practice attempt, get feedback as quickly as possible. Ask observers, check results, or record and review yourself.',
+              reflection: 'What feedback did you receive? What does it tell you about what to adjust?'
+            },
+            {
+              title: 'Make Micro-Adjustments',
+              duration: 'Ongoing',
+              instructions: 'Based on feedback, make small adjustments to your approach. Don\'t try to change everything at once. Focus on one element at a time.',
+              reflection: 'What adjustment made the biggest difference? What should you try next?'
+            }
           ]
         },
         {
           phase: 3,
-          title: 'Integration',
+          title: 'Integration & Advancement',
           duration: 'Week 5+',
+          overview: 'Once basic skill improves, apply it in more varied contexts and increase the challenge level.',
           activities: [
-            'Apply skill in varied contexts',
-            'Seek more challenging applications',
-            'Coach others on the skill',
-            'Select next skill and repeat'
+            {
+              title: 'Apply in Varied Contexts',
+              duration: 'Ongoing',
+              instructions: 'Practice your skill in different situations, with different people, under different conditions. This builds flexibility and robustness.',
+              reflection: 'How does your skill hold up in different contexts? Where does it break down?'
+            },
+            {
+              title: 'Increase Challenge Level',
+              duration: 'Ongoing',
+              instructions: 'As you improve, seek more challenging applications. Higher stakes, more complex situations, less favorable conditions.',
+              reflection: 'What happens when you increase the challenge? Where are your new edges?'
+            },
+            {
+              title: 'Coach Others on the Skill',
+              duration: '30+ minutes',
+              instructions: 'Teaching others deepens your own understanding. Find someone working on a similar skill and coach them through an aspect of it.',
+              reflection: 'What did you learn from teaching? What gaps in your understanding did it reveal?'
+            },
+            {
+              title: 'Select Next Skill',
+              duration: '20 minutes',
+              instructions: 'When you\'ve made meaningful progress, select your next skill focus and begin the cycle again.',
+              reflection: 'What did you learn from this deliberate practice cycle that you\'ll apply to the next one?'
+            }
           ]
         }
       ]
@@ -1960,7 +2703,7 @@ function VoiceCoach({ coachType, setCurrentView }) {
       dataChannel.current = peerConnection.current.createDataChannel('oai-events');
 
       dataChannel.current.onopen = () => {
-        const systemPrompt = isICF ? getICFVoicePrompt() : getDayMentorVoicePrompt();
+        const systemPrompt = isICF ? getICFVoicePrompt() : getDayAdvisorVoicePrompt();
         
         dataChannel.current.send(JSON.stringify({
           type: 'session.update',
@@ -2038,7 +2781,7 @@ function VoiceCoach({ coachType, setCurrentView }) {
             {isICF ? <Icons.Heart /> : <Icons.GraduationCap />}
           </div>
           <div>
-            <h2 className="font-semibold text-stone-800">{isICF ? 'ICF Voice Coach' : 'Day Mentor Voice'}</h2>
+            <h2 className="font-semibold text-stone-800">{isICF ? 'ICF Voice Coach' : 'Day Advisor Voice'}</h2>
             <p className="text-xs text-stone-500">{isICF ? 'Question-based coaching' : 'Research-based guidance'}</p>
           </div>
         </div>
@@ -2089,7 +2832,7 @@ function VoiceCoach({ coachType, setCurrentView }) {
 
         {!isConnected && (
           <p className="text-sm text-stone-500 mt-8 text-center max-w-sm">
-            {isICF ? 'Your coach will ask powerful questions to help you find your own insights.' : 'Your mentor will share research-based advice from David Day\'s leadership framework.'}
+            {isICF ? 'Your coach will ask powerful questions to help you find your own insights.' : 'Your advisor will share research-based advice from David Day\'s leadership framework.'}
           </p>
         )}
       </div>
@@ -2108,7 +2851,7 @@ function TextCoach({ coachType, setCurrentView, user, setActions, actions }) {
   const messagesEndRef = useRef(null);
 
   const isICF = coachType === 'icf';
-  const endpoint = isICF ? 'coach' : 'day-mentor';
+  const endpoint = isICF ? 'coach' : 'day-advisor';
 
   useEffect(() => { messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [messages]);
 
@@ -2162,7 +2905,7 @@ function TextCoach({ coachType, setCurrentView, user, setActions, actions }) {
             {isICF ? <Icons.Heart /> : <Icons.GraduationCap />}
           </div>
           <div>
-            <h2 className="font-semibold text-stone-800">{isICF ? 'ICF Coach' : 'Day Mentor'}</h2>
+            <h2 className="font-semibold text-stone-800">{isICF ? 'ICF Coach' : 'Day Advisor'}</h2>
             <p className="text-xs text-stone-500">{isICF ? 'Question-based' : 'Research-based'}</p>
           </div>
         </div>
@@ -2328,7 +3071,7 @@ function Dashboard({ setCurrentView, streak, user, actions, journalEntries }) {
           <div className="w-12 h-12 rounded-xl bg-amber-500 flex items-center justify-center text-white"><Icons.MessageCircle /></div>
           <div className="flex-1">
             <h3 className="text-base font-semibold text-white mb-1">Talk to Your Coach</h3>
-            <p className="text-stone-400 text-sm">ICF Coach or Day Mentor - Voice or Text</p>
+            <p className="text-stone-400 text-sm">ICF Coach or Day Advisor - Voice or Text</p>
           </div>
           <Icons.ArrowRight className="text-white" />
         </div>
@@ -2762,14 +3505,14 @@ function CoachesView({ setCurrentView }) {
             <div className="flex items-start gap-4">
               <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-violet-600 to-violet-700 flex items-center justify-center text-white shrink-0"><Icons.GraduationCap /></div>
               <div>
-                <h3 className="text-lg font-semibold text-stone-800">Day Mentor</h3>
+                <h3 className="text-lg font-semibold text-stone-800">Day Advisor</h3>
                 <p className="text-stone-600 text-sm">Research-based advice from David Day's leadership development framework.</p>
               </div>
             </div>
           </div>
           <div className="flex">
-            <button onClick={() => setCurrentView('coach-mentor-voice')} className="flex-1 py-3 flex items-center justify-center gap-2 text-violet-700 hover:bg-violet-50 border-r border-stone-100"><Icons.Mic /> <span className="font-medium text-sm">Voice</span></button>
-            <button onClick={() => setCurrentView('coach-mentor-text')} className="flex-1 py-3 flex items-center justify-center gap-2 text-violet-700 hover:bg-violet-50"><Icons.Keyboard /> <span className="font-medium text-sm">Text</span></button>
+            <button onClick={() => setCurrentView('coach-advisor-voice')} className="flex-1 py-3 flex items-center justify-center gap-2 text-violet-700 hover:bg-violet-50 border-r border-stone-100"><Icons.Mic /> <span className="font-medium text-sm">Voice</span></button>
+            <button onClick={() => setCurrentView('coach-advisor-text')} className="flex-1 py-3 flex items-center justify-center gap-2 text-violet-700 hover:bg-violet-50"><Icons.Keyboard /> <span className="font-medium text-sm">Text</span></button>
           </div>
         </div>
       </div>
@@ -2778,7 +3521,7 @@ function CoachesView({ setCurrentView }) {
         <h4 className="font-medium text-stone-800 mb-2">When to use each:</h4>
         <div className="space-y-2 text-sm">
           <div className="flex gap-3"><div className="w-2 h-2 rounded-full bg-amber-500 mt-1.5 shrink-0"></div><span className="text-stone-600"><strong>ICF Coach:</strong> Explore your thinking, work through emotions, find clarity through reflection.</span></div>
-          <div className="flex gap-3"><div className="w-2 h-2 rounded-full bg-violet-500 mt-1.5 shrink-0"></div><span className="text-stone-600"><strong>Day Mentor:</strong> Get specific advice, learn concepts, understand research applications.</span></div>
+          <div className="flex gap-3"><div className="w-2 h-2 rounded-full bg-violet-500 mt-1.5 shrink-0"></div><span className="text-stone-600"><strong>Day Advisor:</strong> Get specific advice, learn concepts, understand research applications.</span></div>
         </div>
       </div>
     </div>
@@ -3542,6 +4285,7 @@ function AssessmentView({ assessmentId, setCurrentView, user }) {
 
 function InterventionView({ interventionId, setCurrentView, user }) {
   const [expandedPhase, setExpandedPhase] = useState(0);
+  const [expandedActivity, setExpandedActivity] = useState(null);
 
   // Find intervention in both LEADER and LEADERSHIP development
   const intervention = LEADER_DEVELOPMENT.interventions.find(i => i.id === interventionId) ||
@@ -3560,6 +4304,9 @@ function InterventionView({ interventionId, setCurrentView, user }) {
 
   const isIndividual = LEADER_DEVELOPMENT.interventions.some(i => i.id === interventionId);
 
+  // Check if activities are detailed objects or simple strings
+  const hasDetailedActivities = intervention.phases[0]?.activities[0]?.title !== undefined;
+
   return (
     <div className="animate-fadeIn">
       <button onClick={() => setCurrentView('develop')} className="flex items-center gap-1 text-stone-500 hover:text-stone-700 mb-4 text-sm">
@@ -3573,7 +4320,10 @@ function InterventionView({ interventionId, setCurrentView, user }) {
             {intervention.duration}
           </span>
         </div>
-        <p className="text-stone-600">{intervention.description}</p>
+        <p className="text-stone-600 mb-3">{intervention.description}</p>
+        {intervention.researchBasis && (
+          <p className="text-xs text-stone-500 italic">{intervention.researchBasis}</p>
+        )}
       </div>
 
       {/* Phases */}
@@ -3598,15 +4348,57 @@ function InterventionView({ interventionId, setCurrentView, user }) {
             
             {expandedPhase === idx && (
               <div className="px-4 pb-4 border-t border-stone-100 pt-3">
+                {phase.overview && (
+                  <p className="text-sm text-stone-600 mb-4 italic">{phase.overview}</p>
+                )}
+                
                 <h4 className="text-sm font-medium text-stone-700 mb-3">Activities</h4>
-                <ul className="space-y-2">
-                  {phase.activities.map((activity, actIdx) => (
-                    <li key={actIdx} className="flex items-start gap-2 text-sm text-stone-600">
-                      <span className={`mt-1 w-4 h-4 rounded border ${isIndividual ? 'border-amber-300' : 'border-teal-300'} flex-shrink-0`} />
-                      {activity}
-                    </li>
-                  ))}
-                </ul>
+                
+                {hasDetailedActivities ? (
+                  <div className="space-y-3">
+                    {phase.activities.map((activity, actIdx) => (
+                      <div key={actIdx} className={`border rounded-lg overflow-hidden ${isIndividual ? 'border-amber-200' : 'border-teal-200'}`}>
+                        <button
+                          onClick={() => setExpandedActivity(expandedActivity === `${idx}-${actIdx}` ? null : `${idx}-${actIdx}`)}
+                          className={`w-full p-3 flex items-center justify-between text-left ${isIndividual ? 'bg-amber-50/50' : 'bg-teal-50/50'}`}
+                        >
+                          <div className="flex items-center gap-2">
+                            <span className={`w-5 h-5 rounded border ${isIndividual ? 'border-amber-400' : 'border-teal-400'} flex items-center justify-center flex-shrink-0`}>
+                              <span className="text-xs">{actIdx + 1}</span>
+                            </span>
+                            <span className="font-medium text-sm text-stone-800">{activity.title}</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <span className="text-xs text-stone-500">{activity.duration}</span>
+                            <Icons.ChevronDown className={`w-4 h-4 transition-transform ${expandedActivity === `${idx}-${actIdx}` ? 'rotate-180' : ''}`} />
+                          </div>
+                        </button>
+                        
+                        {expandedActivity === `${idx}-${actIdx}` && (
+                          <div className="p-3 bg-white space-y-3">
+                            <div>
+                              <h5 className="text-xs font-semibold text-stone-500 uppercase mb-1">Instructions</h5>
+                              <p className="text-sm text-stone-700">{activity.instructions}</p>
+                            </div>
+                            <div className={`p-3 rounded-lg ${isIndividual ? 'bg-amber-50' : 'bg-teal-50'}`}>
+                              <h5 className="text-xs font-semibold text-stone-500 uppercase mb-1">Reflection</h5>
+                              <p className="text-sm text-stone-700 italic">{activity.reflection}</p>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <ul className="space-y-2">
+                    {phase.activities.map((activity, actIdx) => (
+                      <li key={actIdx} className="flex items-start gap-2 text-sm text-stone-600">
+                        <span className={`mt-1 w-4 h-4 rounded border ${isIndividual ? 'border-amber-300' : 'border-teal-300'} flex-shrink-0`} />
+                        {typeof activity === 'string' ? activity : activity.title}
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </div>
             )}
           </div>
@@ -3615,6 +4407,15 @@ function InterventionView({ interventionId, setCurrentView, user }) {
 
       <div className="mt-6">
         <button
+          onClick={() => setCurrentView('coaches')}
+          className={`w-full ${isIndividual ? 'bg-amber-600' : 'bg-teal-600'} text-white py-3 rounded-xl font-medium`}
+        >
+          Discuss with Coach
+        </button>
+      </div>
+    </div>
+  );
+}
           onClick={() => setCurrentView('coaches')}
           className={`w-full ${isIndividual ? 'bg-amber-600' : 'bg-teal-600'} text-white py-3 rounded-xl font-medium`}
         >
@@ -3687,8 +4488,8 @@ export default function DayByDayApp() {
       case 'coaches': return <CoachesView setCurrentView={setCurrentView} />;
       case 'coach-icf-voice': return <VoiceCoach coachType="icf" setCurrentView={setCurrentView} />;
       case 'coach-icf-text': return <TextCoach coachType="icf" setCurrentView={setCurrentView} user={user} setActions={setActions} actions={actions} />;
-      case 'coach-mentor-voice': return <VoiceCoach coachType="mentor" setCurrentView={setCurrentView} />;
-      case 'coach-mentor-text': return <TextCoach coachType="mentor" setCurrentView={setCurrentView} user={user} setActions={setActions} actions={actions} />;
+      case 'coach-advisor-voice': return <VoiceCoach coachType="mentor" setCurrentView={setCurrentView} />;
+      case 'coach-advisor-text': return <TextCoach coachType="mentor" setCurrentView={setCurrentView} user={user} setActions={setActions} actions={actions} />;
       case 'library': return <LibraryView setCurrentView={setCurrentView} />;
       default: return <Dashboard setCurrentView={setCurrentView} streak={streak} user={user} actions={actions} journalEntries={journalEntries} />;
     }
@@ -3710,3 +4511,4 @@ export default function DayByDayApp() {
     </div>
   );
 }
+
