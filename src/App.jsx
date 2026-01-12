@@ -3727,8 +3727,13 @@ function Sidebar({ currentView, setCurrentView, user, onSignOut }) {
       </nav>
       <div className="p-4 border-t border-stone-200">
         <div className="flex items-center gap-3 px-4 py-2 mb-2">
-          <div className="w-8 h-8 rounded-full bg-stone-100 flex items-center justify-center text-stone-400"><Icons.User /></div>
-          <p className="text-sm font-medium text-stone-800 truncate">{user?.user_metadata?.full_name || 'User'}</p>
+          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center text-white font-semibold text-sm">
+            {(user?.user_metadata?.full_name || user?.email || 'U').split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)}
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-medium text-stone-800 truncate">{user?.user_metadata?.full_name || 'User'}</p>
+            <p className="text-xs text-stone-500 truncate">{user?.email}</p>
+          </div>
         </div>
         <button onClick={() => setCurrentView('privacy-settings')} className="w-full flex items-center gap-3 px-4 py-2 text-stone-600 hover:bg-stone-50 rounded-xl text-sm mb-1">
           <Icons.Shield /><span>Privacy Settings</span>
@@ -5379,176 +5384,445 @@ function LeaderDevelopmentTab({ setCurrentView }) {
 }
 
 function LeadershipDevelopmentTab({ setCurrentView }) {
-  const [expandedSection, setExpandedSection] = useState('collective-capacity');
-  
-  const toggleSection = (section) => {
-    setExpandedSection(expandedSection === section ? null : section);
-  };
+  const [activeArea, setActiveArea] = useState('team-learning');
+  const [expandedIntervention, setExpandedIntervention] = useState(null);
 
-  // Development sections organized by Day's book structure (Chapters 6-7)
-  const sections = [
-    {
-      id: 'collective-capacity',
-      title: 'Collective Capacity',
-      subtitle: 'Team & Organizational Climate',
-      source: 'Day (2024), Chapter 6',
-      icon: '👥',
+  // Comprehensive development areas with all research-based interventions
+  const developmentAreas = {
+    'team-learning': {
+      id: 'team-learning',
+      title: 'Team Learning & Action',
+      subtitle: 'Collective problem-solving',
+      icon: '🎯',
       color: 'teal',
-      description: 'Building the collective capacity of teams to engage in leadership processes together.',
-      subsections: [
+      gradient: 'from-teal-500 to-cyan-500',
+      description: 'Build collective capacity through real-world challenges that require teams to learn, reflect, and act together.',
+      source: 'Day et al. (2021); Raelin (2016)',
+      keyQuestion: 'How does your team learn and solve problems together?',
+      interventions: [
         {
-          id: 'psych-safety',
-          title: 'Psychological Safety',
-          description: 'Creating a climate where people feel safe to take interpersonal risks',
-          assessment: COLLECTIVE_ASSESSMENTS.psychologicalSafety,
-          intervention: LEADERSHIP_DEVELOPMENT.interventions.find(i => i.id === 'psych_safety'),
-          keyInsight: 'Without psychological safety, team members won\'t speak up, take risks, or learn from mistakes.'
+          id: 'action_learning_teams',
+          title: 'Action Learning Teams',
+          type: 'team',
+          duration: '3-6 months',
+          mechanism: 'Builds collective problem-solving, shared accountability, and systems thinking',
+          description: 'Cross-functional groups work on live organizational challenges, combining inquiry, reflection, and action.',
+          activities: [
+            'Form a cross-functional team around a real business challenge',
+            'Conduct structured reflection sessions after each work cycle',
+            'Use peer coaching within the team to surface assumptions',
+            'Present solutions to leadership with lessons learned'
+          ],
+          source: 'Day et al. (2021); Raelin (2016); Marsick & O\'Neil (2019)'
         },
         {
-          id: 'collective-efficacy',
-          title: 'Collective Efficacy',
-          description: 'Team\'s shared belief in their ability to succeed together',
-          assessment: COLLECTIVE_ASSESSMENTS.collectiveEfficacy,
-          intervention: LEADERSHIP_DEVELOPMENT.interventions.find(i => i.id === 'collective_efficacy_building'),
-          keyInsight: 'Teams that believe they can succeed together are more likely to persist through challenges.'
-        },
-        {
-          id: 'shared-models',
-          title: 'Shared Mental Models',
-          description: 'Aligned understanding of goals, roles, and processes',
-          assessment: null,
-          intervention: LEADERSHIP_DEVELOPMENT.interventions.find(i => i.id === 'shared_models'),
-          keyInsight: 'When team members have aligned mental models, they can anticipate each other\'s actions.'
+          id: 'shared_leadership_simulations',
+          title: 'Shared Leadership Simulations',
+          type: 'practice',
+          duration: '1-2 days',
+          mechanism: 'Reinforces fluid leadership roles and distributed decision-making',
+          description: 'Teams jointly manage dynamic, ambiguous scenarios where leadership rotates based on task expertise.',
+          activities: [
+            'Participate in crisis response or innovation simulations',
+            'Rotate leadership roles based on who has relevant expertise',
+            'Debrief on how leadership shifted during the exercise',
+            'Identify patterns in when and how leadership emerged'
+          ],
+          source: 'Day et al. (2021); DeRue (2011)'
         }
       ]
     },
-    {
-      id: 'social-capital',
-      title: 'Social Capital',
-      subtitle: 'Networks & Relationships',
-      source: 'Day (2024), Chapter 7',
-      icon: '🔗',
-      color: 'indigo',
-      description: 'Building and leveraging relationships that enable collective leadership.',
-      subsections: [
+    'team-coaching': {
+      id: 'team-coaching',
+      title: 'Team Coaching & Dialogue',
+      subtitle: 'Trust and communication',
+      icon: '💬',
+      color: 'blue',
+      gradient: 'from-blue-500 to-indigo-500',
+      description: 'Strengthen psychological safety, communication, and relational coordination through facilitated dialogue.',
+      source: 'Hawkins (2017); Raelin (2016)',
+      keyQuestion: 'Does your team have the trust to have difficult conversations?',
+      interventions: [
         {
-          id: 'network-dev',
-          title: 'Network Development',
-          description: 'Intentionally building relationships that enable leadership',
-          assessment: null,
-          intervention: LEADERSHIP_DEVELOPMENT.interventions.find(i => i.id === 'network_development'),
-          keyInsight: 'Leadership happens through networks. Structural holes limit your influence.'
+          id: 'team_coaching',
+          title: 'Team Coaching & Reflective Dialogue',
+          type: 'coach',
+          duration: 'Ongoing (monthly)',
+          mechanism: 'Strengthens psychological safety, communication, and relational coordination',
+          description: 'External or internal coaches facilitate team conversations focused on trust, decision processes, and shared purpose.',
+          activities: [
+            'Conduct 360° team feedback assessment',
+            'Facilitate dialogue on team decision-making processes',
+            'Explore underlying assumptions and mental models',
+            'Create team agreements for how to work together'
+          ],
+          source: 'Hawkins (2017); Raelin (2016)'
         },
         {
-          id: 'boundary-spanning',
-          title: 'Boundary Spanning',
-          description: 'Connecting across teams, functions, and organizations',
-          assessment: null,
-          intervention: null,
-          keyInsight: 'Leaders who span boundaries access diverse information and resources.'
+          id: 'leadership_rounds',
+          title: 'Leadership-in-Practice Forums',
+          type: 'forum',
+          duration: 'Regular (bi-weekly)',
+          mechanism: 'Cultivates collective mindfulness and shared leadership narratives',
+          description: 'Regular, open forums where cross-level groups discuss current organizational dilemmas and share leadership perspectives.',
+          activities: [
+            'Schedule regular cross-level leadership forums',
+            'Present real organizational dilemmas for discussion',
+            'Encourage diverse perspectives from all levels',
+            'Document shared learnings and emerging leadership narratives'
+          ],
+          source: 'Raelin (2016); Carroll & Nicholson (2014)'
+        },
+        {
+          id: 'collective_retreats',
+          title: 'Collective Reflection Retreats',
+          type: 'program',
+          duration: '1-3 days',
+          mechanism: 'Promotes co-created meaning and shared vision alignment',
+          description: 'Offsite retreats using dialogue, storytelling, and facilitated systems reflection to review leadership culture.',
+          activities: [
+            'Design a retreat focused on leadership culture review',
+            'Use storytelling to surface shared values and identity',
+            'Facilitate systems reflection on team patterns',
+            'Co-create vision and commitments for the future'
+          ],
+          source: 'Day et al. (2021); Ely et al. (2011)'
+        }
+      ]
+    },
+    'networks': {
+      id: 'networks',
+      title: 'Networks & Boundaries',
+      subtitle: 'Cross-boundary leadership',
+      icon: '🔗',
+      color: 'violet',
+      gradient: 'from-violet-500 to-purple-500',
+      description: 'Build leadership capacity that spans teams, functions, and organizations to address complex challenges.',
+      source: 'Uhl-Bien & Arena (2018); Cross et al. (2013)',
+      keyQuestion: 'How well does your leadership span organizational boundaries?',
+      interventions: [
+        {
+          id: 'cross_boundary_labs',
+          title: 'Cross-Boundary Leadership Labs',
+          type: 'program',
+          duration: '3-6 months',
+          mechanism: 'Fosters boundary-spanning awareness and collective sensemaking under complexity',
+          description: 'Groups from different units or sectors collaborate on adaptive, real-world "wicked problems."',
+          activities: [
+            'Convene leaders from different units around a wicked problem',
+            'Use systems mapping to visualize the challenge',
+            'Facilitate stakeholder dialogue across boundaries',
+            'Prototype and test solutions collaboratively'
+          ],
+          source: 'Uhl-Bien & Arena (2018); Ospina & Foldy (2010)'
+        },
+        {
+          id: 'peer_coaching_networks',
+          title: 'Peer Coaching Networks',
+          type: 'coach',
+          duration: 'Ongoing (6+ months)',
+          mechanism: 'Encourages mutual learning, reflection, and trust-based influence',
+          description: 'Groups of leaders at similar levels engage in structured reciprocal coaching to share insights and accountability.',
+          activities: [
+            'Form peer coaching triads or small groups',
+            'Establish regular coaching meeting rhythm',
+            'Use structured coaching protocols (e.g., GROW model)',
+            'Track and share progress on developmental goals'
+          ],
+          source: 'Parker et al. (2020); Ely et al. (2011)'
+        },
+        {
+          id: 'network_mapping',
+          title: 'Network Leadership Mapping',
+          type: 'assess',
+          duration: '2-4 weeks',
+          mechanism: 'Enhances relational leadership capital and organizational connectivity',
+          description: 'Use social network analysis to visualize and intentionally strengthen leadership connections and influence flows.',
+          activities: [
+            'Conduct social network analysis survey',
+            'Visualize current leadership network patterns',
+            'Identify gaps and opportunities in connections',
+            'Design intentional relationship-building actions'
+          ],
+          source: 'Cross, Ernst & Pasmore (2013); Uhl-Bien (2021)'
+        }
+      ]
+    },
+    'systems': {
+      id: 'systems',
+      title: 'Communities & Systems',
+      subtitle: 'Organizational learning',
+      icon: '🌐',
+      color: 'emerald',
+      gradient: 'from-emerald-500 to-green-500',
+      description: 'Create structures and practices that enable collective learning and adaptive leadership at scale.',
+      source: 'Wenger-Trayner et al. (2015); Reason & Bradbury (2013)',
+      keyQuestion: 'How does leadership learning happen across your organization?',
+      interventions: [
+        {
+          id: 'communities_of_practice',
+          title: 'Communities of Practice (CoP)',
+          type: 'community',
+          duration: 'Ongoing',
+          mechanism: 'Builds collective identity, knowledge diffusion, and cultural alignment',
+          description: 'Voluntary networks around shared domains where members share experiences and jointly learn leadership-in-action.',
+          activities: [
+            'Identify a shared domain of practice (e.g., innovation, equity)',
+            'Recruit voluntary members who share the interest',
+            'Establish regular meeting rhythm and practices',
+            'Document and share learnings across the organization'
+          ],
+          source: 'Wenger-Trayner et al. (2015)'
+        },
+        {
+          id: 'systemic_action_research',
+          title: 'Systemic Action Research',
+          type: 'research',
+          duration: '6-12 months',
+          mechanism: 'Deepens collective reflection and adaptive learning across organizational boundaries',
+          description: 'Ongoing inquiry cycles involving multiple stakeholder groups who co-diagnose challenges and co-design interventions.',
+          activities: [
+            'Convene multiple stakeholder groups around a system challenge',
+            'Conduct collaborative diagnosis of root causes',
+            'Co-design interventions with affected stakeholders',
+            'Implement and reflect in iterative cycles'
+          ],
+          source: 'Reason & Bradbury (2013); Cornett & Parsons (2009)'
         }
       ]
     }
-  ];
+  };
+
+  const currentArea = developmentAreas[activeArea];
+  
+  // Intervention type icons and colors
+  const typeConfig = {
+    team: { icon: '👥', label: 'Team', color: 'teal' },
+    practice: { icon: '🎯', label: 'Practice', color: 'green' },
+    coach: { icon: '💬', label: 'Coach', color: 'blue' },
+    forum: { icon: '🗣️', label: 'Forum', color: 'amber' },
+    program: { icon: '📚', label: 'Program', color: 'rose' },
+    assess: { icon: '📊', label: 'Assess', color: 'violet' },
+    community: { icon: '🌐', label: 'Community', color: 'emerald' },
+    research: { icon: '🔬', label: 'Research', color: 'indigo' }
+  };
 
   return (
-    <div className="space-y-4">
+    <div className="animate-fadeIn">
       {/* Header */}
-      <div className="bg-teal-50 border border-teal-200 rounded-xl p-4">
-        <h2 className="font-semibold text-teal-800 mb-2">{LEADERSHIP_DEVELOPMENT.title}</h2>
+      <div className="bg-gradient-to-br from-teal-50 to-cyan-50 border border-teal-200 rounded-xl p-5 mb-6">
+        <h2 className="font-bold text-xl text-teal-800 mb-2">{LEADERSHIP_DEVELOPMENT.title}</h2>
         <p className="text-sm text-stone-600 mb-2">{LEADERSHIP_DEVELOPMENT.description}</p>
         <p className="text-xs text-stone-500">Source: {LEADERSHIP_DEVELOPMENT.source}</p>
       </div>
 
-      {/* Collapsible Sections */}
-      {sections.map(section => (
-        <div key={section.id} className="bg-white rounded-xl border border-stone-200 overflow-hidden">
-          {/* Section Header - Clickable */}
+      {/* Area Navigation Tabs */}
+      <div className="flex gap-2 mb-6 overflow-x-auto pb-2">
+        {Object.values(developmentAreas).map(area => (
           <button
-            onClick={() => toggleSection(section.id)}
-            className={`w-full p-4 flex items-center justify-between text-left transition-colors ${
-              expandedSection === section.id 
-                ? section.color === 'teal' ? 'bg-teal-50' : 'bg-indigo-50'
-                : 'hover:bg-stone-50'
+            key={area.id}
+            onClick={() => { setActiveArea(area.id); setExpandedIntervention(null); }}
+            className={`flex items-center gap-2 px-4 py-3 rounded-xl font-medium whitespace-nowrap transition-all ${
+              activeArea === area.id
+                ? `bg-gradient-to-r ${area.gradient} text-white shadow-lg`
+                : 'bg-white border border-stone-200 text-stone-600 hover:border-stone-300'
             }`}
           >
-            <div className="flex items-center gap-3">
-              <span className="text-2xl">{section.icon}</span>
-              <div>
-                <h3 className="font-semibold text-stone-800">{section.title}</h3>
-                <p className="text-xs text-stone-500">{section.subtitle}</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className={`text-xs px-2 py-1 rounded-full ${
-                section.color === 'teal' ? 'bg-teal-100 text-teal-700' : 'bg-indigo-100 text-indigo-700'
-              }`}>{section.subsections.length} areas</span>
-              <Icons.ChevronDown className={`transition-transform ${expandedSection === section.id ? 'rotate-180' : ''}`} />
-            </div>
+            <span className="text-lg">{area.icon}</span>
+            <span className="text-sm">{area.title}</span>
           </button>
+        ))}
+      </div>
 
-          {/* Section Content - Expandable */}
-          {expandedSection === section.id && (
-            <div className="border-t border-stone-100 p-4">
-              <p className="text-sm text-stone-600 mb-4">{section.description}</p>
-              
-              {/* Subsection Cards */}
-              <div className="space-y-3">
-                {section.subsections.map(sub => (
-                  <div 
-                    key={sub.id} 
-                    className={`rounded-xl border p-4 ${
-                      section.color === 'teal' ? 'border-teal-200 bg-teal-50/50' : 'border-indigo-200 bg-indigo-50/50'
-                    }`}
-                  >
-                    <h4 className="font-semibold text-stone-800 mb-1">{sub.title}</h4>
-                    <p className="text-sm text-stone-600 mb-3">{sub.description}</p>
-                    
-                    {/* Key Insight */}
-                    <div className={`text-xs p-2 rounded-lg mb-3 ${
-                      section.color === 'teal' ? 'bg-teal-100/50 text-teal-800' : 'bg-indigo-100/50 text-indigo-800'
-                    }`}>
-                      💡 {sub.keyInsight}
-                    </div>
-
-                    {/* Action Buttons */}
-                    <div className="flex flex-wrap gap-2">
-                      {/* Assessment Button */}
-                      {sub.assessment && (
-                        <button
-                          onClick={() => setCurrentView(`assessment-${sub.assessment.id}`)}
-                          className={`flex items-center gap-1 px-3 py-2 rounded-lg text-sm font-medium text-white ${
-                            section.color === 'teal' ? 'bg-teal-600 hover:bg-teal-700' : 'bg-indigo-600 hover:bg-indigo-700'
-                          }`}
-                        >
-                          📋 Take Assessment
-                          <span className="text-xs opacity-80">({sub.assessment.timeToComplete})</span>
-                        </button>
-                      )}
-                      
-                      {/* Intervention Button */}
-                      {sub.intervention && (
-                        <button
-                          onClick={() => setCurrentView(`intervention-${sub.intervention.id}`)}
-                          className="flex items-center gap-1 px-3 py-2 bg-white border border-stone-300 rounded-lg text-sm font-medium text-stone-700 hover:bg-stone-50"
-                        >
-                          🎯 Development Program
-                          <span className="text-xs text-stone-500">({sub.intervention.duration})</span>
-                        </button>
-                      )}
-                      
-                      {/* Coming Soon */}
-                      {!sub.assessment && !sub.intervention && (
-                        <span className="text-xs text-stone-500 italic">Development content coming soon</span>
-                      )}
-                    </div>
-                  </div>
-                ))}
+      {/* Current Area Detail */}
+      <div className="space-y-4">
+        {/* Area Header Card */}
+        <div className={`bg-gradient-to-br ${
+          currentArea.color === 'teal' ? 'from-teal-50 to-cyan-50 border-teal-200' :
+          currentArea.color === 'blue' ? 'from-blue-50 to-indigo-50 border-blue-200' :
+          currentArea.color === 'violet' ? 'from-violet-50 to-purple-50 border-violet-200' :
+          'from-emerald-50 to-green-50 border-emerald-200'
+        } border rounded-xl p-5`}>
+          <div className="flex items-start justify-between mb-3">
+            <div>
+              <div className="flex items-center gap-2 mb-1">
+                <span className="text-2xl">{currentArea.icon}</span>
+                <h3 className="text-lg font-bold text-stone-800">{currentArea.title}</h3>
               </div>
+              <p className="text-sm text-stone-600">{currentArea.subtitle}</p>
             </div>
-          )}
+          </div>
+          
+          <p className="text-sm text-stone-600 mb-3">{currentArea.description}</p>
+          
+          <div className={`${
+            currentArea.color === 'teal' ? 'bg-teal-100/50 text-teal-800' :
+            currentArea.color === 'blue' ? 'bg-blue-100/50 text-blue-800' :
+            currentArea.color === 'violet' ? 'bg-violet-100/50 text-violet-800' :
+            'bg-emerald-100/50 text-emerald-800'
+          } text-sm p-3 rounded-lg`}>
+            <span className="font-medium">Key Question:</span> {currentArea.keyQuestion}
+          </div>
+          
+          <p className="text-xs text-stone-500 mt-3">Source: {currentArea.source}</p>
         </div>
-      ))}
+
+        {/* Intervention Type Legend */}
+        <div className="bg-white rounded-xl border border-stone-200 p-4">
+          <p className="text-xs font-medium text-stone-500 mb-3">INTERVENTION TYPES</p>
+          <div className="flex flex-wrap gap-2">
+            {Object.entries(typeConfig).map(([key, config]) => (
+              <span key={key} className="flex items-center gap-1 text-xs text-stone-600 bg-stone-50 px-2 py-1 rounded-full">
+                <span>{config.icon}</span>
+                <span>{config.label}</span>
+              </span>
+            ))}
+          </div>
+        </div>
+
+        {/* Interventions Grid */}
+        <div>
+          <h4 className="font-semibold text-stone-800 mb-3">
+            {currentArea.interventions.length} Development Interventions
+          </h4>
+          <div className="space-y-3">
+            {currentArea.interventions.map((intervention, idx) => {
+              const typeInfo = typeConfig[intervention.type];
+              const isExpanded = expandedIntervention === intervention.id;
+              
+              return (
+                <div
+                  key={intervention.id}
+                  className={`bg-white rounded-xl border transition-all ${
+                    isExpanded ? 'border-stone-300 shadow-md' : 'border-stone-200 hover:border-stone-300'
+                  }`}
+                >
+                  {/* Intervention Header */}
+                  <button
+                    onClick={() => setExpandedIntervention(isExpanded ? null : intervention.id)}
+                    className="w-full p-4 text-left"
+                  >
+                    <div className="flex items-start gap-3">
+                      {/* Number Badge */}
+                      <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-white text-sm font-bold bg-gradient-to-br ${currentArea.gradient}`}>
+                        {idx + 1}
+                      </div>
+                      
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-1">
+                          <h5 className="font-semibold text-stone-800">{intervention.title}</h5>
+                          <span className={`text-xs px-2 py-0.5 rounded-full ${
+                            typeInfo.color === 'teal' ? 'bg-teal-100 text-teal-700' :
+                            typeInfo.color === 'green' ? 'bg-green-100 text-green-700' :
+                            typeInfo.color === 'blue' ? 'bg-blue-100 text-blue-700' :
+                            typeInfo.color === 'amber' ? 'bg-amber-100 text-amber-700' :
+                            typeInfo.color === 'rose' ? 'bg-rose-100 text-rose-700' :
+                            typeInfo.color === 'violet' ? 'bg-violet-100 text-violet-700' :
+                            typeInfo.color === 'emerald' ? 'bg-emerald-100 text-emerald-700' :
+                            'bg-indigo-100 text-indigo-700'
+                          }`}>
+                            {typeInfo.icon} {typeInfo.label}
+                          </span>
+                        </div>
+                        
+                        <p className="text-sm text-stone-600">{intervention.description}</p>
+                        
+                        <div className="flex items-center gap-4 mt-2">
+                          <span className="text-xs text-stone-500">⏱️ {intervention.duration}</span>
+                        </div>
+                      </div>
+                      
+                      <Icons.ChevronDown className={`text-stone-400 transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
+                    </div>
+                  </button>
+                  
+                  {/* Expanded Content */}
+                  {isExpanded && (
+                    <div className="px-4 pb-4 pt-0 border-t border-stone-100">
+                      {/* Mechanism */}
+                      <div className={`${
+                        currentArea.color === 'teal' ? 'bg-teal-50 border-teal-200' :
+                        currentArea.color === 'blue' ? 'bg-blue-50 border-blue-200' :
+                        currentArea.color === 'violet' ? 'bg-violet-50 border-violet-200' :
+                        'bg-emerald-50 border-emerald-200'
+                      } border rounded-lg p-3 mt-4 mb-4`}>
+                        <p className="text-xs font-medium text-stone-500 mb-1">HOW IT WORKS</p>
+                        <p className="text-sm text-stone-700">{intervention.mechanism}</p>
+                      </div>
+                      
+                      {/* Activities */}
+                      <div className="mb-4">
+                        <p className="text-xs font-medium text-stone-500 mb-2">ACTIVITIES</p>
+                        <div className="space-y-2">
+                          {intervention.activities.map((activity, actIdx) => (
+                            <div key={actIdx} className="flex items-start gap-2">
+                              <span className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-medium text-white bg-gradient-to-br ${currentArea.gradient}`}>
+                                {actIdx + 1}
+                              </span>
+                              <p className="text-sm text-stone-600 flex-1">{activity}</p>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                      
+                      {/* Source */}
+                      <p className="text-xs text-stone-500">📚 {intervention.source}</p>
+                      
+                      {/* Action Buttons */}
+                      <div className="flex gap-2 mt-4">
+                        <button
+                          onClick={() => setCurrentView('journal')}
+                          className="flex-1 px-4 py-2 bg-stone-100 rounded-lg text-sm font-medium text-stone-700 hover:bg-stone-200 transition-colors"
+                        >
+                          📝 Reflect in Journal
+                        </button>
+                        <button
+                          onClick={() => setCurrentView('coaches')}
+                          className="flex-1 px-4 py-2 bg-stone-100 rounded-lg text-sm font-medium text-stone-700 hover:bg-stone-200 transition-colors"
+                        >
+                          💬 Discuss with Coach
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Team Assessment Section */}
+        <div className="bg-white rounded-xl border border-stone-200 p-4 mt-6">
+          <h4 className="font-semibold text-stone-800 mb-3">📊 Team Assessments</h4>
+          <p className="text-sm text-stone-600 mb-4">Assess your team's collective capacity with these research-based instruments.</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <button
+              onClick={() => setCurrentView('assessment-psychological_safety')}
+              className="flex items-center gap-3 p-3 bg-teal-50 rounded-lg border border-teal-200 hover:border-teal-300 transition-colors text-left"
+            >
+              <div className="w-10 h-10 bg-teal-100 rounded-lg flex items-center justify-center">
+                <span className="text-lg">🛡️</span>
+              </div>
+              <div>
+                <p className="font-medium text-stone-800">Psychological Safety</p>
+                <p className="text-xs text-stone-500">Team climate assessment</p>
+              </div>
+            </button>
+            <button
+              onClick={() => setCurrentView('assessment-collective_efficacy')}
+              className="flex items-center gap-3 p-3 bg-blue-50 rounded-lg border border-blue-200 hover:border-blue-300 transition-colors text-left"
+            >
+              <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                <span className="text-lg">💪</span>
+              </div>
+              <div>
+                <p className="font-medium text-stone-800">Collective Efficacy</p>
+                <p className="text-xs text-stone-500">Team confidence assessment</p>
+              </div>
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
@@ -7054,6 +7328,7 @@ export default function DayByDayApp() {
     </div>
   );
 }
+
 
 
 
