@@ -3308,6 +3308,8 @@ function VoiceCoach({ coachType, setCurrentView, user, setActions }) {
   const [status, setStatus] = useState('Ready to connect');
   const [isAISpeaking, setIsAISpeaking] = useState(false);
   const [transcript, setTranscript] = useState('');
+  const [conversationHistory, setConversationHistory] = useState([]);
+  const [sessionStarted, setSessionStarted] = useState(null);
 
   const peerConnection = useRef(null);
   const dataChannel = useRef(null);
@@ -3319,8 +3321,42 @@ function VoiceCoach({ coachType, setCurrentView, user, setActions }) {
   const bgColor = isICF ? '#FEF3C7' : '#EDE9FE';
 
   useEffect(() => {
-    return () => cleanupConnection();
+    return () => {
+      saveSession();
+      cleanupConnection();
+    };
   }, []);
+
+  const saveSession = async () => {
+    if (!user?.id || conversationHistory.length === 0) return;
+    
+    try {
+      const sessionData = {
+        user_id: user.id,
+        coach_type: isICF ? 'icf' : 'day_advisor',
+        session_type: 'voice',
+        started_at: sessionStarted || new Date().toISOString(),
+        ended_at: new Date().toISOString(),
+        duration_seconds: sessionStarted 
+          ? Math.floor((Date.now() - new Date(sessionStarted).getTime()) / 1000)
+          : 0,
+        messages: conversationHistory,
+        include_in_research: false
+      };
+
+      const { error } = await supabase
+        .from('coaching_sessions')
+        .insert(sessionData);
+
+      if (error) {
+        console.error('Error saving voice session:', error);
+      } else {
+        console.log('Voice coaching session saved');
+      }
+    } catch (e) {
+      console.error('Exception saving voice session:', e);
+    }
+  };
 
   const cleanupConnection = () => {
     if (dataChannel.current) { dataChannel.current.close(); dataChannel.current = null; }
@@ -3380,8 +3416,13 @@ function VoiceCoach({ coachType, setCurrentView, user, setActions }) {
         }
         break;
       case 'response.audio_transcript.done':
-        // Full transcript available - check for actions
+        // Full transcript available - save to conversation history
         if (event.transcript) {
+          setConversationHistory(prev => [...prev, {
+            role: 'assistant',
+            content: event.transcript,
+            timestamp: new Date().toISOString()
+          }]);
           extractAndSaveActions(event.transcript);
           setTranscript('');
         }
@@ -3392,6 +3433,11 @@ function VoiceCoach({ coachType, setCurrentView, user, setActions }) {
         setStatus('Your turn - speak when ready');
         // Also try to extract from accumulated transcript
         if (transcript) {
+          setConversationHistory(prev => [...prev, {
+            role: 'assistant',
+            content: transcript,
+            timestamp: new Date().toISOString()
+          }]);
           extractAndSaveActions(transcript);
           setTranscript('');
         }
@@ -3402,6 +3448,16 @@ function VoiceCoach({ coachType, setCurrentView, user, setActions }) {
       case 'input_audio_buffer.speech_stopped':
         setStatus('Processing...');
         break;
+      case 'conversation.item.input_audio_transcription.completed':
+        // User's speech was transcribed
+        if (event.transcript) {
+          setConversationHistory(prev => [...prev, {
+            role: 'user',
+            content: event.transcript,
+            timestamp: new Date().toISOString()
+          }]);
+        }
+        break;
       case 'error':
         console.error('Realtime error:', event.error);
         break;
@@ -3411,6 +3467,7 @@ function VoiceCoach({ coachType, setCurrentView, user, setActions }) {
   const connectSession = async () => {
     setIsConnecting(true);
     setStatus('Requesting microphone...');
+    setSessionStarted(new Date().toISOString());
 
     try {
       mediaStream.current = await navigator.mediaDevices.getUserMedia({
@@ -3464,6 +3521,13 @@ function VoiceCoach({ coachType, setCurrentView, user, setActions }) {
 
         setTimeout(() => {
           const greetingText = getGreeting();
+          // Add greeting to conversation history
+          setConversationHistory([{
+            role: 'assistant',
+            content: greetingText,
+            timestamp: new Date().toISOString()
+          }]);
+          
           dataChannel.current.send(JSON.stringify({
             type: 'conversation.item.create',
             item: { type: 'message', role: 'assistant', content: [{ type: 'text', text: greetingText }] }
@@ -3522,10 +3586,19 @@ function VoiceCoach({ coachType, setCurrentView, user, setActions }) {
     if (audioElement.current) { audioElement.current.muted = isSpeakerOn; setIsSpeakerOn(!isSpeakerOn); }
   };
 
+  const handleBack = async () => {
+    // Save session before leaving
+    if (conversationHistory.length > 0 && user?.id) {
+      await saveSession();
+    }
+    cleanupConnection();
+    setCurrentView('coaches');
+  };
+
   return (
     <div className="animate-fadeIn flex flex-col h-[calc(100vh-160px)] lg:h-[calc(100vh-100px)]">
       <div className="flex items-center gap-3 mb-6">
-        <button onClick={() => setCurrentView('coaches')} className="p-2 -ml-2 text-stone-500 hover:text-stone-700"><Icons.ChevronLeft /></button>
+        <button onClick={handleBack} className="p-2 -ml-2 text-stone-500 hover:text-stone-700"><Icons.ChevronLeft /></button>
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl flex items-center justify-center text-white" style={{ background: `linear-gradient(135deg, ${primaryColor}, ${primaryColor}dd)` }}>
             {isICF ? <Icons.Heart /> : <Icons.GraduationCap />}
@@ -3598,6 +3671,8 @@ function TextCoach({ coachType, setCurrentView, user, setActions, actions }) {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [sessionId, setSessionId] = useState(null);
+  const [sessionStarted, setSessionStarted] = useState(null);
   const messagesEndRef = useRef(null);
 
   const isICF = coachType === 'icf';
@@ -3605,17 +3680,63 @@ function TextCoach({ coachType, setCurrentView, user, setActions, actions }) {
 
   useEffect(() => { messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [messages]);
 
+  // Initialize session
   useEffect(() => {
     const greeting = isICF
       ? "Hello! What are you interested in coaching about today?"
       : "Welcome! I'm here to share research-based guidance from David Day's work. What would you like to explore today?";
-    setMessages([{ role: 'assistant', content: greeting }]);
+    setMessages([{ role: 'assistant', content: greeting, timestamp: new Date().toISOString() }]);
+    setSessionStarted(new Date().toISOString());
   }, []);
+
+  // Save session when leaving (cleanup)
+  useEffect(() => {
+    return () => {
+      if (messages.length > 1 && user?.id) {
+        saveSession();
+      }
+    };
+  }, [messages]);
+
+  const saveSession = async () => {
+    if (!user?.id || messages.length <= 1) return;
+    
+    try {
+      const sessionData = {
+        user_id: user.id,
+        coach_type: isICF ? 'icf' : 'day_advisor',
+        session_type: 'text',
+        started_at: sessionStarted,
+        ended_at: new Date().toISOString(),
+        duration_seconds: Math.floor((Date.now() - new Date(sessionStarted).getTime()) / 1000),
+        messages: messages.map(m => ({
+          role: m.role,
+          content: m.content,
+          timestamp: m.timestamp || new Date().toISOString()
+        })),
+        include_in_research: false // User can opt-in later in privacy settings
+      };
+
+      const { data, error } = await supabase
+        .from('coaching_sessions')
+        .insert(sessionData)
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Error saving coaching session:', error);
+      } else {
+        console.log('Coaching session saved:', data?.id);
+      }
+    } catch (e) {
+      console.error('Exception saving coaching session:', e);
+    }
+  };
 
   const handleSend = async (text) => {
     const messageText = text || input;
     if (!messageText.trim() || isLoading) return;
-    const userMessage = { role: 'user', content: messageText };
+    const userMessage = { role: 'user', content: messageText, timestamp: new Date().toISOString() };
     setMessages(prev => [...prev, userMessage]);
     setInput('');
     setIsLoading(true);
@@ -3629,7 +3750,7 @@ function TextCoach({ coachType, setCurrentView, user, setActions, actions }) {
       });
       const data = await response.json();
       if (data.content) {
-        setMessages(prev => [...prev, { role: 'assistant', content: data.content }]);
+        setMessages(prev => [...prev, { role: 'assistant', content: data.content, timestamp: new Date().toISOString() }]);
         if (data.actions && data.actions.length > 0 && user) {
           for (const action of data.actions) {
             const { data: newAction } = await supabase.from('actions').insert({
@@ -3640,16 +3761,24 @@ function TextCoach({ coachType, setCurrentView, user, setActions, actions }) {
         }
       }
     } catch (error) {
-      setMessages(prev => [...prev, { role: 'assistant', content: "Connection error. Please try again." }]);
+      setMessages(prev => [...prev, { role: 'assistant', content: "Connection error. Please try again.", timestamp: new Date().toISOString() }]);
     } finally {
       setIsLoading(false);
     }
   };
 
+  const handleBack = async () => {
+    // Save session before leaving
+    if (messages.length > 1 && user?.id) {
+      await saveSession();
+    }
+    setCurrentView('coaches');
+  };
+
   return (
     <div className="animate-fadeIn flex flex-col h-[calc(100vh-160px)] lg:h-[calc(100vh-100px)]">
       <div className="flex items-center gap-3 mb-4">
-        <button onClick={() => setCurrentView('coaches')} className="p-2 -ml-2 text-stone-500"><Icons.ChevronLeft /></button>
+        <button onClick={handleBack} className="p-2 -ml-2 text-stone-500"><Icons.ChevronLeft /></button>
         <div className="flex items-center gap-3">
           <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-white ${isICF ? 'bg-gradient-to-br from-amber-500 to-amber-600' : 'bg-gradient-to-br from-violet-600 to-violet-700'}`}>
             {isICF ? <Icons.Heart /> : <Icons.GraduationCap />}
@@ -3951,11 +4080,47 @@ function Dashboard({ setCurrentView, streak, user, actions, journalEntries }) {
 function JournalView({ user, journalEntries, setJournalEntries }) {
   const [newEntry, setNewEntry] = useState('');
   const [showNew, setShowNew] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState(null);
 
   const handleSave = async () => {
     if (!newEntry.trim()) return;
-    const { data } = await supabase.from('reflections').insert({ user_id: user.id, content: newEntry, reflection_type: 'journal' }).select().single();
-    if (data) { setJournalEntries([data, ...journalEntries]); setNewEntry(''); setShowNew(false); }
+    if (!user?.id) {
+      setError('You must be logged in to save');
+      return;
+    }
+    
+    setSaving(true);
+    setError(null);
+    
+    try {
+      const { data, error: saveError } = await supabase
+        .from('reflections')
+        .insert({ 
+          user_id: user.id, 
+          content: newEntry.trim(), 
+          reflection_type: 'journal' 
+        })
+        .select()
+        .single();
+      
+      if (saveError) {
+        console.error('Journal save error:', saveError);
+        setError(saveError.message || 'Failed to save. Please try again.');
+        return;
+      }
+      
+      if (data) { 
+        setJournalEntries([data, ...journalEntries]); 
+        setNewEntry(''); 
+        setShowNew(false); 
+      }
+    } catch (e) {
+      console.error('Journal save exception:', e);
+      setError('An unexpected error occurred. Please try again.');
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
@@ -3971,9 +4136,23 @@ function JournalView({ user, journalEntries, setJournalEntries }) {
       {showNew && (
         <div className="bg-white rounded-2xl border border-stone-200 p-5 mb-6">
           <textarea value={newEntry} onChange={(e) => setNewEntry(e.target.value)} placeholder="What are you learning about yourself as a leader? What insights have emerged?" className="w-full px-4 py-3 border border-stone-200 rounded-xl resize-none h-32 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500" autoFocus />
+          {error && (
+            <div className="mt-2 p-2 bg-red-50 border border-red-200 rounded-lg">
+              <p className="text-red-700 text-sm">❌ {error}</p>
+            </div>
+          )}
           <div className="flex justify-end gap-2 mt-3">
-            <button onClick={() => { setShowNew(false); setNewEntry(''); }} className="px-4 py-2 text-stone-600 text-sm">Cancel</button>
-            <button onClick={handleSave} className="px-5 py-2 bg-stone-900 text-white rounded-full text-sm">Save Entry</button>
+            <button onClick={() => { setShowNew(false); setNewEntry(''); setError(null); }} className="px-4 py-2 text-stone-600 text-sm" disabled={saving}>Cancel</button>
+            <button onClick={handleSave} disabled={saving || !newEntry.trim()} className="px-5 py-2 bg-stone-900 text-white rounded-full text-sm disabled:opacity-50 flex items-center gap-2">
+              {saving ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  Saving...
+                </>
+              ) : (
+                'Save Entry'
+              )}
+            </button>
           </div>
         </div>
       )}
@@ -7396,6 +7575,7 @@ export default function DayByDayApp() {
     </div>
   );
 }
+
 
 
 
