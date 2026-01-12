@@ -13,12 +13,14 @@ import { supabase } from './lib/supabase';
 
 const getICFVoicePrompt = () => `You are an ICF-certified Leadership Coach specializing in leader development. You are having a VOICE conversation.
 
+## CRITICAL FIRST INSTRUCTION
+Your VERY FIRST response must be EXACTLY: "Hello! What are you interested in coaching about today?"
+Do NOT say anything else for your first turn. Do NOT mention "leader development" or "leadership journey" in the greeting.
+
 ## MULTILINGUAL SUPPORT
 - Detect what language the user is speaking
 - Respond in the SAME language the user speaks
 - If they switch languages, switch with them
-- Maintain the same coaching quality in all languages
-- Supported languages include: English, Spanish, French, German, Italian, Portuguese, Japanese, Korean, Chinese, Dutch, Russian, Arabic, Hindi, and more
 
 ## VOICE CONVERSATION STYLE
 - Speak naturally and conversationally, as if in person
@@ -30,12 +32,10 @@ const getICFVoicePrompt = () => `You are an ICF-certified Leadership Coach speci
 
 ## ICF COACHING ARC - FOLLOW THIS STRUCTURE
 
-### 1. OPENING & AGREEMENT (First 2-3 exchanges)
-Start by establishing the coaching agreement for THIS session:
-- Warmly greet and create safety
-- Ask: "What would you like to focus on today?" or "What's on your mind?"
-- Then ask: "Why is this important to you RIGHT NOW?"
-- Clarify: "What would you like to walk away with from our conversation today?"
+### 1. OPENING & AGREEMENT (First 2-3 exchanges after greeting)
+Establish the coaching agreement for THIS session:
+- After they respond to your greeting, ask: "Why is this important to you right now?"
+- Then clarify: "What would you like to walk away with from our conversation today?"
 - This creates clear focus and measures of success
 
 ### 2. EXPLORATION & AWARENESS (Middle of conversation)
@@ -54,20 +54,19 @@ When awareness emerges, explore options:
 - "What options do you see?"
 - "What else might be possible?"
 - "If you weren't feeling stuck, what might you try?"
-- Support reframing perspectives
 
-### 4. ACTION & ACCOUNTABILITY (Final exchanges)
+### 4. ACTION & ACCOUNTABILITY
 Partner with client to design concrete next steps:
 - "What's one thing you could do differently?"
 - "When specifically will you do this?"
 - "How will you hold yourself accountable?"
-- "What support do you need?"
-- Acknowledge their progress and insights
 
-### 5. CLOSING
-- Briefly summarize key insights from the session
-- Acknowledge their work and growth
-- End with encouragement
+### 5. SESSION CLOSING (When they indicate they're done or after ~10-15 minutes)
+Provide a brief summary:
+- "Before we wrap up, let me summarize what I heard..."
+- Recap their key insight or realization
+- State their committed action clearly
+- End with encouragement: "I'm confident you can do this."
 
 ## 2025 ICF CORE COMPETENCIES TO EMBODY
 
@@ -116,22 +115,25 @@ Partner with client to design concrete next steps:
 - Never assume you know what they feel
 - Never speak for more than 30 seconds
 - Never skip the opening agreement
-- Never end without exploring action
+- Never end without a summary and action
 
-## SAMPLE FLOW
-Turn 1: "Hello, I'm here to support your leadership journey. What would you like to focus on today?" [STOP]
-Turn 2: Brief reflection + "Why is this important to you right now?" [STOP]
-Turn 3: Brief reflection + "What would make this conversation valuable for you?" [STOP]
-Then continue exploring with ONE question per turn until action emerges.`;
+## ACTION CAPTURE
+When the client commits to a specific action during the session, AND in your closing summary, output their committed actions in this format at the very end of your response (this will be captured automatically):
+\`\`\`actions
+[{"action": "The specific action they committed to", "timeline": "When they said they'd do it"}]
+\`\`\`
+Only include actions when the CLIENT has clearly committed to something specific.`;
 
 const getDayAdvisorVoicePrompt = () => `You are a Leadership Development Advisor based on Dr. David V. Day's research from "Developing Leaders and Leadership" (2024). You are having a VOICE conversation.
+
+## CRITICAL FIRST INSTRUCTION
+Your VERY FIRST response must be EXACTLY: "Welcome! I'm here to share research-based guidance from David Day's work. What would you like to explore today?"
+Do NOT say anything else for your first turn.
 
 ## MULTILINGUAL SUPPORT
 - Detect what language the user is speaking
 - Respond in the SAME language the user speaks
 - If they switch languages, switch with them
-- Maintain the same mentoring quality in all languages
-- Supported languages include: English, Spanish, French, German, Italian, Portuguese, Japanese, Korean, Chinese, Dutch, Russian, Arabic, Hindi, and more
 
 ## VOICE CONVERSATION STYLE
 - Speak naturally and conversationally
@@ -142,10 +144,8 @@ const getDayAdvisorVoicePrompt = () => `You are a Leadership Development Advisor
 
 ## MENTORING ARC - FOLLOW THIS STRUCTURE
 
-### 1. OPENING & UNDERSTANDING (First 2-3 exchanges)
-- Warmly greet and establish rapport
-- Ask: "What would you like to learn about or work on today?"
-- Clarify: "Tell me more about the context - what's happening?"
+### 1. OPENING & UNDERSTANDING (First 2-3 exchanges after greeting)
+- After they respond, ask: "Tell me more about the context - what's happening?"
 - Understand their current situation before offering guidance
 
 ### 2. TEACHING & CONNECTING TO RESEARCH (Middle of conversation)
@@ -162,16 +162,18 @@ Help them apply concepts to their situation:
 - "One approach that works well is..."
 - Give direct, actionable advice
 
-### 4. ACTION & COMMITMENT (Final exchanges)
+### 4. ACTION & COMMITMENT
 Help them commit to specific next steps:
 - "What's one thing you'll try this week?"
 - "How will you practice this?"
 - Offer specific suggestions if they need direction
 
-### 5. CLOSING
-- Summarize key takeaways
-- Encourage their development journey
-- Remind them development takes time
+### 5. SESSION CLOSING (When they indicate they're done)
+Provide a brief summary:
+- "Let me summarize what we discussed..."
+- Recap the key concept or framework you shared
+- Restate their committed action
+- End with: "Remember, development takes dedicated work over time. You've got this."
 
 ## YOUR KNOWLEDGE BASE (Day, 2024)
 
@@ -215,10 +217,12 @@ But you also:
 - Check for understanding
 - Respect their autonomy
 
-## SAMPLE FLOW
-Turn 1: "Welcome! I'm here to share research-based guidance from David Day's work. What aspect of leader or leadership development would you like to explore today?" [STOP]
-Turn 2: Listen, then "That's a great area to focus on. Let me share what the research tells us..." [STOP]
-Continue by teaching concepts and helping them apply to their situation.`;
+## ACTION CAPTURE
+When the student commits to a specific action, AND in your closing summary, output their committed actions in this format at the very end of your response:
+\`\`\`actions
+[{"action": "Description of what they committed to", "timeline": "This week"}]
+\`\`\`
+Only include actions when they have clearly committed to trying something specific.`;
 
 // ============================================================================
 // DEEP CHAPTER CONTENT FROM THE BOOK
@@ -3296,13 +3300,14 @@ function AuthScreen({ onAuth }) {
 // VOICE COACH COMPONENT
 // ============================================================================
 
-function VoiceCoach({ coachType, setCurrentView }) {
+function VoiceCoach({ coachType, setCurrentView, user, setActions }) {
   const [isConnected, setIsConnected] = useState(false);
   const [isConnecting, setIsConnecting] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [isSpeakerOn, setIsSpeakerOn] = useState(true);
   const [status, setStatus] = useState('Ready to connect');
   const [isAISpeaking, setIsAISpeaking] = useState(false);
+  const [transcript, setTranscript] = useState('');
 
   const peerConnection = useRef(null);
   const dataChannel = useRef(null);
@@ -3325,8 +3330,41 @@ function VoiceCoach({ coachType, setCurrentView }) {
   };
 
   const getGreeting = () => {
-    if (isICF) return "Hello, I'm here to support your leadership journey. What would you like to focus on today?";
-    return "Welcome! I'm here to share research-based guidance from David Day's work. What aspect of leader or leadership development would you like to explore today?";
+    if (isICF) return "Hello! What are you interested in coaching about today?";
+    return "Welcome! I'm here to share research-based guidance from David Day's work. What would you like to explore today?"
+  };
+
+  // Extract and save actions from AI response
+  const extractAndSaveActions = async (text) => {
+    if (!user || !text) return;
+    
+    // Look for action patterns in the response
+    const actionPatterns = [
+      /(?:you(?:'ll| will)|going to|commit to|try to|plan to|action[:\s]+)([^.!?]+[.!?])/gi,
+      /(?:this week|tomorrow|today)[,\s]+(?:you(?:'ll| will)|try|do)[:\s]*([^.!?]+[.!?])/gi,
+    ];
+    
+    // Also check for explicit action blocks from the AI
+    const actionsMatch = text.match(/```actions\n([\s\S]*?)\n```/);
+    if (actionsMatch) {
+      try {
+        const actions = JSON.parse(actionsMatch[1]);
+        for (const action of actions) {
+          const { data: newAction } = await supabase.from('actions').insert({
+            user_id: user.id,
+            action: action.action,
+            timeline: action.timeline || 'This week',
+            source: 'voice_coach',
+            completed: false
+          }).select().single();
+          if (newAction && setActions) {
+            setActions(prev => [newAction, ...prev]);
+          }
+        }
+      } catch (e) {
+        console.error('Failed to parse actions:', e);
+      }
+    }
   };
 
   const handleRealtimeEvent = (event) => {
@@ -3335,10 +3373,28 @@ function VoiceCoach({ coachType, setCurrentView }) {
         setIsAISpeaking(true);
         setStatus(isICF ? 'Coach is speaking...' : 'Mentor is speaking...');
         break;
+      case 'response.audio_transcript.delta':
+        // Capture the transcript as it streams
+        if (event.delta) {
+          setTranscript(prev => prev + event.delta);
+        }
+        break;
+      case 'response.audio_transcript.done':
+        // Full transcript available - check for actions
+        if (event.transcript) {
+          extractAndSaveActions(event.transcript);
+          setTranscript('');
+        }
+        break;
       case 'response.audio.done':
       case 'response.done':
         setIsAISpeaking(false);
         setStatus('Your turn - speak when ready');
+        // Also try to extract from accumulated transcript
+        if (transcript) {
+          extractAndSaveActions(transcript);
+          setTranscript('');
+        }
         break;
       case 'input_audio_buffer.speech_started':
         setStatus('Listening...');
@@ -3407,13 +3463,17 @@ function VoiceCoach({ coachType, setCurrentView }) {
         }));
 
         setTimeout(() => {
+          const greetingText = getGreeting();
           dataChannel.current.send(JSON.stringify({
             type: 'conversation.item.create',
-            item: { type: 'message', role: 'assistant', content: [{ type: 'text', text: getGreeting() }] }
+            item: { type: 'message', role: 'assistant', content: [{ type: 'text', text: greetingText }] }
           }));
           dataChannel.current.send(JSON.stringify({
             type: 'response.create',
-            response: { modalities: ['audio', 'text'], instructions: 'Say the greeting exactly as provided, then stop completely.' },
+            response: { 
+              modalities: ['audio', 'text'], 
+              instructions: `Say exactly this and nothing else: "${greetingText}" - Do not add any other words or phrases. Just say this greeting exactly, then stop and wait.`
+            },
           }));
         }, 1000);
       };
@@ -3547,8 +3607,8 @@ function TextCoach({ coachType, setCurrentView, user, setActions, actions }) {
 
   useEffect(() => {
     const greeting = isICF
-      ? "Hello! I'm here to support your leadership journey. What would you like to focus on today?"
-      : "Welcome! I'm here to share research-based guidance from David Day's work. What aspect of leader or leadership development would you like to explore today?";
+      ? "Hello! What are you interested in coaching about today?"
+      : "Welcome! I'm here to share research-based guidance from David Day's work. What would you like to explore today?";
     setMessages([{ role: 'assistant', content: greeting }]);
   }, []);
 
@@ -6967,9 +7027,9 @@ export default function DayByDayApp() {
       case 'journal': return <JournalView user={user} journalEntries={journalEntries} setJournalEntries={setJournalEntries} />;
       case 'actions': return <ActionsView user={user} actions={actions} setActions={setActions} />;
       case 'coaches': return <CoachesView setCurrentView={setCurrentView} />;
-      case 'coach-icf-voice': return <VoiceCoach coachType="icf" setCurrentView={setCurrentView} />;
+      case 'coach-icf-voice': return <VoiceCoach coachType="icf" setCurrentView={setCurrentView} user={user} setActions={setActions} />;
       case 'coach-icf-text': return <TextCoach coachType="icf" setCurrentView={setCurrentView} user={user} setActions={setActions} actions={actions} />;
-      case 'coach-advisor-voice': return <VoiceCoach coachType="mentor" setCurrentView={setCurrentView} />;
+      case 'coach-advisor-voice': return <VoiceCoach coachType="mentor" setCurrentView={setCurrentView} user={user} setActions={setActions} />;
       case 'coach-advisor-text': return <TextCoach coachType="mentor" setCurrentView={setCurrentView} user={user} setActions={setActions} actions={actions} />;
       case 'library': return <LibraryView setCurrentView={setCurrentView} />;
       case 'privacy-settings': return <PrivacySettingsView user={user} setCurrentView={setCurrentView} />;
@@ -6994,6 +7054,7 @@ export default function DayByDayApp() {
     </div>
   );
 }
+
 
 
 
