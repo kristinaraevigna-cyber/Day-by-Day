@@ -4491,6 +4491,9 @@ function DailyPractice({ activityId, setCurrentView, user }) {
   const [currentStep, setCurrentStep] = useState(0);
   const [responses, setResponses] = useState({});
   const [completed, setCompleted] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
+  const [saveError, setSaveError] = useState(null);
 
   const activity = ACTIVITIES.find(a => a.id === activityId);
   if (!activity) return <div>Activity not found</div>;
@@ -4527,15 +4530,60 @@ function DailyPractice({ activityId, setCurrentView, user }) {
   };
 
   const saveReflection = async () => {
-    if (!user) return;
+    if (!user) {
+      setSaveError('You must be logged in to save');
+      return false;
+    }
+    
+    setSaving(true);
+    setSaveError(null);
+    
     try {
-      await supabase.from('reflections').insert({
+      // Create a summary content string for easy reading
+      const contentSummary = `VCoL Practice: ${activity.title}\n\n` +
+        `🎯 Goal: ${responses.set_goal || '(not provided)'}\n\n` +
+        `🔍 Information Gathered: ${responses.gather_info || '(not provided)'}\n\n` +
+        `⚡ Application: ${responses.apply || '(not provided)'}\n\n` +
+        `💭 Reflection: ${responses.reflect || '(not provided)'}`;
+      
+      const { data, error } = await supabase.from('reflections').insert({
         user_id: user.id,
-        content: JSON.stringify({ activity: activity.title, responses }),
-        reflection_type: 'vcol_practice'
-      });
+        content: contentSummary,
+        reflection_type: 'vcol_practice',
+        activity_id: activity.id,
+        practice_data: {
+          activity_id: activity.id,
+          activity_title: activity.title,
+          competency: activity.competency,
+          capability: activity.capability,
+          responses: {
+            set_goal: responses.set_goal || '',
+            gather_info: responses.gather_info || '',
+            apply: responses.apply || '',
+            reflect: responses.reflect || ''
+          },
+          completed_at: new Date().toISOString()
+        }
+      }).select().single();
+      
+      if (error) throw error;
+      
+      setSaved(true);
+      console.log('VCoL practice saved:', data);
+      return true;
     } catch (e) {
-      console.error('Error saving reflection:', e);
+      console.error('Error saving VCoL practice:', e);
+      setSaveError(e.message || 'Failed to save. Please try again.');
+      return false;
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleSaveAndContinue = async () => {
+    const success = await saveReflection();
+    if (success) {
+      setTimeout(() => setCurrentView('practice'), 500);
     }
   };
 
@@ -4560,21 +4608,41 @@ function DailyPractice({ activityId, setCurrentView, user }) {
           ))}
         </div>
 
+        {/* Save Status Messages */}
+        {saveError && (
+          <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-4">
+            <p className="text-red-700 text-sm">❌ {saveError}</p>
+          </div>
+        )}
+        
+        {saved && (
+          <div className="bg-green-50 border border-green-200 rounded-xl p-4 mb-4">
+            <p className="text-green-700 text-sm">✅ Practice saved successfully!</p>
+          </div>
+        )}
+
         <div className="flex gap-3">
           <button
-            onClick={() => {
-              saveReflection();
-              setCurrentView('practice');
-            }}
-            className={`flex-1 ${colors.accent} text-white py-3 rounded-xl font-medium`}
+            onClick={handleSaveAndContinue}
+            disabled={saving || saved}
+            className={`flex-1 ${colors.accent} text-white py-3 rounded-xl font-medium disabled:opacity-50 flex items-center justify-center gap-2`}
           >
-            Save & Continue
+            {saving ? (
+              <>
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                Saving...
+              </>
+            ) : saved ? (
+              <>✅ Saved!</>
+            ) : (
+              <>💾 Save & Continue</>
+            )}
           </button>
           <button
             onClick={() => setCurrentView('practice')}
-            className="px-4 py-3 border border-stone-300 rounded-xl text-stone-600"
+            className="px-4 py-3 border border-stone-300 rounded-xl text-stone-600 hover:bg-stone-50"
           >
-            Skip
+            {saved ? 'Done' : 'Skip'}
           </button>
         </div>
       </div>
@@ -6995,11 +7063,11 @@ function PrivacySettingsView({ user, setCurrentView }) {
         <h2 className="font-semibold text-stone-800 mb-3">Your Consents</h2>
         <div className="bg-white rounded-xl border border-stone-200 p-4 space-y-3">
           <div className="flex items-center justify-between">
-            <span className="text-stone-700">Privacy Policy (v{consents?.privacy_policy_version})</span>
+            <span className="text-stone-700">Privacy Policy (v{consents?.privacy_policy_version || '1.0'})</span>
             <span className="text-xs text-green-600">✓ Accepted</span>
           </div>
           <div className="flex items-center justify-between">
-            <span className="text-stone-700">Terms of Service (v{consents?.terms_of_service_version})</span>
+            <span className="text-stone-700">Terms of Service (v{consents?.terms_of_service_version || '1.0'})</span>
             <span className="text-xs text-green-600">✓ Accepted</span>
           </div>
           <div className="flex items-center justify-between">
@@ -7328,8 +7396,6 @@ export default function DayByDayApp() {
     </div>
   );
 }
-
-
 
 
 
