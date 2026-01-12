@@ -1794,6 +1794,711 @@ const SELF_VIEW_ASSESSMENTS = {
 };
 
 // ============================================================================
+// PERMA+4 WELL-BEING ASSESSMENT AND DATA
+// ============================================================================
+
+const PERMA4_ASSESSMENT = {
+  id: 'perma4',
+  title: 'Positive Functioning at Work Scale',
+  subtitle: 'PERMA+4 Well-being Assessment',
+  description: 'A 29-item validated assessment to measure your well-being across nine building blocks: Positive Emotions, Engagement, Relationships, Meaning, Accomplishment, Physical Health, Growth Mindset, Economic Security, and Work Environment.',
+  source: 'Donaldson, S. I., & Donaldson, S. I. (2020). Journal of Well-Being Assessment',
+  instructions: 'Rate each statement from 1 (Strongly Disagree) to 7 (Strongly Agree)',
+  scoringGuide: 'Calculate your mean score for each building block. Scores of 5+ indicate strength; below 5 suggests areas for development.',
+  items: [
+    // Positive Emotions (1-3)
+    { id: 1, text: 'I feel joy in a typical workday.', block: 'positiveEmotions' },
+    { id: 2, text: 'Overall, I feel enthusiastic about my work.', block: 'positiveEmotions' },
+    { id: 3, text: 'I love my job.', block: 'positiveEmotions' },
+    // Engagement (4-6)
+    { id: 4, text: 'I typically become absorbed while I am working on something that challenges my abilities.', block: 'engagement' },
+    { id: 5, text: 'I lose track of time while doing something I enjoy at work.', block: 'engagement' },
+    { id: 6, text: 'When I am working on something I enjoy, I forget everything else around me.', block: 'engagement' },
+    // Relationships (7-10)
+    { id: 7, text: 'I can receive support from others when I need it.', block: 'relationships' },
+    { id: 8, text: 'I feel appreciated by my coworkers.', block: 'relationships' },
+    { id: 9, text: 'I trust my colleagues.', block: 'relationships' },
+    { id: 10, text: 'My colleagues bring out my best self.', block: 'relationships' },
+    // Meaning (11-13)
+    { id: 11, text: 'My work is meaningful.', block: 'meaning' },
+    { id: 12, text: 'I understand what makes my job meaningful.', block: 'meaning' },
+    { id: 13, text: 'The work I do serves a greater purpose.', block: 'meaning' },
+    // Accomplishment (14-16)
+    { id: 14, text: 'I set goals that help me achieve my career aspirations.', block: 'accomplishment' },
+    { id: 15, text: 'I typically accomplish what I set out to do in my job.', block: 'accomplishment' },
+    { id: 16, text: 'I am generally satisfied with my performance at work.', block: 'accomplishment' },
+    // Physical Health (17-20)
+    { id: 17, text: 'I typically feel physically healthy.', block: 'physicalHealth' },
+    { id: 18, text: 'I am rarely sick.', block: 'physicalHealth' },
+    { id: 19, text: 'I can typically overcome sources of physical distress (e.g., insomnia, injuries, vision issues).', block: 'physicalHealth' },
+    { id: 20, text: 'I feel in control of my physical health.', block: 'physicalHealth' },
+    // Growth Mindset (21-23)
+    { id: 21, text: 'I believe I can improve my job skills through hard work.', block: 'growthMindset' },
+    { id: 22, text: 'I believe my job will allow me to develop in the future.', block: 'growthMindset' },
+    { id: 23, text: 'I have a bright future at my current work organization.', block: 'growthMindset' },
+    // Economic Security (24-26)
+    { id: 24, text: 'I am comfortable with my current income.', block: 'economicSecurity' },
+    { id: 25, text: 'I could lose several months of pay due to serious illness and still have my economic security.', block: 'economicSecurity' },
+    { id: 26, text: 'In the event of a financial emergency, I have adequate savings.', block: 'economicSecurity' },
+    // Work Environment (27-29)
+    { id: 27, text: 'My physical work environment (e.g., office space) allows me to focus on my work.', block: 'environment' },
+    { id: 28, text: 'There is plenty of natural light in my workplace.', block: 'environment' },
+    { id: 29, text: 'I can conveniently access nature in my work environment (e.g., parks, oceans, mountains).', block: 'environment' },
+  ],
+  blocks: {
+    positiveEmotions: { name: 'Positive Emotions', items: [1, 2, 3], divisor: 3 },
+    engagement: { name: 'Engagement', items: [4, 5, 6], divisor: 3 },
+    relationships: { name: 'Relationships', items: [7, 8, 9, 10], divisor: 4 },
+    meaning: { name: 'Meaning', items: [11, 12, 13], divisor: 3 },
+    accomplishment: { name: 'Accomplishment', items: [14, 15, 16], divisor: 3 },
+    physicalHealth: { name: 'Physical Health', items: [17, 18, 19, 20], divisor: 4 },
+    growthMindset: { name: 'Growth Mindset', items: [21, 22, 23], divisor: 3 },
+    economicSecurity: { name: 'Economic Security', items: [24, 25, 26], divisor: 3 },
+    environment: { name: 'Work Environment', items: [27, 28, 29], divisor: 3 },
+  }
+};
+
+// ============================================================================
+// WELL-BEING DATA STRUCTURE
+// ============================================================================
+
+const WELLBEING_DATA = {
+  title: 'Well-being Development',
+  description: 'The PERMA+4 framework identifies nine building blocks that contribute to well-being and positive functioning. Each element can be intentionally strengthened through evidence-based practices.',
+  source: 'Cabrera & Donaldson (2024); Seligman (2011, 2018); Donaldson et al. (2020, 2021, 2022)',
+  assessment: PERMA4_ASSESSMENT,
+  
+  blocks: {
+    positiveEmotions: {
+      id: 'positiveEmotions',
+      title: 'Positive Emotions',
+      subtitle: 'Pleasant feelings that broaden thinking',
+      icon: '😊',
+      color: 'rose',
+      gradient: 'from-rose-500 to-pink-500',
+      description: 'Experiencing pleasant feelings like joy, enthusiasm, gratitude, and appreciation can boost creativity, broaden thinking, and build resilience during difficult times.',
+      keyQuestion: 'Do you regularly experience positive emotions at work?',
+      source: 'Fredrickson (2001); Lyubomirsky (2008)',
+      interventions: [
+        {
+          id: 'past_future_pleasure',
+          title: 'Bringing Pleasure Past & Future into Present',
+          type: 'reflect',
+          duration: '15-20 min',
+          mechanism: 'Savoring positive past experiences and anticipating joyful future events enhances overall mood and well-being by broadening positive emotional states.',
+          description: 'Share positive past experiences and anticipate future joyful events to boost happiness.',
+          activities: [
+            'Recall a meaningful positive experience from your personal or professional life',
+            'Describe the experience in detail—what happened, who was there, how did it feel',
+            'Identify something you are excited about or looking forward to in the future',
+            'Share these reflections with a colleague, friend, or in a group setting'
+          ],
+          source: 'Lyubomirsky, S. (2008). The How of Happiness. Penguin Press.'
+        },
+        {
+          id: 'savoring_pleasures',
+          title: 'Savoring Pleasures in Life',
+          type: 'reflect',
+          duration: '10-15 min',
+          mechanism: 'Mindfully appreciating positive moments enhances emotional engagement and increases gratitude by extending the duration and intensity of positive experiences.',
+          description: 'Practice savoring by reflecting on enjoyable moments from past, present, and future.',
+          activities: [
+            'Remember the last time you experienced a positive emotion (joy, gratitude) and appreciate that moment',
+            'Think about a positive experience you have planned and how it will make you feel',
+            'The next time you experience a positive emotion, pause to appreciate the moment as it happens',
+            'Notice and extend positive experiences by sharing them with others'
+          ],
+          source: 'Lyubomirsky, S. (2008). The How of Happiness. Penguin Press.'
+        },
+        {
+          id: 'gratitude_journal',
+          title: 'Daily Gratitude Journal',
+          type: 'reflect',
+          duration: '10 min daily',
+          mechanism: 'Regularly reflecting on positive experiences fosters a habit of recognizing the good in life, enhances mood, and increases overall well-being.',
+          description: 'Maintain a daily journal where you write down three things you are grateful for each day.',
+          activities: [
+            'Set aside time at the beginning or end of each day for gratitude journaling',
+            'Write down three specific things you are grateful for today',
+            'Describe why each item is meaningful to you',
+            'Review your entries weekly to notice patterns and growth'
+          ],
+          source: 'Emmons, R. A., & McCullough, M. E. (2003). Counting Blessings vs. Burdens. Journal of Personality and Social Psychology.'
+        }
+      ]
+    },
+    
+    engagement: {
+      id: 'engagement',
+      title: 'Engagement',
+      subtitle: 'Deep absorption and flow states',
+      icon: '🎯',
+      color: 'amber',
+      gradient: 'from-amber-500 to-yellow-500',
+      description: 'Engagement happens when people are deeply involved, focused, and energized by what they are doing—often entering a state of flow where they lose track of time.',
+      keyQuestion: 'Do you experience flow states where you lose track of time?',
+      source: 'Csikszentmihalyi (1990); Peterson & Seligman (2004)',
+      interventions: [
+        {
+          id: 'flow_reflection',
+          title: 'Flow Moments Reflection',
+          type: 'reflect',
+          duration: '15-20 min',
+          mechanism: 'Recognizing patterns in flow experiences helps design activities in more meaningful and energizing ways, increasing the frequency of engagement.',
+          description: 'Reflect on recent experiences when you felt completely immersed in what you were doing.',
+          activities: [
+            'Think about a recent moment when you felt fully absorbed and energized',
+            'Identify what you were doing and what skills you were using',
+            'Note what made the experience particularly engaging',
+            'Plan how to create more opportunities for similar engagement'
+          ],
+          source: 'Csikszentmihalyi, M. (1990). Flow: The Psychology of Optimal Experience. Harper & Row.'
+        },
+        {
+          id: 'signature_strengths_new',
+          title: 'Using Signature Strengths in New Ways',
+          type: 'practice',
+          duration: '30-45 min + ongoing',
+          mechanism: 'Aligning activities with personal strengths and passions leads to greater fulfillment, motivation, and engagement.',
+          description: 'Identify your signature strengths and find new ways to use them in both personal and professional life.',
+          activities: [
+            'Take the free VIA Character Strengths Survey at viacharacter.org',
+            'Identify your top 5 signature strengths from the results',
+            'Brainstorm 3 new ways to apply each strength in your work',
+            'Choose one strength to focus on this week and track your experience'
+          ],
+          source: 'Peterson, C., & Seligman, M. E. (2004). Character Strengths and Virtues. Oxford University Press.'
+        }
+      ]
+    },
+    
+    relationships: {
+      id: 'relationships',
+      title: 'Positive Relationships',
+      subtitle: 'High-quality connections with others',
+      icon: '🤝',
+      color: 'blue',
+      gradient: 'from-blue-500 to-indigo-500',
+      description: 'Supportive, respectful, and authentic relationships with peers, classmates, or colleagues satisfy our need for connection and belonging.',
+      keyQuestion: 'Do you have supportive, trusting relationships at work?',
+      source: 'Dutton (2003); Gable et al. (2006)',
+      interventions: [
+        {
+          id: 'respectful_engagement',
+          title: 'Respectful Engagement',
+          type: 'practice',
+          duration: '5-10 min per conversation',
+          mechanism: 'Full presence and attentiveness in conversations strengthens relationships and helps others feel seen and valued, building mutual trust.',
+          description: 'Practice full presence and attentiveness in everyday conversations.',
+          activities: [
+            'Put away distractions before important conversations',
+            'Make eye contact and focus on the other person\'s words',
+            'Reflect what they are saying to show understanding',
+            'Respond with empathy and care before offering your thoughts'
+          ],
+          source: 'Dutton, J. E. (2003). Energize Your Workplace. Jossey-Bass.'
+        },
+        {
+          id: 'task_enabling',
+          title: 'Task Enabling',
+          type: 'practice',
+          duration: '15-30 min',
+          mechanism: 'Sharing knowledge and skills with others fosters stronger connections while reinforcing your own sense of purpose and contribution.',
+          description: 'Share your knowledge, skills, or talents to help someone else succeed.',
+          activities: [
+            'Identify a skill you enjoy or are good at (organizing, tech, writing, etc.)',
+            'Offer it as support to someone in your network',
+            'Help with specific tasks like reviewing a resume or teaching a tool',
+            'Follow up to see how your help made a difference'
+          ],
+          source: 'Dutton, J. E. (2003). Energize Your Workplace. Jossey-Bass.'
+        },
+        {
+          id: 'trusting',
+          title: 'Trust Building',
+          type: 'practice',
+          duration: 'Ongoing',
+          mechanism: 'Making and keeping small commitments builds mutual trust and creates stronger, more energized connections over time.',
+          description: 'Practice trust-building by making small commitments and following through on them.',
+          activities: [
+            'Each week, make a small promise to a friend or colleague',
+            'Focus on consistently delivering on these commitments',
+            'Track your follow-through rate',
+            'Notice how reliability strengthens your relationships'
+          ],
+          source: 'Dutton, J. E. (2003). Energize Your Workplace. Jossey-Bass.'
+        },
+        {
+          id: 'play',
+          title: 'Collaborative Play',
+          type: 'practice',
+          duration: '30-60 min',
+          mechanism: 'Playful, collaborative activities foster high-quality connections by encouraging cooperation and shared accomplishments in a relaxed setting.',
+          description: 'Engage in collaborative creative activities with colleagues.',
+          activities: [
+            'Organize a creative challenge (themed brainstorming, collaborative project)',
+            'Create space for light-hearted, joyful interactions',
+            'Break down barriers through shared positive experiences',
+            'Celebrate collaborative accomplishments together'
+          ],
+          source: 'Dutton, J. E. (2003). Energize Your Workplace. Jossey-Bass.'
+        },
+        {
+          id: 'active_constructive',
+          title: 'Active-Constructive Responding',
+          type: 'practice',
+          duration: '5 min per interaction',
+          mechanism: 'Responding with enthusiasm and genuine interest when others share good news strengthens relationships and enhances trust.',
+          description: 'Practice responding with enthusiasm and curiosity when someone shares good news.',
+          activities: [
+            'When someone shares positive news, show genuine excitement',
+            'Ask follow-up questions: "That\'s amazing—tell me more!"',
+            'Express curiosity about their experience: "What was your favorite part?"',
+            'Avoid passive or dismissive responses that diminish their joy'
+          ],
+          source: 'Gable, S. L., et al. (2006). Will You Be There for Me When Things Go Right? Journal of Personality and Social Psychology.'
+        },
+        {
+          id: 'random_kindness',
+          title: 'Random Acts of Kindness',
+          type: 'practice',
+          duration: '15-30 min',
+          mechanism: 'Expressing appreciation and gratitude strengthens social bonds and promotes positive emotions for both giver and receiver.',
+          description: 'Write a heartfelt letter to someone who has positively influenced your life.',
+          activities: [
+            'Think of someone who has made a difference in your life',
+            'Write a letter describing why you appreciate them and their impact',
+            'Deliver the message in person, via video call, or heartfelt email',
+            'Notice how this small act affects your relationship and well-being'
+          ],
+          source: 'Lyubomirsky, S. (2008). The How of Happiness. Penguin Press.'
+        }
+      ]
+    },
+    
+    meaning: {
+      id: 'meaning',
+      title: 'Meaning',
+      subtitle: 'Purpose beyond yourself',
+      icon: '💫',
+      color: 'purple',
+      gradient: 'from-purple-500 to-violet-500',
+      description: 'Having a sense of purpose—feeling that your work connects to something greater than yourself—enhances motivation and satisfaction.',
+      keyQuestion: 'Do you feel your work serves a greater purpose?',
+      source: 'Wrzesniewski et al. (2003); Sheldon & Lyubomirsky (2006)',
+      interventions: [
+        {
+          id: 'values_meaning',
+          title: 'Values and Meaning Reflection',
+          type: 'reflect',
+          duration: '15-20 min',
+          mechanism: 'Connecting core values to current roles and activities builds a deeper sense of meaning and direction in everyday life.',
+          description: 'Reflect on your core values and how your current roles connect to those values.',
+          activities: [
+            'Identify your core values (growth, compassion, creativity, service, freedom)',
+            'Consider which daily tasks or life roles reflect those values',
+            'Identify small adjustments to bring activities into closer alignment with values',
+            'Set intentions for how to live your values more fully this week'
+          ],
+          source: 'Wrzesniewski, A., et al. (2003). Interpersonal Sensemaking and the Meaning of Work. Research in Organizational Behavior.'
+        },
+        {
+          id: 'best_possible_self',
+          title: 'Best Possible Self',
+          type: 'envision',
+          duration: '30-45 min',
+          mechanism: 'Envisioning your best possible future self increases optimism, motivation, and a stronger sense of meaning and purpose.',
+          description: 'Envision and write about your best possible future self focusing on aspirations and values.',
+          activities: [
+            'Imagine your life one year from now at its best',
+            'Write a detailed description of that version of yourself',
+            'Consider how your values and goals align with that vision',
+            'Identify one small action you can take today to move toward that vision'
+          ],
+          source: 'Sheldon, K. M., & Lyubomirsky, S. (2006). How to Increase and Sustain Positive Emotion. Journal of Positive Psychology.'
+        },
+        {
+          id: 'signature_strengths_meaning',
+          title: 'Signature Strengths for Meaning',
+          type: 'practice',
+          duration: '30 min + ongoing',
+          mechanism: 'Recognizing core strengths and finding creative ways to apply them enhances personal fulfillment and sense of purpose.',
+          description: 'Identify and use your signature strengths in new ways to enhance meaning.',
+          activities: [
+            'Take the VIA Character Strengths Survey at viacharacter.org',
+            'Identify your top 5 signature strengths',
+            'Brainstorm how to use these strengths more in your personal life',
+            'Connect your strengths to activities that serve others or a greater purpose'
+          ],
+          source: 'Peterson, C., & Seligman, M. E. (2004). Character Strengths and Virtues. Oxford University Press.'
+        }
+      ]
+    },
+    
+    accomplishment: {
+      id: 'accomplishment',
+      title: 'Accomplishment',
+      subtitle: 'Mastery and goal achievement',
+      icon: '🏆',
+      color: 'emerald',
+      gradient: 'from-emerald-500 to-green-500',
+      description: 'Achieving goals, mastering new skills, or making progress in areas that matter leads to a sense of pride and confidence.',
+      keyQuestion: 'Do you regularly accomplish meaningful goals?',
+      source: 'Locke & Latham (2002); Baumeister & Vohs (2017)',
+      interventions: [
+        {
+          id: 'smart_goals',
+          title: 'SMART Goal-Setting',
+          type: 'practice',
+          duration: '30-45 min',
+          mechanism: 'Setting Specific, Measurable, Achievable, Relevant, and Time-bound goals breaks larger ambitions into manageable steps and supports clear progress.',
+          description: 'Set SMART goals that break larger ambitions into achievable steps.',
+          activities: [
+            'Choose one personal, academic, or career goal',
+            'Rewrite it using the SMART format (Specific, Measurable, Achievable, Relevant, Time-bound)',
+            'Break the goal into weekly milestones',
+            'Schedule weekly check-ins to track progress and celebrate small wins'
+          ],
+          source: 'Locke, E. A., & Latham, G. P. (2002). Building a Practically Useful Theory of Goal Setting. American Psychologist.'
+        },
+        {
+          id: 'weekly_reflection',
+          title: 'Weekly Reflection',
+          type: 'reflect',
+          duration: '15-20 min weekly',
+          mechanism: 'Regular reflection on accomplishments and challenges boosts self-efficacy and motivation for continuous growth.',
+          description: 'At the end of each week, reflect on what you accomplished and areas for improvement.',
+          activities: [
+            'Set aside 10-15 minutes every Friday for reflection',
+            'Write down three things you accomplished that week',
+            'Identify two challenges you faced and what you learned',
+            'Set one specific goal for the following week'
+          ],
+          source: 'Baumeister, R. F., & Vohs, K. D. (2017). Handbook of Self-Regulation. Guilford Press.'
+        },
+        {
+          id: 'life_summary',
+          title: 'Life Summary Technique',
+          type: 'envision',
+          duration: '45-60 min',
+          mechanism: 'Writing about life from a future perspective clarifies what matters most and aligns current actions with long-term values and goals.',
+          description: 'Write a summary of your life as if reflecting on your accomplishments at the end of your life.',
+          activities: [
+            'Write a short story about your life from the perspective of your future self',
+            'Focus on your most meaningful accomplishments',
+            'Identify key themes (career, relationships, personal growth)',
+            'Use these reflections to guide your current priorities'
+          ],
+          source: 'Seligman, M. E. P., et al. (2006). Positive Psychology Progress. American Psychologist.'
+        }
+      ]
+    },
+    
+    physicalHealth: {
+      id: 'physicalHealth',
+      title: 'Physical Health',
+      subtitle: 'Body care and vitality',
+      icon: '💪',
+      color: 'teal',
+      gradient: 'from-teal-500 to-cyan-500',
+      description: 'Taking care of our bodies through quality sleep, balanced nutrition, regular physical activity, and maintaining energy greatly impacts focus, motivation, and resilience.',
+      keyQuestion: 'Do you feel physically healthy and in control of your well-being?',
+      source: 'Ratey & Hagerman (2008); Sherman & Cohen (2006)',
+      interventions: [
+        {
+          id: 'movement_breaks',
+          title: 'Movement Breaks',
+          type: 'practice',
+          duration: '5 min every hour',
+          mechanism: 'Short movement breaks reduce sedentary behavior, increase energy, and support better focus, mood, and overall health.',
+          description: 'Incorporate short movement breaks into your daily routine.',
+          activities: [
+            'Stand up and stretch every hour',
+            'Take short walks between tasks or meetings',
+            'Do light exercises during work or study breaks',
+            'Use a standing desk setup or walk before/after meetings'
+          ],
+          source: 'Ratey, J. J., & Hagerman, E. (2008). Spark: The Revolutionary New Science of Exercise and the Brain. Little, Brown.'
+        },
+        {
+          id: 'positive_affirmations',
+          title: 'Positive Affirmations',
+          type: 'reflect',
+          duration: '5 min daily',
+          mechanism: 'Daily affirmations that support a positive mindset toward physical well-being motivate healthy behaviors and reinforce commitment to self-care.',
+          description: 'Use daily affirmations to support a positive mindset toward physical well-being.',
+          activities: [
+            'Choose 1-2 affirmations (e.g., "I am strong and capable," "My body deserves care")',
+            'Repeat them at the start of your day or during movement breaks',
+            'Write affirmations on sticky notes or set phone reminders',
+            'Place them in visible spaces at home or work'
+          ],
+          source: 'Sherman, D. K., & Cohen, G. L. (2006). The Psychology of Self-Defense. Advances in Experimental Social Psychology.'
+        },
+        {
+          id: 'three_good_health',
+          title: 'Three Good Things for Physical Health',
+          type: 'reflect',
+          duration: '5 min daily',
+          mechanism: 'Reflecting on positive health actions enhances gratitude, promotes positive thinking, and reinforces healthy habits.',
+          description: 'Reflect daily on three actions that positively impacted your physical health.',
+          activities: [
+            'Each night before bed, list three things you did for your physical health',
+            'Examples: drinking enough water, walking, eating a healthy meal, getting sleep',
+            'Note why each action was beneficial',
+            'Track patterns over time to reinforce healthy habits'
+          ],
+          source: 'Seligman, M. E., et al. (2005). Positive Psychology Progress. American Psychologist.'
+        }
+      ]
+    },
+    
+    growthMindset: {
+      id: 'growthMindset',
+      title: 'Growth Mindset',
+      subtitle: 'Belief in development through effort',
+      icon: '🌱',
+      color: 'lime',
+      gradient: 'from-lime-500 to-green-500',
+      description: 'Believing that abilities and intelligence can be developed through effort drives motivation and perseverance.',
+      keyQuestion: 'Do you believe you can improve through hard work and learning?',
+      source: 'Dweck (2006); Reivich & Shatté (2002); Neff (2011)',
+      interventions: [
+        {
+          id: 'setbacks_learning',
+          title: 'Setbacks as Learning Opportunities',
+          type: 'reflect',
+          duration: '15-20 min',
+          mechanism: 'Reframing setbacks as learning opportunities builds resilience and reinforces a growth mindset by shifting perspective from failure to growth.',
+          description: 'Reflect on challenges and use them to identify lessons and areas of growth.',
+          activities: [
+            'After a difficult experience, journal about what happened',
+            'Reflect on how you responded and what you learned about yourself',
+            'Identify what you would do differently next time',
+            'Shift your perspective from failure to learning'
+          ],
+          source: 'Neenan, M. (2018). Developing Resilience: A Cognitive-Behavioural Approach. Routledge.'
+        },
+        {
+          id: 'reframing_negative',
+          title: 'Reframing Negative Thoughts',
+          type: 'reflect',
+          duration: '10 min daily',
+          mechanism: 'Identifying unhelpful thinking patterns and shifting them to constructive alternatives reduces emotional impact of stress and promotes growth.',
+          description: 'Practice reframing negative thoughts to more positive, constructive alternatives.',
+          activities: [
+            'At the end of each day, reflect on a negative thought you had',
+            'Example: "I\'m not good at this task" → "This is challenging, but I\'m learning"',
+            'Write down the original thought and your reframe',
+            'Notice how this practice reduces frustration over time'
+          ],
+          source: 'Beck, A. T. (1979). Cognitive Therapy and the Emotional Disorders. Penguin.'
+        },
+        {
+          id: 'abcde_intervention',
+          title: 'ABCDE Intervention',
+          type: 'reflect',
+          duration: '15-20 min',
+          mechanism: 'The ABCDE model (Adversity, Beliefs, Consequences, Disputation, Energization) helps manage emotional responses and foster a growth-oriented mindset.',
+          description: 'Use the ABCDE model when facing challenges or negative thoughts.',
+          activities: [
+            'Identify the Adversity (what happened)',
+            'Note your initial Belief (what you told yourself about it)',
+            'Recognize the Consequences (how it made you feel)',
+            'Practice Disputation (challenge or reframe the belief)',
+            'Experience Energization (notice how you feel after shifting perspective)'
+          ],
+          source: 'Reivich, K., & Shatté, A. (2002). The Resilience Factor. Broadway Books.'
+        },
+        {
+          id: 'self_compassion',
+          title: 'Self-Compassion Exercises',
+          type: 'reflect',
+          duration: '15-20 min',
+          mechanism: 'Self-compassion builds resilience and a positive mindset by treating yourself with the same kindness you would offer a friend.',
+          description: 'Practice self-compassion through writing exercises and guided reflection.',
+          activities: [
+            'Write a letter to yourself offering kindness as if comforting a friend',
+            'Reflect on a recent challenge and acknowledge your feelings',
+            'Reassure yourself that it\'s okay to struggle',
+            'Practice self-compassionate self-talk during difficult moments'
+          ],
+          source: 'Neff, K. D. (2011). Self-Compassion: The Proven Power of Being Kind to Yourself. HarperCollins.'
+        }
+      ]
+    },
+    
+    economicSecurity: {
+      id: 'economicSecurity',
+      title: 'Economic Security',
+      subtitle: 'Financial stability and peace of mind',
+      icon: '💰',
+      color: 'yellow',
+      gradient: 'from-yellow-500 to-amber-500',
+      description: 'A sense of financial stability reduces stress and allows people to fully engage in their work and life.',
+      keyQuestion: 'Do you feel financially secure and in control of your finances?',
+      source: 'Archuleta et al. (2020); Thaler & Sunstein (2008)',
+      interventions: [
+        {
+          id: 'smart_financial_goals',
+          title: 'SMART Financial Goal Setting',
+          type: 'practice',
+          duration: '30-45 min',
+          mechanism: 'Setting specific financial goals improves financial well-being and reduces financial stress by providing clarity and motivation.',
+          description: 'Set SMART financial goals to improve your financial well-being.',
+          activities: [
+            'Break down long-term financial goals into smaller milestones',
+            'Example: Save $200 per month toward an emergency fund',
+            'Track your progress weekly',
+            'Celebrate each small victory to build momentum'
+          ],
+          source: 'Archuleta, K. L., et al. (2020). Financial Goal Setting, Financial Anxiety, and SFFT. Contemporary Family Therapy.'
+        },
+        {
+          id: 'three_good_financial',
+          title: 'Three Good Financial Things',
+          type: 'reflect',
+          duration: '5 min daily',
+          mechanism: 'Reflecting on positive financial decisions cultivates gratitude and a sense of control over your financial situation.',
+          description: 'Reflect daily on three positive financial experiences or decisions.',
+          activities: [
+            'At the end of each day, list three positive financial decisions',
+            'Examples: sticking to your budget, making a smart investment, avoiding an impulse purchase',
+            'Note why each decision was good for your financial health',
+            'Track patterns to reinforce positive financial habits'
+          ],
+          source: 'Asebedo, S. D., et al. (2021). Three Good Things or Three Good Financial Things? Journal of Positive Psychology.'
+        },
+        {
+          id: 'budget_planning',
+          title: 'Budget Planning',
+          type: 'practice',
+          duration: '1-2 hours setup + weekly tracking',
+          mechanism: 'Creating and maintaining a personal budget provides a sense of control and reduces anxiety related to economic security.',
+          description: 'Create and maintain a personal budget to manage finances effectively.',
+          activities: [
+            'List your income and categorize expenses (rent, groceries, entertainment)',
+            'Set a specific savings goal (e.g., $500 in three months)',
+            'Identify areas to cut back and allocate money toward savings',
+            'Track weekly expenses and adjust as needed'
+          ],
+          source: 'Thaler, R. H., & Sunstein, C. R. (2008). Nudge: Improving Decisions About Health, Wealth, and Happiness. Penguin.'
+        }
+      ]
+    },
+    
+    environment: {
+      id: 'environment',
+      title: 'Work Environment',
+      subtitle: 'Physical space that supports well-being',
+      icon: '🏢',
+      color: 'sky',
+      gradient: 'from-sky-500 to-blue-500',
+      description: 'The physical environment—lighting, air quality, safety, noise levels, and access to nature—affects concentration, comfort, and well-being.',
+      keyQuestion: 'Does your physical environment support your focus and well-being?',
+      source: 'Kellert et al. (2008); Womack & Jones (1996)',
+      interventions: [
+        {
+          id: 'biophilic_design',
+          title: 'Biophilic Design',
+          type: 'practice',
+          duration: '30 min + ongoing',
+          mechanism: 'Incorporating natural elements into your workspace reduces stress, boosts focus, and supports overall well-being.',
+          description: 'Improve your environment by incorporating natural elements into your workspace.',
+          activities: [
+            'Place a plant on your desk or in your workspace',
+            'Adjust your seating to get more natural light',
+            'Add calming visual elements like nature-themed artwork',
+            'Open windows when possible to increase fresh air'
+          ],
+          source: 'Physical Workplaces and Human Well-Being (2022). Building and Environment.'
+        },
+        {
+          id: 'decluttering',
+          title: 'Decluttering and Organizing',
+          type: 'practice',
+          duration: '30-60 min monthly',
+          mechanism: 'Regular decluttering and organizing enhances focus, reduces stress, and increases productivity by reducing mental clutter.',
+          description: 'Regularly declutter and organize your workspace to enhance focus.',
+          activities: [
+            'Once a month, evaluate your workspace (physical and digital)',
+            'Organize files and clear out old papers',
+            'Create systems for ongoing organization',
+            'Make your environment more streamlined to increase productivity'
+          ],
+          source: 'Womack, J. P., & Jones, D. T. (1996). Lean Thinking. Simon and Schuster.'
+        }
+      ]
+    },
+    
+    // Multi-Block Interventions
+    multiBlock: {
+      id: 'multiBlock',
+      title: 'Multi-Block Practices',
+      subtitle: 'Interventions targeting multiple building blocks',
+      icon: '✨',
+      color: 'violet',
+      gradient: 'from-violet-500 to-purple-500',
+      description: 'These powerful practices simultaneously enhance multiple building blocks of well-being.',
+      keyQuestion: 'Want comprehensive practices that boost multiple areas at once?',
+      source: 'Sheldon & Lyubomirsky (2006); Davidson et al. (2003)',
+      interventions: [
+        {
+          id: 'counting_blessings',
+          title: 'Counting Your Blessings',
+          type: 'reflect',
+          duration: '10 min daily',
+          mechanism: 'Regular gratitude reflection shifts focus from stress to positive aspects of life, boosting happiness and life satisfaction across multiple well-being domains.',
+          description: 'Regularly reflect on the things you are grateful for to boost overall well-being.',
+          targetBlocks: ['Positive Emotions', 'Relationships', 'Meaning'],
+          activities: [
+            'Set aside time each day for gratitude reflection',
+            'List 3-5 things you are grateful for',
+            'Include items from different life domains (work, relationships, health)',
+            'Share your gratitude with others when appropriate'
+          ],
+          source: 'Sheldon, K. M., & Lyubomirsky, S. (2006). How to Increase and Sustain Positive Emotion. Journal of Positive Psychology.'
+        },
+        {
+          id: 'mindfulness_meditation',
+          title: 'Mindfulness Meditation',
+          type: 'reflect',
+          duration: '10-15 min daily',
+          mechanism: 'Focusing on the present moment increases awareness, intellectual engagement, and fosters positive energy and emotional regulation.',
+          description: 'Incorporate mindfulness meditation into your daily routine to increase awareness and engagement.',
+          targetBlocks: ['Positive Emotions', 'Engagement', 'Physical Health', 'Growth Mindset'],
+          activities: [
+            'Set aside 10-15 minutes each day for mindfulness practice',
+            'Focus on your breath and present-moment sensations',
+            'When thoughts arise, notice them without judgment and return to breath',
+            'Start with guided meditations if helpful'
+          ],
+          source: 'Davidson, R. J., et al. (2003). Alterations in Brain and Immune Function Produced by Mindfulness Meditation. Psychosomatic Medicine.'
+        },
+        {
+          id: 'have_good_day',
+          title: 'Have-a-Good-Day Exercise',
+          type: 'practice',
+          duration: '10 min morning + evening reflection',
+          mechanism: 'Planning for positive moments and reflecting on them afterward supports positive emotions, deeper engagement, and stronger relationships.',
+          description: 'Plan for a "good day" by identifying activities and interactions that bring joy and fulfillment.',
+          targetBlocks: ['Positive Emotions', 'Engagement', 'Relationships'],
+          activities: [
+            'Each morning, identify activities that might bring joy or fulfillment',
+            'Consider meaningful conversations, walks, or focused time on things you enjoy',
+            'Reflect on your day afterward',
+            'Adjust your approach based on what worked'
+          ],
+          source: 'Sheldon, K. M., & Lyubomirsky, S. (2006). How to Increase and Sustain Positive Emotion. Journal of Positive Psychology.'
+        }
+      ]
+    }
+  }
+};
+
+
+
+// ============================================================================
 // BIG FIVE PERSONALITY ASSESSMENT (From Day, 2024 - Table 2.1)
 // Based on IPIP (International Personality Item Pool) - Public Domain
 // ============================================================================
@@ -4950,12 +5655,26 @@ function DevelopView({ setCurrentView, user }) {
           <div className="text-sm">Leadership Development</div>
           <div className="text-xs opacity-70">Collective</div>
         </button>
+        <button
+          onClick={() => setActiveTab('wellbeing')}
+          className={`flex-1 py-3 px-4 rounded-xl font-medium transition-all ${
+            activeTab === 'wellbeing'
+              ? 'bg-emerald-100 text-emerald-800 border-2 border-emerald-300'
+              : 'bg-stone-100 text-stone-600 border-2 border-transparent'
+          }`}
+        >
+          <div className="text-lg mb-1">🌱</div>
+          <div className="text-sm">Well-being</div>
+          <div className="text-xs opacity-70">PERMA+4</div>
+        </button>
       </div>
 
       {activeTab === 'leader' ? (
         <LeaderDevelopmentTab setCurrentView={setCurrentView} />
-      ) : (
+      ) : activeTab === 'leadership' ? (
         <LeadershipDevelopmentTab setCurrentView={setCurrentView} />
+      ) : (
+        <WellbeingTab setCurrentView={setCurrentView} />
       )}
     </div>
   );
@@ -6077,6 +6796,383 @@ function LeadershipDevelopmentTab({ setCurrentView }) {
 // ============================================================================
 // ASSESSMENT VIEW (Take Self-View Assessments)
 // ============================================================================
+
+
+// ============================================================================
+// WELL-BEING TAB (PERMA+4 Framework)
+// ============================================================================
+
+function WellbeingTab({ setCurrentView }) {
+  const [activeBlock, setActiveBlock] = useState('positiveEmotions');
+  const [expandedIntervention, setExpandedIntervention] = useState(null);
+  const [showAssessment, setShowAssessment] = useState(false);
+  const [assessmentResponses, setAssessmentResponses] = useState({});
+  const [assessmentComplete, setAssessmentComplete] = useState(false);
+  const [blockScores, setBlockScores] = useState(null);
+
+  const blocks = WELLBEING_DATA.blocks;
+  const currentBlock = blocks[activeBlock];
+  
+  // Intervention type icons and colors
+  const typeConfig = {
+    reflect: { icon: '📝', label: 'Reflect', color: 'blue' },
+    practice: { icon: '🎯', label: 'Practice', color: 'green' },
+    envision: { icon: '🔮', label: 'Envision', color: 'indigo' },
+    assess: { icon: '📊', label: 'Assess', color: 'amber' }
+  };
+
+  // Calculate assessment scores
+  const calculateScores = () => {
+    const scores = {};
+    const assessment = PERMA4_ASSESSMENT;
+    
+    Object.entries(assessment.blocks).forEach(([blockKey, blockData]) => {
+      const itemScores = blockData.items
+        .map(itemId => assessmentResponses[itemId])
+        .filter(score => score !== undefined);
+      
+      if (itemScores.length === blockData.items.length) {
+        const sum = itemScores.reduce((a, b) => a + b, 0);
+        scores[blockKey] = (sum / blockData.divisor).toFixed(1);
+      }
+    });
+    
+    return scores;
+  };
+
+  const handleAssessmentSubmit = () => {
+    const scores = calculateScores();
+    setBlockScores(scores);
+    setAssessmentComplete(true);
+  };
+
+  const getScoreColor = (score) => {
+    if (score >= 5) return 'text-green-600 bg-green-50';
+    if (score >= 4) return 'text-amber-600 bg-amber-50';
+    return 'text-red-600 bg-red-50';
+  };
+
+  // Assessment Modal
+  if (showAssessment) {
+    return (
+      <div className="animate-fadeIn">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-6">
+          <button 
+            onClick={() => setShowAssessment(false)}
+            className="flex items-center gap-2 text-stone-600 hover:text-stone-800"
+          >
+            <Icons.ChevronLeft size={20} />
+            <span>Back to Well-being</span>
+          </button>
+        </div>
+
+        <div className="bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-200 rounded-xl p-5 mb-6">
+          <h2 className="font-bold text-xl text-emerald-800 mb-2">{PERMA4_ASSESSMENT.title}</h2>
+          <p className="text-sm text-stone-600 mb-2">{PERMA4_ASSESSMENT.description}</p>
+          <p className="text-xs text-stone-500">📚 {PERMA4_ASSESSMENT.source}</p>
+        </div>
+
+        {!assessmentComplete ? (
+          <>
+            {/* Instructions */}
+            <div className="bg-white border border-stone-200 rounded-xl p-4 mb-6">
+              <p className="text-sm font-medium text-stone-700 mb-2">📋 Instructions</p>
+              <p className="text-sm text-stone-600">{PERMA4_ASSESSMENT.instructions}</p>
+            </div>
+
+            {/* Assessment Items */}
+            <div className="space-y-4 mb-6">
+              {PERMA4_ASSESSMENT.items.map((item) => (
+                <div key={item.id} className="bg-white border border-stone-200 rounded-xl p-4">
+                  <p className="text-sm text-stone-700 mb-3">{item.id}. {item.text}</p>
+                  <div className="flex gap-2 flex-wrap">
+                    {[1, 2, 3, 4, 5, 6, 7].map((score) => (
+                      <button
+                        key={score}
+                        onClick={() => setAssessmentResponses({...assessmentResponses, [item.id]: score})}
+                        className={`w-10 h-10 rounded-lg font-medium transition-all ${
+                          assessmentResponses[item.id] === score
+                            ? 'bg-emerald-500 text-white shadow-md'
+                            : 'bg-stone-100 text-stone-600 hover:bg-stone-200'
+                        }`}
+                      >
+                        {score}
+                      </button>
+                    ))}
+                  </div>
+                  <div className="flex justify-between text-xs text-stone-400 mt-2 px-1">
+                    <span>Strongly Disagree</span>
+                    <span>Strongly Agree</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Submit Button */}
+            <button
+              onClick={handleAssessmentSubmit}
+              disabled={Object.keys(assessmentResponses).length < 29}
+              className={`w-full py-4 rounded-xl font-medium transition-all ${
+                Object.keys(assessmentResponses).length >= 29
+                  ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-lg hover:shadow-xl'
+                  : 'bg-stone-200 text-stone-400 cursor-not-allowed'
+              }`}
+            >
+              Calculate My Scores ({Object.keys(assessmentResponses).length}/29 answered)
+            </button>
+          </>
+        ) : (
+          <>
+            {/* Results */}
+            <div className="bg-white border border-stone-200 rounded-xl p-5 mb-6">
+              <h3 className="font-semibold text-lg text-stone-800 mb-4">Your PERMA+4 Scores</h3>
+              <p className="text-sm text-stone-600 mb-4">{PERMA4_ASSESSMENT.scoringGuide}</p>
+              
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                {Object.entries(PERMA4_ASSESSMENT.blocks).map(([key, blockData]) => (
+                  <div key={key} className={`p-4 rounded-lg ${getScoreColor(blockScores[key])}`}>
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-lg">{blocks[key]?.icon || '📊'}</span>
+                      <span className="font-medium text-sm">{blockData.name}</span>
+                    </div>
+                    <div className="text-2xl font-bold">{blockScores[key] || '—'}</div>
+                    <div className="text-xs mt-1">
+                      {blockScores[key] >= 5 ? '✅ Strength' : '📈 Growth area'}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Recommendations */}
+            <div className="bg-amber-50 border border-amber-200 rounded-xl p-5 mb-6">
+              <h3 className="font-semibold text-amber-800 mb-2">💡 Next Steps</h3>
+              <p className="text-sm text-stone-600">
+                Explore the interventions for your lower-scoring areas to strengthen those building blocks. 
+                Your higher scores indicate strengths you can leverage and maintain.
+              </p>
+            </div>
+
+            <button
+              onClick={() => { setShowAssessment(false); setAssessmentComplete(false); }}
+              className="w-full py-4 rounded-xl font-medium bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-lg hover:shadow-xl"
+            >
+              Explore Interventions
+            </button>
+          </>
+        )}
+      </div>
+    );
+  }
+
+  return (
+    <div className="animate-fadeIn">
+      {/* Header */}
+      <div className="bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-200 rounded-xl p-5 mb-6">
+        <div className="flex items-start justify-between">
+          <div>
+            <h2 className="font-bold text-xl text-emerald-800 mb-2">🌱 {WELLBEING_DATA.title}</h2>
+            <p className="text-sm text-stone-600 mb-2">{WELLBEING_DATA.description}</p>
+            <p className="text-xs text-stone-500">📚 {WELLBEING_DATA.source}</p>
+          </div>
+          <button
+            onClick={() => setShowAssessment(true)}
+            className="px-4 py-2 bg-emerald-500 text-white text-sm font-medium rounded-lg hover:bg-emerald-600 transition-colors flex items-center gap-2"
+          >
+            <span>📊</span>
+            Take Assessment
+          </button>
+        </div>
+      </div>
+
+      {/* Block Navigation Tabs */}
+      <div className="flex gap-2 mb-6 overflow-x-auto pb-2">
+        {Object.values(blocks).map(block => (
+          <button
+            key={block.id}
+            onClick={() => { setActiveBlock(block.id); setExpandedIntervention(null); }}
+            className={`flex items-center gap-2 px-4 py-3 rounded-xl font-medium whitespace-nowrap transition-all ${
+              activeBlock === block.id
+                ? `bg-gradient-to-r ${block.gradient} text-white shadow-lg`
+                : 'bg-white border border-stone-200 text-stone-600 hover:border-stone-300'
+            }`}
+          >
+            <span className="text-lg">{block.icon}</span>
+            <span className="text-sm">{block.title}</span>
+          </button>
+        ))}
+      </div>
+
+      {/* Current Block Detail */}
+      <div className="space-y-4">
+        {/* Block Header Card */}
+        <div className={`bg-gradient-to-br ${
+          currentBlock.color === 'rose' ? 'from-rose-50 to-pink-50 border-rose-200' :
+          currentBlock.color === 'amber' ? 'from-amber-50 to-yellow-50 border-amber-200' :
+          currentBlock.color === 'blue' ? 'from-blue-50 to-indigo-50 border-blue-200' :
+          currentBlock.color === 'purple' ? 'from-purple-50 to-violet-50 border-purple-200' :
+          currentBlock.color === 'emerald' ? 'from-emerald-50 to-green-50 border-emerald-200' :
+          currentBlock.color === 'teal' ? 'from-teal-50 to-cyan-50 border-teal-200' :
+          currentBlock.color === 'lime' ? 'from-lime-50 to-green-50 border-lime-200' :
+          currentBlock.color === 'yellow' ? 'from-yellow-50 to-amber-50 border-yellow-200' :
+          currentBlock.color === 'sky' ? 'from-sky-50 to-blue-50 border-sky-200' :
+          'from-violet-50 to-purple-50 border-violet-200'
+        } border rounded-xl p-5`}>
+          <div className="flex items-start gap-4">
+            <span className="text-4xl">{currentBlock.icon}</span>
+            <div className="flex-1">
+              <h3 className="font-bold text-lg text-stone-800">{currentBlock.title}</h3>
+              <p className="text-sm text-stone-500 mb-2">{currentBlock.subtitle}</p>
+              <p className="text-sm text-stone-600 mb-3">{currentBlock.description}</p>
+              <div className="bg-white/60 rounded-lg p-3 mb-3">
+                <p className="text-sm font-medium text-stone-700">❓ {currentBlock.keyQuestion}</p>
+              </div>
+              <p className="text-xs text-stone-500">📚 {currentBlock.source}</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Intervention Type Legend */}
+        <div className="flex flex-wrap gap-3 px-1">
+          {Object.entries(typeConfig).map(([key, config]) => (
+            <span key={key} className="text-xs text-stone-500">
+              {config.icon} {config.label}
+            </span>
+          ))}
+        </div>
+
+        {/* Interventions */}
+        <div className="space-y-3">
+          {currentBlock.interventions.map((intervention, idx) => {
+            const isExpanded = expandedIntervention === intervention.id;
+            const typeInfo = typeConfig[intervention.type] || typeConfig.practice;
+
+            return (
+              <div
+                key={intervention.id}
+                className={`bg-white border rounded-xl transition-all ${
+                  isExpanded ? 'border-stone-300 shadow-md' : 'border-stone-200 hover:border-stone-300'
+                }`}
+              >
+                {/* Intervention Header */}
+                <button
+                  onClick={() => setExpandedIntervention(isExpanded ? null : intervention.id)}
+                  className="w-full p-4 text-left"
+                >
+                  <div className="flex items-start gap-3">
+                    {/* Number Badge */}
+                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-white text-sm font-bold bg-gradient-to-br ${currentBlock.gradient}`}>
+                      {idx + 1}
+                    </div>
+                    
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-1 flex-wrap">
+                        <h5 className="font-semibold text-stone-800">{intervention.title}</h5>
+                        <span className={`text-xs px-2 py-0.5 rounded-full ${
+                          typeInfo.color === 'blue' ? 'bg-blue-100 text-blue-700' :
+                          typeInfo.color === 'green' ? 'bg-green-100 text-green-700' :
+                          typeInfo.color === 'indigo' ? 'bg-indigo-100 text-indigo-700' :
+                          'bg-amber-100 text-amber-700'
+                        }`}>
+                          {typeInfo.icon} {typeInfo.label}
+                        </span>
+                        {intervention.targetBlocks && (
+                          <span className="text-xs text-violet-600 bg-violet-100 px-2 py-0.5 rounded-full">
+                            ✨ Multi-block
+                          </span>
+                        )}
+                      </div>
+                      
+                      <p className="text-sm text-stone-600">{intervention.description}</p>
+                      
+                      <div className="flex items-center gap-4 mt-2">
+                        <span className="text-xs text-stone-500">⏱️ {intervention.duration}</span>
+                      </div>
+                    </div>
+                    
+                    <Icons.ChevronDown className={`text-stone-400 transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
+                  </div>
+                </button>
+                
+                {/* Expanded Content */}
+                {isExpanded && (
+                  <div className="px-4 pb-4 pt-0 border-t border-stone-100">
+                    {/* Target Blocks (for multi-block interventions) */}
+                    {intervention.targetBlocks && (
+                      <div className="bg-violet-50 border border-violet-200 rounded-lg p-3 mt-4 mb-4">
+                        <p className="text-xs font-medium text-stone-500 mb-1">TARGETS MULTIPLE BLOCKS</p>
+                        <div className="flex flex-wrap gap-2">
+                          {intervention.targetBlocks.map(block => (
+                            <span key={block} className="text-xs bg-violet-100 text-violet-700 px-2 py-1 rounded">
+                              {block}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    
+                    {/* Mechanism */}
+                    <div className={`${
+                      currentBlock.color === 'rose' ? 'bg-rose-50 border-rose-200' :
+                      currentBlock.color === 'amber' ? 'bg-amber-50 border-amber-200' :
+                      currentBlock.color === 'blue' ? 'bg-blue-50 border-blue-200' :
+                      currentBlock.color === 'purple' ? 'bg-purple-50 border-purple-200' :
+                      currentBlock.color === 'emerald' ? 'bg-emerald-50 border-emerald-200' :
+                      currentBlock.color === 'teal' ? 'bg-teal-50 border-teal-200' :
+                      currentBlock.color === 'lime' ? 'bg-lime-50 border-lime-200' :
+                      currentBlock.color === 'yellow' ? 'bg-yellow-50 border-yellow-200' :
+                      currentBlock.color === 'sky' ? 'bg-sky-50 border-sky-200' :
+                      'bg-violet-50 border-violet-200'
+                    } border rounded-lg p-3 mt-4 mb-4`}>
+                      <p className="text-xs font-medium text-stone-500 mb-1">HOW IT WORKS</p>
+                      <p className="text-sm text-stone-700">{intervention.mechanism}</p>
+                    </div>
+                    
+                    {/* Activities */}
+                    <div className="mb-4">
+                      <p className="text-xs font-medium text-stone-500 mb-2">ACTIVITIES</p>
+                      <div className="space-y-2">
+                        {intervention.activities.map((activity, actIdx) => (
+                          <div key={actIdx} className="flex items-start gap-2">
+                            <span className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-medium text-white bg-gradient-to-br ${currentBlock.gradient}`}>
+                              {actIdx + 1}
+                            </span>
+                            <p className="text-sm text-stone-600 flex-1">{activity}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                    
+                    {/* Source */}
+                    <p className="text-xs text-stone-500 mb-4">📚 {intervention.source}</p>
+                    
+                    {/* Action Buttons */}
+                    <div className="flex gap-3">
+                      <button 
+                        onClick={() => setCurrentView({ view: 'journal', context: { intervention } })}
+                        className="flex-1 py-2.5 px-4 bg-stone-100 hover:bg-stone-200 rounded-lg text-sm font-medium text-stone-700 transition-colors"
+                      >
+                        📝 Start in Journal
+                      </button>
+                      <button 
+                        onClick={() => setCurrentView({ view: 'coach', context: { topic: intervention.title, intervention } })}
+                        className="flex-1 py-2.5 px-4 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 rounded-lg text-sm font-medium text-white transition-colors"
+                      >
+                        💬 Discuss with Coach
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 
 function AssessmentView({ assessmentId, setCurrentView, user }) {
   const [currentItem, setCurrentItem] = useState(0);
@@ -7575,11 +8671,6 @@ export default function DayByDayApp() {
     </div>
   );
 }
-
-
-
-
-
 
 
 
