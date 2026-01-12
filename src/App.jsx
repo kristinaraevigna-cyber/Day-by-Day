@@ -3284,6 +3284,9 @@ function Sidebar({ currentView, setCurrentView, user, onSignOut }) {
           <div className="w-8 h-8 rounded-full bg-stone-100 flex items-center justify-center text-stone-400"><Icons.User /></div>
           <p className="text-sm font-medium text-stone-800 truncate">{user?.user_metadata?.full_name || 'User'}</p>
         </div>
+        <button onClick={() => setCurrentView('privacy-settings')} className="w-full flex items-center gap-3 px-4 py-2 text-stone-600 hover:bg-stone-50 rounded-xl text-sm mb-1">
+          <Icons.Shield /><span>Privacy Settings</span>
+        </button>
         <button onClick={onSignOut} className="w-full flex items-center gap-3 px-4 py-2 text-red-600 hover:bg-red-50 rounded-xl text-sm">
           <Icons.LogOut /><span>Sign Out</span>
         </button>
@@ -5191,9 +5194,629 @@ function InterventionView({ interventionId, setCurrentView, user }) {
 // MAIN APP
 // ============================================================================
 
+// Privacy Policy Content
+const PRIVACY_POLICY_VERSION = '1.0';
+const TERMS_VERSION = '1.0';
+
+const PRIVACY_POLICY = {
+  version: PRIVACY_POLICY_VERSION,
+  effectiveDate: '2025-01-12',
+  sections: [
+    {
+      title: 'Information We Collect',
+      content: 'We collect information you provide directly, including: account information (email), assessment responses, journal reflections, action items, and usage data. All data is stored securely and associated with your account.'
+    },
+    {
+      title: 'How We Use Your Information',
+      content: 'We use your information to: provide and improve the leadership development experience, track your progress, enable coaching features, and if you consent, for research purposes to advance leadership development science.'
+    },
+    {
+      title: 'Data Sharing',
+      content: 'We do not sell your personal information. With your explicit consent, aggregated or anonymized data may be used for academic research. If you are part of a class, your instructor may view your progress with your consent.'
+    },
+    {
+      title: 'Data Security',
+      content: 'We implement industry-standard security measures including encryption at rest, secure data transmission (HTTPS), and strict access controls. Your data is stored on Supabase infrastructure with SOC 2 compliance.'
+    },
+    {
+      title: 'Your Rights (GDPR)',
+      content: 'You have the right to: access your data, export your data in a portable format, correct inaccurate data, delete your data, and withdraw consent at any time. Use the "My Data" section to exercise these rights.'
+    },
+    {
+      title: 'Data Retention',
+      content: 'We retain your data for as long as your account is active. Assessment and reflection data is retained for up to 3 years. Audit logs are retained for 7 years for compliance purposes. You can delete your data at any time.'
+    },
+    {
+      title: 'Contact',
+      content: 'For privacy-related questions or to exercise your rights, contact us through the app settings or email the course administrator.'
+    }
+  ]
+};
+
+// Consent Screen Component
+function ConsentScreen({ user, onConsentComplete }) {
+  const [step, setStep] = useState(1); // 1: Privacy Policy, 2: Consent Options, 3: Complete
+  const [consents, setConsents] = useState({
+    privacyPolicy: false,
+    termsOfService: false,
+    dataProcessing: false,
+    assessmentData: false,
+    researchParticipation: false
+  });
+  const [saving, setSaving] = useState(false);
+  const [showFullPolicy, setShowFullPolicy] = useState(false);
+
+  const requiredConsents = ['privacyPolicy', 'termsOfService', 'dataProcessing', 'assessmentData'];
+  const allRequiredAccepted = requiredConsents.every(key => consents[key]);
+
+  const handleSaveConsent = async () => {
+    if (!allRequiredAccepted) return;
+    
+    setSaving(true);
+    try {
+      const now = new Date().toISOString();
+      await supabase.from('user_consents').upsert({
+        user_id: user.id,
+        privacy_policy_accepted: consents.privacyPolicy,
+        privacy_policy_version: PRIVACY_POLICY_VERSION,
+        privacy_policy_accepted_at: consents.privacyPolicy ? now : null,
+        terms_of_service_accepted: consents.termsOfService,
+        terms_of_service_version: TERMS_VERSION,
+        terms_of_service_accepted_at: consents.termsOfService ? now : null,
+        data_processing_consent: consents.dataProcessing,
+        data_processing_consent_at: consents.dataProcessing ? now : null,
+        assessment_data_consent: consents.assessmentData,
+        assessment_data_consent_at: consents.assessmentData ? now : null,
+        research_participation_consent: consents.researchParticipation,
+        research_participation_consent_at: consents.researchParticipation ? now : null,
+        updated_at: now
+      }, { onConflict: 'user_id' });
+
+      // Create default privacy settings
+      await supabase.from('user_privacy_settings').upsert({
+        user_id: user.id,
+        share_anonymized_data_for_research: consents.researchParticipation,
+        share_with_instructors: true,
+        email_notifications: true,
+        updated_at: now
+      }, { onConflict: 'user_id' });
+
+      onConsentComplete();
+    } catch (error) {
+      console.error('Error saving consent:', error);
+      alert('Error saving consent. Please try again.');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const ConsentCheckbox = ({ id, label, description, required, checked, onChange }) => (
+    <label className="flex items-start gap-3 p-4 bg-white rounded-xl border border-stone-200 cursor-pointer hover:border-amber-300 transition-colors">
+      <input
+        type="checkbox"
+        checked={checked}
+        onChange={(e) => onChange(e.target.checked)}
+        className="mt-1 w-5 h-5 rounded border-stone-300 text-amber-600 focus:ring-amber-500"
+      />
+      <div className="flex-1">
+        <div className="flex items-center gap-2">
+          <span className="font-medium text-stone-800">{label}</span>
+          {required && <span className="text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full">Required</span>}
+        </div>
+        <p className="text-sm text-stone-500 mt-1">{description}</p>
+      </div>
+    </label>
+  );
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-amber-50 to-stone-100 flex items-center justify-center p-4">
+      <div className="w-full max-w-xl">
+        {/* Header */}
+        <div className="text-center mb-8">
+          <div className="w-16 h-16 bg-gradient-to-br from-amber-500 to-amber-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
+            <Icons.Shield />
+          </div>
+          <h1 className="text-2xl font-bold text-stone-800">Welcome to Day by Day</h1>
+          <p className="text-stone-600 mt-2">Before we begin, please review and accept our privacy practices</p>
+        </div>
+
+        {/* Progress */}
+        <div className="flex items-center justify-center gap-2 mb-6">
+          {[1, 2].map(s => (
+            <div key={s} className={`w-3 h-3 rounded-full transition-colors ${step >= s ? 'bg-amber-500' : 'bg-stone-300'}`} />
+          ))}
+        </div>
+
+        {/* Step 1: Privacy Policy */}
+        {step === 1 && (
+          <div className="bg-white rounded-2xl shadow-xl p-6 animate-fadeIn">
+            <h2 className="text-lg font-semibold text-stone-800 mb-4">📜 Privacy Policy</h2>
+            
+            <div className={`space-y-4 ${showFullPolicy ? '' : 'max-h-64'} overflow-y-auto mb-4`}>
+              {PRIVACY_POLICY.sections.map((section, idx) => (
+                <div key={idx}>
+                  <h3 className="font-medium text-stone-800">{section.title}</h3>
+                  <p className="text-sm text-stone-600 mt-1">{section.content}</p>
+                </div>
+              ))}
+            </div>
+
+            {!showFullPolicy && (
+              <button 
+                onClick={() => setShowFullPolicy(true)}
+                className="text-amber-600 text-sm font-medium mb-4"
+              >
+                Read full policy...
+              </button>
+            )}
+
+            <div className="pt-4 border-t border-stone-100">
+              <p className="text-xs text-stone-500 mb-4">
+                Version {PRIVACY_POLICY.version} • Effective {PRIVACY_POLICY.effectiveDate}
+              </p>
+              <button
+                onClick={() => setStep(2)}
+                className="w-full bg-amber-600 text-white py-3 rounded-xl font-medium hover:bg-amber-700 transition-colors"
+              >
+                I've Read the Privacy Policy
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Step 2: Consent Options */}
+        {step === 2 && (
+          <div className="bg-white rounded-2xl shadow-xl p-6 animate-fadeIn">
+            <h2 className="text-lg font-semibold text-stone-800 mb-4">✅ Your Consent</h2>
+            <p className="text-sm text-stone-600 mb-6">Please indicate your consent for the following:</p>
+
+            <div className="space-y-3 mb-6">
+              <ConsentCheckbox
+                id="privacyPolicy"
+                label="Privacy Policy"
+                description="I have read and accept the Privacy Policy"
+                required={true}
+                checked={consents.privacyPolicy}
+                onChange={(v) => setConsents({...consents, privacyPolicy: v})}
+              />
+              
+              <ConsentCheckbox
+                id="termsOfService"
+                label="Terms of Service"
+                description="I agree to the Terms of Service for using this application"
+                required={true}
+                checked={consents.termsOfService}
+                onChange={(v) => setConsents({...consents, termsOfService: v})}
+              />
+              
+              <ConsentCheckbox
+                id="dataProcessing"
+                label="Data Processing"
+                description="I consent to the processing of my data as described in the Privacy Policy"
+                required={true}
+                checked={consents.dataProcessing}
+                onChange={(v) => setConsents({...consents, dataProcessing: v})}
+              />
+              
+              <ConsentCheckbox
+                id="assessmentData"
+                label="Assessment Data"
+                description="I consent to the collection and storage of my assessment responses for my development"
+                required={true}
+                checked={consents.assessmentData}
+                onChange={(v) => setConsents({...consents, assessmentData: v})}
+              />
+              
+              <div className="pt-2 border-t border-stone-100">
+                <p className="text-xs text-stone-500 mb-3">Optional:</p>
+                <ConsentCheckbox
+                  id="researchParticipation"
+                  label="Research Participation"
+                  description="I consent to my anonymized data being used for academic research on leadership development"
+                  required={false}
+                  checked={consents.researchParticipation}
+                  onChange={(v) => setConsents({...consents, researchParticipation: v})}
+                />
+              </div>
+            </div>
+
+            <div className="flex gap-3">
+              <button
+                onClick={() => setStep(1)}
+                className="px-4 py-3 border border-stone-300 rounded-xl text-stone-600 hover:bg-stone-50"
+              >
+                Back
+              </button>
+              <button
+                onClick={handleSaveConsent}
+                disabled={!allRequiredAccepted || saving}
+                className={`flex-1 py-3 rounded-xl font-medium transition-colors ${
+                  allRequiredAccepted 
+                    ? 'bg-amber-600 text-white hover:bg-amber-700' 
+                    : 'bg-stone-200 text-stone-400 cursor-not-allowed'
+                }`}
+              >
+                {saving ? 'Saving...' : 'Accept & Continue'}
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Footer */}
+        <p className="text-center text-xs text-stone-500 mt-6">
+          You can change your privacy settings at any time in the app settings.
+        </p>
+      </div>
+    </div>
+  );
+}
+
+// Privacy Settings View
+function PrivacySettingsView({ user, setCurrentView }) {
+  const [settings, setSettings] = useState(null);
+  const [consents, setConsents] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    loadSettings();
+  }, [user]);
+
+  const loadSettings = async () => {
+    setLoading(true);
+    const { data: privacyData } = await supabase
+      .from('user_privacy_settings')
+      .select('*')
+      .eq('user_id', user.id)
+      .single();
+    
+    const { data: consentData } = await supabase
+      .from('user_consents')
+      .select('*')
+      .eq('user_id', user.id)
+      .single();
+
+    setSettings(privacyData || {});
+    setConsents(consentData || {});
+    setLoading(false);
+  };
+
+  const updateSetting = async (key, value) => {
+    setSaving(true);
+    const newSettings = { ...settings, [key]: value, updated_at: new Date().toISOString() };
+    setSettings(newSettings);
+    
+    await supabase
+      .from('user_privacy_settings')
+      .upsert({ user_id: user.id, ...newSettings }, { onConflict: 'user_id' });
+    
+    setSaving(false);
+  };
+
+  const updateConsent = async (key, value) => {
+    setSaving(true);
+    const now = new Date().toISOString();
+    const newConsents = { 
+      ...consents, 
+      [key]: value,
+      [`${key}_at`]: value ? now : null,
+      updated_at: now 
+    };
+    setConsents(newConsents);
+    
+    await supabase
+      .from('user_consents')
+      .upsert({ user_id: user.id, ...newConsents }, { onConflict: 'user_id' });
+    
+    setSaving(false);
+  };
+
+  if (loading) {
+    return (
+      <div className="animate-fadeIn flex items-center justify-center py-12">
+        <Icons.Loader />
+      </div>
+    );
+  }
+
+  const ToggleSetting = ({ label, description, value, onChange }) => (
+    <div className="flex items-center justify-between p-4 bg-white rounded-xl border border-stone-200">
+      <div className="flex-1 mr-4">
+        <p className="font-medium text-stone-800">{label}</p>
+        <p className="text-sm text-stone-500">{description}</p>
+      </div>
+      <button
+        onClick={() => onChange(!value)}
+        className={`relative w-12 h-7 rounded-full transition-colors ${value ? 'bg-amber-500' : 'bg-stone-300'}`}
+      >
+        <div className={`absolute top-1 w-5 h-5 bg-white rounded-full shadow transition-transform ${value ? 'translate-x-6' : 'translate-x-1'}`} />
+      </button>
+    </div>
+  );
+
+  return (
+    <div className="animate-fadeIn">
+      <button onClick={() => setCurrentView('dashboard')} className="flex items-center gap-1 text-stone-500 hover:text-stone-700 mb-4 text-sm">
+        <Icons.ChevronLeft /> Back
+      </button>
+
+      <div className="bg-gradient-to-br from-amber-50 to-stone-50 border border-amber-200 rounded-xl p-5 mb-6">
+        <div className="flex items-center gap-3 mb-2">
+          <Icons.Shield />
+          <h1 className="text-xl font-bold text-stone-800">Privacy Settings</h1>
+        </div>
+        <p className="text-sm text-stone-600">Manage how your data is used and shared</p>
+        {saving && <p className="text-xs text-amber-600 mt-2">Saving...</p>}
+      </div>
+
+      {/* Data Sharing */}
+      <div className="mb-6">
+        <h2 className="font-semibold text-stone-800 mb-3">Data Sharing</h2>
+        <div className="space-y-3">
+          <ToggleSetting
+            label="Share with Instructors"
+            description="Allow your instructor to view your assessment scores and progress"
+            value={settings?.share_with_instructors ?? true}
+            onChange={(v) => updateSetting('share_with_instructors', v)}
+          />
+          <ToggleSetting
+            label="Research Participation"
+            description="Allow anonymized data to be used for academic research"
+            value={consents?.research_participation_consent ?? false}
+            onChange={(v) => updateConsent('research_participation_consent', v)}
+          />
+        </div>
+      </div>
+
+      {/* Communications */}
+      <div className="mb-6">
+        <h2 className="font-semibold text-stone-800 mb-3">Communications</h2>
+        <div className="space-y-3">
+          <ToggleSetting
+            label="Email Notifications"
+            description="Receive email reminders and updates"
+            value={settings?.email_notifications ?? true}
+            onChange={(v) => updateSetting('email_notifications', v)}
+          />
+          <ToggleSetting
+            label="Product Updates"
+            description="Receive news about new features"
+            value={settings?.product_updates ?? false}
+            onChange={(v) => updateSetting('product_updates', v)}
+          />
+        </div>
+      </div>
+
+      {/* Your Consents */}
+      <div className="mb-6">
+        <h2 className="font-semibold text-stone-800 mb-3">Your Consents</h2>
+        <div className="bg-white rounded-xl border border-stone-200 p-4 space-y-3">
+          <div className="flex items-center justify-between">
+            <span className="text-stone-700">Privacy Policy (v{consents?.privacy_policy_version})</span>
+            <span className="text-xs text-green-600">✓ Accepted</span>
+          </div>
+          <div className="flex items-center justify-between">
+            <span className="text-stone-700">Terms of Service (v{consents?.terms_of_service_version})</span>
+            <span className="text-xs text-green-600">✓ Accepted</span>
+          </div>
+          <div className="flex items-center justify-between">
+            <span className="text-stone-700">Data Processing</span>
+            <span className="text-xs text-green-600">✓ Consented</span>
+          </div>
+          {consents?.privacy_policy_accepted_at && (
+            <p className="text-xs text-stone-500 pt-2 border-t border-stone-100">
+              Consent given on {new Date(consents.privacy_policy_accepted_at).toLocaleDateString()}
+            </p>
+          )}
+        </div>
+      </div>
+
+      {/* Manage Data Link */}
+      <button
+        onClick={() => setCurrentView('my-data')}
+        className="w-full bg-white border border-stone-200 rounded-xl p-4 text-left hover:border-amber-300 transition-colors"
+      >
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="font-medium text-stone-800">Manage Your Data</p>
+            <p className="text-sm text-stone-500">Export or delete your personal data</p>
+          </div>
+          <Icons.ChevronRight />
+        </div>
+      </button>
+    </div>
+  );
+}
+
+// My Data View (Export / Delete)
+function MyDataView({ user, setCurrentView, onSignOut }) {
+  const [exporting, setExporting] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [deleteConfirmText, setDeleteConfirmText] = useState('');
+  const [dataSummary, setDataSummary] = useState(null);
+
+  useEffect(() => {
+    loadDataSummary();
+  }, [user]);
+
+  const loadDataSummary = async () => {
+    const [assessments, reflections, actions] = await Promise.all([
+      supabase.from('assessment_responses').select('id', { count: 'exact' }).eq('user_id', user.id),
+      supabase.from('reflections').select('id', { count: 'exact' }).eq('user_id', user.id),
+      supabase.from('actions').select('id', { count: 'exact' }).eq('user_id', user.id)
+    ]);
+    
+    setDataSummary({
+      assessments: assessments.count || 0,
+      reflections: reflections.count || 0,
+      actions: actions.count || 0
+    });
+  };
+
+  const handleExport = async () => {
+    setExporting(true);
+    try {
+      const { data, error } = await supabase.rpc('export_user_data', { p_user_id: user.id });
+      
+      if (error) throw error;
+      
+      // Download as JSON file
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `day-by-day-export-${new Date().toISOString().split('T')[0]}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      
+      alert('Your data has been exported successfully!');
+    } catch (error) {
+      console.error('Export error:', error);
+      alert('Error exporting data. Please try again.');
+    } finally {
+      setExporting(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (deleteConfirmText !== 'DELETE') return;
+    
+    setDeleting(true);
+    try {
+      const { data, error } = await supabase.rpc('delete_user_data', { 
+        p_user_id: user.id,
+        p_reason: 'User requested deletion via app'
+      });
+      
+      if (error) throw error;
+      
+      alert('Your data has been deleted. You will now be signed out.');
+      
+      // Sign out the user
+      await supabase.auth.signOut();
+      onSignOut();
+    } catch (error) {
+      console.error('Delete error:', error);
+      alert('Error deleting data. Please contact support.');
+    } finally {
+      setDeleting(false);
+      setShowDeleteConfirm(false);
+    }
+  };
+
+  return (
+    <div className="animate-fadeIn">
+      <button onClick={() => setCurrentView('privacy-settings')} className="flex items-center gap-1 text-stone-500 hover:text-stone-700 mb-4 text-sm">
+        <Icons.ChevronLeft /> Back to Privacy Settings
+      </button>
+
+      <div className="bg-gradient-to-br from-blue-50 to-stone-50 border border-blue-200 rounded-xl p-5 mb-6">
+        <h1 className="text-xl font-bold text-stone-800 mb-2">Your Data</h1>
+        <p className="text-sm text-stone-600">Export or delete your personal data in accordance with GDPR</p>
+      </div>
+
+      {/* Data Summary */}
+      <div className="bg-white rounded-xl border border-stone-200 p-4 mb-6">
+        <h2 className="font-semibold text-stone-800 mb-3">Data Summary</h2>
+        {dataSummary ? (
+          <div className="grid grid-cols-3 gap-4">
+            <div className="text-center p-3 bg-stone-50 rounded-lg">
+              <p className="text-2xl font-bold text-stone-800">{dataSummary.assessments}</p>
+              <p className="text-xs text-stone-500">Assessments</p>
+            </div>
+            <div className="text-center p-3 bg-stone-50 rounded-lg">
+              <p className="text-2xl font-bold text-stone-800">{dataSummary.reflections}</p>
+              <p className="text-xs text-stone-500">Reflections</p>
+            </div>
+            <div className="text-center p-3 bg-stone-50 rounded-lg">
+              <p className="text-2xl font-bold text-stone-800">{dataSummary.actions}</p>
+              <p className="text-xs text-stone-500">Actions</p>
+            </div>
+          </div>
+        ) : (
+          <p className="text-stone-500">Loading...</p>
+        )}
+      </div>
+
+      {/* Export Data */}
+      <div className="bg-white rounded-xl border border-stone-200 p-4 mb-6">
+        <h2 className="font-semibold text-stone-800 mb-2">Export Your Data</h2>
+        <p className="text-sm text-stone-600 mb-4">
+          Download a complete copy of all your data in JSON format. This includes your profile, assessments, reflections, actions, and consent records.
+        </p>
+        <button
+          onClick={handleExport}
+          disabled={exporting}
+          className="w-full bg-blue-600 text-white py-3 rounded-xl font-medium hover:bg-blue-700 transition-colors disabled:opacity-50"
+        >
+          {exporting ? 'Preparing Export...' : '📦 Export All My Data'}
+        </button>
+      </div>
+
+      {/* Delete Data */}
+      <div className="bg-white rounded-xl border border-red-200 p-4">
+        <h2 className="font-semibold text-red-800 mb-2">Delete Your Data</h2>
+        <p className="text-sm text-stone-600 mb-4">
+          Permanently delete all your data from our systems. This action cannot be undone. Your account will be deactivated.
+        </p>
+        
+        {!showDeleteConfirm ? (
+          <button
+            onClick={() => setShowDeleteConfirm(true)}
+            className="w-full border border-red-300 text-red-600 py-3 rounded-xl font-medium hover:bg-red-50 transition-colors"
+          >
+            🗑️ Delete All My Data
+          </button>
+        ) : (
+          <div className="space-y-4 p-4 bg-red-50 rounded-xl">
+            <p className="text-sm text-red-800 font-medium">
+              ⚠️ This will permanently delete:
+            </p>
+            <ul className="text-sm text-red-700 list-disc list-inside space-y-1">
+              <li>All assessment responses</li>
+              <li>All journal reflections</li>
+              <li>All action items</li>
+              <li>Your account settings</li>
+            </ul>
+            <p className="text-sm text-red-800">
+              Type <strong>DELETE</strong> to confirm:
+            </p>
+            <input
+              type="text"
+              value={deleteConfirmText}
+              onChange={(e) => setDeleteConfirmText(e.target.value)}
+              placeholder="Type DELETE"
+              className="w-full px-4 py-2 border border-red-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+            />
+            <div className="flex gap-3">
+              <button
+                onClick={() => { setShowDeleteConfirm(false); setDeleteConfirmText(''); }}
+                className="flex-1 py-2 border border-stone-300 rounded-lg text-stone-600"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDelete}
+                disabled={deleteConfirmText !== 'DELETE' || deleting}
+                className="flex-1 py-2 bg-red-600 text-white rounded-lg font-medium disabled:opacity-50"
+              >
+                {deleting ? 'Deleting...' : 'Permanently Delete'}
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 export default function DayByDayApp() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [hasConsent, setHasConsent] = useState(null);
   const [currentView, setCurrentView] = useState('dashboard');
   const [streak, setStreak] = useState(0);
   const [actions, setActions] = useState([]);
@@ -5205,7 +5828,25 @@ export default function DayByDayApp() {
     return () => subscription.unsubscribe();
   }, []);
 
-  useEffect(() => { if (user) loadUserData(); }, [user]);
+  // Check for consent when user logs in
+  useEffect(() => { 
+    if (user) {
+      checkConsent();
+      loadUserData(); 
+    }
+  }, [user]);
+
+  const checkConsent = async () => {
+    const { data } = await supabase
+      .from('user_consents')
+      .select('privacy_policy_accepted, data_processing_consent')
+      .eq('user_id', user.id)
+      .single();
+    
+    // User has consent if they've accepted privacy policy and data processing
+    const consentGiven = data?.privacy_policy_accepted && data?.data_processing_consent;
+    setHasConsent(consentGiven);
+  };
 
   const loadUserData = async () => {
     const { data: actionsData } = await supabase.from('actions').select('*').eq('user_id', user.id).order('created_at', { ascending: false });
@@ -5216,10 +5857,20 @@ export default function DayByDayApp() {
     if (streakData) setStreak(streakData.current_streak);
   };
 
-  const handleSignOut = async () => { await supabase.auth.signOut(); setUser(null); };
+  const handleSignOut = async () => { await supabase.auth.signOut(); setUser(null); setHasConsent(null); };
 
   if (loading) return <div className="min-h-screen bg-stone-50 flex items-center justify-center"><Icons.Loader /></div>;
   if (!user) return <AuthScreen onAuth={setUser} />;
+  
+  // Show consent screen if user hasn't consented
+  if (hasConsent === false) {
+    return <ConsentScreen user={user} onConsentComplete={() => setHasConsent(true)} />;
+  }
+  
+  // Still checking consent
+  if (hasConsent === null) {
+    return <div className="min-h-screen bg-stone-50 flex items-center justify-center"><Icons.Loader /></div>;
+  }
 
   const renderView = () => {
     if (currentView.startsWith('chapter-')) {
@@ -5252,6 +5903,8 @@ export default function DayByDayApp() {
       case 'coach-advisor-voice': return <VoiceCoach coachType="mentor" setCurrentView={setCurrentView} />;
       case 'coach-advisor-text': return <TextCoach coachType="mentor" setCurrentView={setCurrentView} user={user} setActions={setActions} actions={actions} />;
       case 'library': return <LibraryView setCurrentView={setCurrentView} />;
+      case 'privacy-settings': return <PrivacySettingsView user={user} setCurrentView={setCurrentView} />;
+      case 'my-data': return <MyDataView user={user} setCurrentView={setCurrentView} onSignOut={handleSignOut} />;
       default: return <Dashboard setCurrentView={setCurrentView} streak={streak} user={user} actions={actions} journalEntries={journalEntries} />;
     }
   };
@@ -5272,6 +5925,7 @@ export default function DayByDayApp() {
     </div>
   );
 }
+
 
 
 
