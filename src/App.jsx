@@ -2093,6 +2093,392 @@ const LEARNING_ORIENTATION_ASSESSMENT = {
 };
 
 // ============================================================================
+// LEADER IDENTITY INTERVENTIONS (Comprehensive - 9 Evidence-Based Approaches)
+// Based on Day et al. (2021), Ely et al. (2011), Ibarra (1999, 2010), Lord et al. (2017)
+// ============================================================================
+
+const LEADER_IDENTITY_INTERVENTIONS = {
+  title: 'Leader Identity Development',
+  subtitle: 'Building Your Self-Concept as a Leader',
+  description: 'Identity motivates the learning and practice that sustains development over time. These interventions help you move from "doing leadership" to "being a leader."',
+  assessment: 'leaderIdentity',
+  
+  categories: [
+    {
+      id: 'reflective',
+      name: 'Reflective Approaches',
+      icon: '🪞',
+      color: 'violet',
+      description: 'Internal work to understand and construct your leader identity through reflection, narrative, and visualization.'
+    },
+    {
+      id: 'experiential',
+      name: 'Experiential Learning',
+      icon: '🎯',
+      color: 'amber',
+      description: 'Learning by doing - trying on leadership roles and accumulating evidence of your leadership through action.'
+    },
+    {
+      id: 'social',
+      name: 'Social & Relational',
+      icon: '👥',
+      color: 'teal',
+      description: 'Building identity through relationships, feedback, and social validation from others.'
+    },
+    {
+      id: 'coaching',
+      name: 'Guided Development',
+      icon: '🧭',
+      color: 'blue',
+      description: 'Structured support from coaches and mentors to develop authentic leadership identity.'
+    }
+  ],
+  
+  interventions: [
+    // REFLECTIVE APPROACHES
+    {
+      id: 'identity_reflection',
+      title: 'Identity Reflection & Narrative Construction',
+      category: 'reflective',
+      duration: '2-3 weeks',
+      effort: 'moderate',
+      format: 'individual',
+      mechanism: 'Self-concept integration — connecting personal values with leadership purpose',
+      description: 'Guided reflection on your personal leadership journey through writing and storytelling exercises that trace pivotal experiences, values, and turning points.',
+      sources: 'Ely et al. (2011); Day et al. (2021)',
+      activities: [
+        {
+          title: 'Leadership Autobiography',
+          duration: '60 min',
+          instructions: 'Write your leadership story from earliest memory to now. Include: first leadership experience, key turning points, people who shaped your view of leadership, successes and failures, and what leadership means to you today.',
+          reflection: 'What themes emerge? What values have been consistent?'
+        },
+        {
+          title: 'Values Excavation',
+          duration: '45 min',
+          instructions: 'List 10 moments when you felt most alive and engaged. For each, identify what value was being honored. Cluster similar values and identify your top 5 core values.',
+          reflection: 'How do these values connect to how you want to lead?'
+        },
+        {
+          title: 'Leadership Timeline',
+          duration: '30 min',
+          instructions: 'Create a visual timeline of your leadership journey. Mark high points, low points, transitions, and key relationships. Add annotations about what you learned at each stage.',
+          reflection: 'What pattern do you see in your development?'
+        },
+        {
+          title: 'Identity Integration Reflection',
+          duration: '30 min',
+          instructions: 'Write about how "being a leader" connects to your other important identities (professional, family, community). Where do they reinforce each other? Where might they conflict?',
+          reflection: 'How can you lead authentically across all parts of your life?'
+        }
+      ]
+    },
+    {
+      id: 'possible_selves',
+      title: 'Leadership Possible Selves',
+      category: 'reflective',
+      duration: '1-2 weeks',
+      effort: 'moderate',
+      format: 'individual',
+      mechanism: 'Identity motivation and self-regulatory alignment with aspirational leader roles',
+      description: 'Envision your future leader self through visualization, vision boards, and narrative exercises that clarify who you want to become.',
+      sources: 'Lord et al. (2017); Day et al. (2021)',
+      activities: [
+        {
+          title: 'Three Possible Selves',
+          duration: '45 min',
+          instructions: 'Describe in detail three versions of your future leader self: (1) Your hoped-for leader self - the best you could become, (2) Your feared leader self - what you want to avoid, (3) Your expected leader self - where you\'ll likely end up. Be specific about behaviors, not titles.',
+          reflection: 'What separates your hoped-for self from your expected self?'
+        },
+        {
+          title: 'Letter from Future Self',
+          duration: '30 min',
+          instructions: 'Write a letter from yourself 5 years in the future. You\'ve become the leader you hoped to be. Describe what you did to get there, what obstacles you overcame, and what advice you have for your present self.',
+          reflection: 'What actions could you take now to move toward this future?'
+        },
+        {
+          title: 'Vision Board Creation',
+          duration: '60 min',
+          instructions: 'Create a visual representation of your leadership vision. Include images, words, and symbols that represent: the leader you want to become, the impact you want to have, and the values you want to embody.',
+          reflection: 'What does this vision board reveal about your leadership aspirations?'
+        },
+        {
+          title: 'Gap Analysis',
+          duration: '30 min',
+          instructions: 'Compare your current leader identity assessment score to your hoped-for self. Identify 3 specific gaps. For each, write one concrete action you could take in the next 30 days.',
+          reflection: 'What\'s the smallest step that would make the biggest difference?'
+        }
+      ]
+    },
+    
+    // EXPERIENTIAL APPROACHES
+    {
+      id: 'role_experimentation',
+      title: 'Role-Based Experimentation',
+      category: 'experiential',
+      duration: '4-6 weeks',
+      effort: 'high',
+      format: 'individual',
+      mechanism: 'Identity enactment and feedback integration — aligning behavior with self-concept',
+      description: 'Safe, structured opportunities to "try on" leadership roles in low-risk settings. Learn by doing and adjust your identity through direct experience.',
+      sources: 'Ibarra (1999, 2010); DeRue & Ashford (2010)',
+      activities: [
+        {
+          title: 'Leadership Role Inventory',
+          duration: '20 min',
+          instructions: 'List all the opportunities you currently have to practice leadership: formal roles, informal opportunities, volunteer positions, community involvement. Rate each by frequency and visibility.',
+          reflection: 'Where are the untapped opportunities to practice leading?'
+        },
+        {
+          title: 'Low-Stakes Leadership Challenge',
+          duration: '2 weeks',
+          instructions: 'Volunteer to lead something small but real: a meeting, a team project, a community initiative, or a social event. Choose something with genuine responsibility but limited consequences if imperfect.',
+          reflection: 'What did you learn about yourself as a leader?'
+        },
+        {
+          title: 'Stretch Assignment',
+          duration: '4 weeks',
+          instructions: 'Take on a leadership challenge that\'s slightly beyond your comfort zone. It should require you to develop a new skill or work with unfamiliar people. Document your experience weekly.',
+          reflection: 'How did stretching change your view of what you\'re capable of?'
+        },
+        {
+          title: 'Role Model Experiment',
+          duration: '1 week',
+          instructions: 'Identify a leader you admire. Study their specific behaviors (not just traits). Choose 2-3 behaviors to try yourself this week. Observe what happens and how it feels.',
+          reflection: 'Which behaviors felt natural? Which felt forced? What does that tell you?'
+        }
+      ]
+    },
+    {
+      id: 'micro_moments',
+      title: 'Empowerment-Based Micro-Moments',
+      category: 'experiential',
+      duration: 'Ongoing',
+      effort: 'low',
+      format: 'individual',
+      mechanism: 'Accumulating identity evidence through small wins that confirm internalized leader identity',
+      description: 'Everyday leadership moments that build identity through brief experiences of empowerment, responsibility, and voice. Small wins that add up.',
+      sources: 'Damon et al. (2024)',
+      activities: [
+        {
+          title: 'Daily Leadership Spotting',
+          duration: '5 min/day',
+          instructions: 'At the end of each day, identify one moment where you acted as a leader - influenced someone, made a decision, took initiative, or helped the group. No moment is too small.',
+          reflection: 'What made this a leadership moment?'
+        },
+        {
+          title: 'Voice Practice',
+          duration: '10 min/week',
+          instructions: 'In your next meeting, share one perspective, opinion, or idea you might normally keep to yourself. Speak with conviction while remaining open to feedback.',
+          reflection: 'What happened when you used your voice?'
+        },
+        {
+          title: 'Initiative Taking',
+          duration: 'As opportunities arise',
+          instructions: 'Notice something that needs to be done and do it without being asked. Don\'t wait for permission or assignment. Start small - organizing something, offering help, or solving a minor problem.',
+          reflection: 'How did it feel to take initiative? How did others respond?'
+        },
+        {
+          title: 'Micro-Mentoring',
+          duration: '15 min/week',
+          instructions: 'Help someone else with something you know well - share knowledge, give feedback, or provide guidance. You don\'t need a formal role to develop others.',
+          reflection: 'What did you notice about yourself when you were in a helping role?'
+        }
+      ]
+    },
+    
+    // SOCIAL & RELATIONAL APPROACHES
+    {
+      id: 'feedback_mirroring',
+      title: 'Feedback & Identity Mirroring',
+      category: 'social',
+      duration: '2-3 weeks',
+      effort: 'moderate',
+      format: 'individual + others',
+      mechanism: 'Building identity coherence through social validation and perspective-taking',
+      description: '360° or peer feedback processes that show you how others perceive your leadership, helping you understand identity discrepancies and build coherence.',
+      sources: 'Day et al. (2021); Conger (2024)',
+      activities: [
+        {
+          title: 'Leadership Perception Interviews',
+          duration: '60 min total',
+          instructions: 'Ask 3 people who\'ve seen you in different contexts: "When have you seen me act as a leader? What did I do? What was the impact?" Take notes without defending or explaining.',
+          reflection: 'How does others\' view match your self-perception? What surprised you?'
+        },
+        {
+          title: 'Feedback Pattern Analysis',
+          duration: '30 min',
+          instructions: 'Review all feedback you\'ve received about your leadership in the past year (formal reviews, informal comments, 360 data). Look for themes - what comes up repeatedly?',
+          reflection: 'What\'s your leadership reputation? Does it match your intended identity?'
+        },
+        {
+          title: 'Identity Discrepancy Dialogue',
+          duration: '45 min',
+          instructions: 'Find a trusted colleague. Share your leader identity assessment results and how you see yourself. Ask them to share how they see you. Explore the gaps together without judgment.',
+          reflection: 'What explains the discrepancies? What would help close the gap?'
+        },
+        {
+          title: 'Reputation Repair or Enhancement',
+          duration: 'Ongoing',
+          instructions: 'Based on feedback, identify one aspect of your leadership reputation you want to strengthen or change. Create a plan: What will you do differently? How will you make it visible? How will you know if it\'s working?',
+          reflection: 'What\'s the cost of not addressing this? What\'s the benefit of change?'
+        }
+      ]
+    },
+    {
+      id: 'mentoring_modeling',
+      title: 'Mentoring & Relational Modeling',
+      category: 'social',
+      duration: '3-6 months',
+      effort: 'moderate',
+      format: 'relational',
+      mechanism: 'Identity scaffolding — legitimizing emerging leader selves through relational affirmation',
+      description: 'Learning from mentors who share their leadership journeys and guide you through reflective dialogues on leadership meaning, authenticity, and values.',
+      sources: 'Ely et al. (2011); Ibarra et al. (2010)',
+      activities: [
+        {
+          title: 'Mentor Identification',
+          duration: '30 min',
+          instructions: 'List 5 people whose leadership you admire and who might be accessible to you. Consider: formal mentors, informal advisors, peers who are slightly ahead, or leaders you can observe from a distance.',
+          reflection: 'What specifically do you want to learn from each person?'
+        },
+        {
+          title: 'Leadership Journey Interview',
+          duration: '60 min',
+          instructions: 'Ask a mentor to share their leadership journey. Questions: How did you come to see yourself as a leader? What were the key turning points? What mistakes taught you the most? What do you wish you\'d known earlier?',
+          reflection: 'What parallels do you see with your own journey?'
+        },
+        {
+          title: 'Reverse Role Model Analysis',
+          duration: '30 min',
+          instructions: 'Think of someone whose leadership you don\'t want to emulate. What specifically do they do? What values do they seem to hold? This "anti-mentor" analysis clarifies what you stand for by contrast.',
+          reflection: 'What does avoiding their approach require of you?'
+        },
+        {
+          title: 'Mentoring Up and Down',
+          duration: 'Ongoing',
+          instructions: 'While seeking mentorship, also mentor someone else. Teaching leadership helps you internalize it. Find someone earlier in their journey and offer your perspective and support.',
+          reflection: 'How does mentoring others strengthen your own identity as a leader?'
+        }
+      ]
+    },
+    {
+      id: 'social_identity_framing',
+      title: 'Social Identity & Inclusive Leadership',
+      category: 'social',
+      duration: '2-3 weeks',
+      effort: 'moderate',
+      format: 'individual + group',
+      mechanism: 'Inclusive identity integration — challenging stereotypes that constrain leader emergence',
+      description: 'Explore how group membership, background, and context shape your leader identity. Challenge limiting beliefs and develop an inclusive leadership approach.',
+      sources: 'Ely et al. (2011); Lord et al. (2017)',
+      activities: [
+        {
+          title: 'Identity Inventory',
+          duration: '30 min',
+          instructions: 'List all your social identities (gender, culture, profession, generation, etc.). For each, write: How has this identity shaped my view of leadership? What stereotypes about leaders from my group have I encountered?',
+          reflection: 'Which identities feel like assets for leadership? Which feel like barriers?'
+        },
+        {
+          title: 'Stereotype Challenge',
+          duration: '45 min',
+          instructions: 'Identify one stereotype about leadership that doesn\'t fit you (e.g., "leaders are extroverted," "leaders are older," "leaders look a certain way"). Find 3 examples of effective leaders who also break this stereotype.',
+          reflection: 'How can you lead effectively in your own way?'
+        },
+        {
+          title: 'Leadership Model Expansion',
+          duration: '30 min',
+          instructions: 'Research leaders from backgrounds different from yours. Look for leaders from underrepresented groups in your field. What can you learn from how they\'ve built their leader identity?',
+          reflection: 'How does this expand your definition of what a leader can be?'
+        },
+        {
+          title: 'Context-Shifting Practice',
+          duration: '2 weeks',
+          instructions: 'Practice leading in a context where your usual identity markers don\'t apply - a different team, community group, or setting where you\'re not already established. Notice how context affects your identity.',
+          reflection: 'What did you learn about yourself in an unfamiliar context?'
+        }
+      ]
+    },
+    
+    // COACHING & GUIDED DEVELOPMENT
+    {
+      id: 'authenticity_coaching',
+      title: 'Coaching for Authenticity & Values',
+      category: 'coaching',
+      duration: '4-8 weeks',
+      effort: 'high',
+      format: 'individual + coach',
+      mechanism: 'Fostering identity authenticity and sustained confidence in leader self-concept',
+      description: 'One-on-one or guided exploration focusing on values clarification, purpose articulation, and congruence between personal beliefs and leader role expectations.',
+      sources: 'Conger (2024); Day et al. (2021)',
+      activities: [
+        {
+          title: 'Values Clarification Deep Dive',
+          duration: '60 min',
+          instructions: 'Work through a values card sort or guided reflection. Identify your top 5 non-negotiable values. For each, describe: a time you honored it, a time you violated it, and how it shows up in your leadership.',
+          reflection: 'Are you currently leading in alignment with these values?'
+        },
+        {
+          title: 'Purpose Statement Development',
+          duration: '45 min',
+          instructions: 'Answer: Why do you want to lead? What impact do you want to have? What would be missing if you didn\'t lead? Draft a leadership purpose statement in 2-3 sentences.',
+          reflection: 'Does this purpose feel authentic and motivating?'
+        },
+        {
+          title: 'Authenticity Audit',
+          duration: '30 min',
+          instructions: 'Review your past week of leadership behavior. Where did you feel authentic? Where did you feel like you were wearing a mask or playing a role that didn\'t fit? What triggered the inauthenticity?',
+          reflection: 'What conditions help you lead more authentically?'
+        },
+        {
+          title: 'Congruence Action Plan',
+          duration: '30 min',
+          instructions: 'Identify one area where there\'s a gap between your values and your current leadership behavior. Create a specific plan: What will you do differently? What support do you need? How will you hold yourself accountable?',
+          reflection: 'What\'s the cost of continued incongruence? What\'s possible with alignment?'
+        }
+      ]
+    },
+    {
+      id: 'identity_transitions',
+      title: 'Identity Transition Support',
+      category: 'coaching',
+      duration: '6-12 weeks',
+      effort: 'high',
+      format: 'individual + support system',
+      mechanism: 'Aids identity redefinition during career thresholds, reducing derailment risk',
+      description: 'Structured support for major leadership transitions - new roles, promotions, or career changes. Helps you redefine your identity while maintaining authenticity.',
+      sources: 'Conger (2024); DeRue & Ashford (2010)',
+      activities: [
+        {
+          title: 'Transition Mapping',
+          duration: '30 min',
+          instructions: 'If you\'re approaching or in a transition, map it: What\'s changing about your role, scope, relationships, and visibility? What parts of your old identity do you want to keep? What needs to evolve?',
+          reflection: 'What feels exciting about this transition? What feels threatening?'
+        },
+        {
+          title: 'First 90 Days Identity Plan',
+          duration: '45 min',
+          instructions: 'Plan how you\'ll establish your leader identity in a new context. Consider: How will you introduce yourself? What reputation do you want to build? What early wins will demonstrate your leadership?',
+          reflection: 'How will you balance proving yourself with staying authentic?'
+        },
+        {
+          title: 'Support System Activation',
+          duration: '30 min',
+          instructions: 'Identify 3-5 people who can support your identity through this transition: a thought partner, an emotional supporter, a practical advisor, and someone who can provide honest feedback.',
+          reflection: 'What specific support do you need from each person?'
+        },
+        {
+          title: 'Identity Anchor Identification',
+          duration: '20 min',
+          instructions: 'What aspects of your leader identity are constant regardless of context? These are your "identity anchors." Write them down and commit to maintaining them through the transition.',
+          reflection: 'How will these anchors help you stay grounded during change?'
+        }
+      ]
+    }
+  ]
+};
+
+// ============================================================================
 // LEADER DEVELOPMENT INTERVENTIONS (Individual Level - Human Capital)
 // Based on Day (2024) Chapters 3-5
 // ============================================================================
@@ -4264,239 +4650,670 @@ function DevelopView({ setCurrentView, user }) {
 }
 
 function LeaderDevelopmentTab({ setCurrentView }) {
-  const [expandedSection, setExpandedSection] = useState('self-views');
-  
-  const toggleSection = (section) => {
-    setExpandedSection(expandedSection === section ? null : section);
-  };
+  const [activeArea, setActiveArea] = useState('identity');
+  const [expandedIntervention, setExpandedIntervention] = useState(null);
 
-  // Development sections organized by Day's book structure
-  const sections = [
-    {
-      id: 'self-views',
-      title: 'Self-Views',
-      subtitle: 'Proximal Indicators of Leader Development',
-      source: 'Day (2024), Chapter 4',
+  // Comprehensive development areas with all research-based interventions
+  const developmentAreas = {
+    identity: {
+      id: 'identity',
+      title: 'Leader Identity',
+      subtitle: 'Who you are as a leader',
       icon: '🪞',
       color: 'amber',
-      description: 'How you see yourself as a leader. These self-views are the most direct indicators of leader development.',
-      subsections: [
+      gradient: 'from-amber-500 to-orange-500',
+      description: 'Leader identity is the extent to which you see yourself as a leader. It motivates the learning and practice that sustains development over time.',
+      source: 'Day (2024), Chapter 4; DeRue & Ashford (2010)',
+      assessment: SELF_VIEW_ASSESSMENTS.leaderIdentity,
+      keyQuestion: 'Do you see yourself as a leader?',
+      interventions: [
         {
-          id: 'leader-identity',
-          title: 'Leader Identity',
-          description: 'The extent to which you see yourself as a leader',
-          assessment: SELF_VIEW_ASSESSMENTS.leaderIdentity,
-          intervention: LEADER_DEVELOPMENT.interventions.find(i => i.id === 'identity_work'),
-          keyInsight: 'Identity motivates the learning and practice that sustains development over time.'
+          id: 'identity_narrative',
+          title: 'Identity Reflection & Narrative',
+          type: 'reflect',
+          duration: '45-60 min',
+          mechanism: 'Self-concept integration — connecting personal values with leadership purpose',
+          description: 'Guided reflection on your personal leadership journey through writing and storytelling exercises.',
+          activities: [
+            'Write your leadership autobiography (key moments that shaped you)',
+            'Identify 3 pivotal experiences that defined your leader self',
+            'Articulate your core values and how they connect to leadership',
+            'Create a "leadership timeline" mapping your development'
+          ],
+          source: 'Ely et al. (2011); Day et al. (2021)'
         },
         {
-          id: 'self-awareness',
-          title: 'Self-Awareness',
-          description: 'Understanding your values, tendencies, and impact on others',
-          assessment: SELF_VIEW_ASSESSMENTS.selfAwareness,
-          intervention: LEADER_DEVELOPMENT.interventions.find(i => i.id === 'self_awareness_360'),
-          keyInsight: 'Most people overestimate their self-awareness. External feedback is essential.'
+          id: 'possible_selves',
+          title: 'Leadership Possible Selves',
+          type: 'envision',
+          duration: '30-45 min',
+          mechanism: 'Identity motivation and self-regulatory alignment with aspirational roles',
+          description: 'Envision your future leader self to clarify direction and motivation.',
+          activities: [
+            'Write a letter from your future leader self (5 years ahead)',
+            'Create a "leadership vision board" (visual or written)',
+            'Identify the leader you most admire and why',
+            'Map obstacles between current and future leader self'
+          ],
+          source: 'Lord et al. (2017); Day et al. (2021)'
         },
         {
-          id: 'self-efficacy',
-          title: 'Leadership Self-Efficacy',
-          description: 'Confidence in your ability to lead effectively',
-          assessment: SELF_VIEW_ASSESSMENTS.leadershipSelfEfficacy,
-          intervention: LEADER_DEVELOPMENT.interventions.find(i => i.id === 'efficacy_building'),
-          keyInsight: 'Self-efficacy is built through mastery experiences, role models, and reframing anxiety.'
+          id: 'role_experimentation',
+          title: 'Role-Based Experimentation',
+          type: 'practice',
+          duration: 'Ongoing',
+          mechanism: 'Identity enactment and feedback integration',
+          description: 'Try on leadership roles in safe, low-risk settings to build identity through action.',
+          activities: [
+            'Lead a small project or team initiative',
+            'Volunteer to chair a meeting or committee',
+            'Mentor a peer or junior colleague',
+            'Take on a stretch assignment outside your comfort zone'
+          ],
+          source: 'Ibarra (1999, 2010); DeRue & Ashford (2010)'
         },
         {
-          id: 'self-regulation',
-          title: 'Self-Regulation',
-          description: 'Managing your behavior through deliberate practice',
-          assessment: null,
-          intervention: LEADER_DEVELOPMENT.interventions.find(i => i.id === 'deliberate_practice'),
-          keyInsight: 'Expert performance comes from focused practice at the edge of your ability.'
+          id: 'identity_feedback',
+          title: 'Feedback & Identity Mirroring',
+          type: 'feedback',
+          duration: '2-3 weeks',
+          mechanism: 'Identity coherence through social validation',
+          description: 'Understand how others perceive your leadership to build coherent identity.',
+          activities: [
+            'Request feedback from 3-5 colleagues on your leadership',
+            'Compare self-perception with others\' perceptions',
+            'Reflect on identity discrepancies with a coach or mentor',
+            'Integrate feedback into your leader self-concept'
+          ],
+          source: 'Day et al. (2021); Conger (2024)'
+        },
+        {
+          id: 'mentoring_identity',
+          title: 'Mentoring & Relational Modeling',
+          type: 'coach',
+          duration: 'Ongoing',
+          mechanism: 'Identity scaffolding through relational affirmation',
+          description: 'Learn from mentors who share their journeys and validate your emerging leader identity.',
+          activities: [
+            'Find a mentor whose leadership style you admire',
+            'Ask your mentor about their leadership journey and struggles',
+            'Discuss your leadership doubts and aspirations',
+            'Seek feedback on specific leadership challenges'
+          ],
+          source: 'Ely et al. (2011); Ibarra et al. (2010)'
+        },
+        {
+          id: 'micro_moments',
+          title: 'Empowerment Micro-Moments',
+          type: 'practice',
+          duration: 'Daily',
+          mechanism: 'Identity evidence through small wins',
+          description: 'Accumulate daily leadership experiences that confirm your leader identity.',
+          activities: [
+            'Speak up in a meeting with your perspective',
+            'Offer to help resolve a team conflict',
+            'Make a decision and own the outcome',
+            'Recognize and appreciate someone\'s contribution'
+          ],
+          source: 'Damon et al. (2024)'
+        },
+        {
+          id: 'values_coaching',
+          title: 'Coaching for Authenticity',
+          type: 'coach',
+          duration: '4-6 sessions',
+          mechanism: 'Identity authenticity and sustained confidence',
+          description: 'One-on-one coaching focused on values clarification and authentic leadership.',
+          activities: [
+            'Clarify your core values and non-negotiables',
+            'Identify gaps between your values and current behavior',
+            'Develop strategies for authentic self-expression',
+            'Practice having difficult conversations authentically'
+          ],
+          source: 'Conger (2024); Day et al. (2021)'
+        },
+        {
+          id: 'transition_support',
+          title: 'Identity Transition Support',
+          type: 'program',
+          duration: '8-12 weeks',
+          mechanism: 'Identity redefinition during career thresholds',
+          description: 'Structured support for leadership transitions (new role, promotion, career shift).',
+          activities: [
+            'Map what\'s changing in your leadership context',
+            'Identify skills and mindsets to develop',
+            'Build a peer support cohort going through similar transitions',
+            'Regular reflection on identity evolution'
+          ],
+          source: 'Conger (2024); DeRue & Ashford (2010)'
         }
       ]
     },
-    {
-      id: 'foundations',
-      title: 'Foundational Assessments',
-      subtitle: 'Personality & Competencies',
-      source: 'Day (2024), Chapter 2',
-      icon: '📊',
-      color: 'violet',
-      description: 'Understand your personality traits and leadership competencies as the foundation for development.',
-      subsections: [
-        {
-          id: 'personality',
-          title: 'Personality (Big Five)',
-          description: 'Your core personality traits and their leadership implications',
-          assessment: BIG_FIVE_ASSESSMENT,
-          intervention: null,
-          keyInsight: 'Personality is relatively stable but you can adapt your behaviors.'
-        },
-        {
-          id: 'competencies',
-          title: 'KLI Competencies',
-          description: 'Courage, Creativity, and Collaboration capabilities',
-          assessment: KLI_COMPETENCY_ASSESSMENT,
-          intervention: null,
-          keyInsight: 'The 3Cs provide a framework for targeted skill development.'
-        },
-        {
-          id: 'learning',
-          title: 'Learning Orientation',
-          description: 'Your growth mindset and approach to development',
-          assessment: LEARNING_ORIENTATION_ASSESSMENT,
-          intervention: null,
-          keyInsight: 'A growth mindset believes leadership ability can be developed through effort.'
-        }
-      ]
-    },
-    {
-      id: 'external',
-      title: 'External Assessments',
-      subtitle: 'Recommended Free Tools',
-      source: 'Grant & Dalio',
-      icon: '🔗',
+    awareness: {
+      id: 'awareness',
+      title: 'Self-Awareness',
+      subtitle: 'Understanding yourself',
+      icon: '🔍',
       color: 'blue',
-      description: 'Additional scientifically-validated assessments from leading researchers.',
-      external: true,
-      subsections: [
+      gradient: 'from-blue-500 to-indigo-500',
+      description: 'Self-awareness involves understanding your values, behavioral tendencies, strengths, weaknesses, and impact on others. Most people overestimate their self-awareness.',
+      source: 'Day (2024), Chapter 4; Eurich (2017)',
+      assessment: SELF_VIEW_ASSESSMENTS.selfAwareness,
+      keyQuestion: 'Do you truly understand how you come across to others?',
+      interventions: [
         {
-          id: 'principlesyou',
-          title: 'PrinciplesYou',
-          description: 'Comprehensive 17-trait assessment by Adam Grant & Ray Dalio',
-          url: 'https://principlesyou.com',
-          duration: '30-40 min',
-          keyInsight: 'Combines Big Five with traits important for personal and professional success.'
+          id: 'reflective_journaling',
+          title: 'Reflective Practice & Journaling',
+          type: 'reflect',
+          duration: '15-20 min daily',
+          mechanism: 'Metacognition and meaning-making from experience',
+          description: 'Structured self-reflection logs following key leadership experiences.',
+          activities: [
+            'Daily leadership journal (what happened, what you learned)',
+            'Record emotional responses to leadership situations',
+            'Reflect on what you would do differently',
+            'Weekly synthesis: patterns and insights'
+          ],
+          source: 'Cornett & Parsons (2009); Day et al. (2021)'
         },
         {
-          id: 'bigfive-short',
-          title: 'Big Five (Short Version)',
-          description: 'Quick validated personality assessment',
-          url: 'https://www.outofservice.com/bigfive/',
-          duration: '~10 min',
-          keyInsight: 'Faster alternative if you want a quick personality snapshot.'
+          id: '360_feedback',
+          title: '360-Degree Feedback',
+          type: 'feedback',
+          duration: '3-4 weeks',
+          mechanism: 'Self-insight and reduction of self-serving bias',
+          description: 'Multi-source assessments comparing self-perception with how others see you.',
+          activities: [
+            'Complete self-assessment on key leadership behaviors',
+            'Gather feedback from peers, direct reports, supervisors',
+            'Compare self-ratings with others\' ratings',
+            'Create development goals based on gaps'
+          ],
+          source: 'Day et al. (2021); Conger (2024)'
+        },
+        {
+          id: 'self_regulation_coaching',
+          title: 'Coaching for Self-Regulation',
+          type: 'coach',
+          duration: '6-8 sessions',
+          mechanism: 'Emotional intelligence and adaptive coping',
+          description: 'Individual coaching focused on emotional triggers and self-management.',
+          activities: [
+            'Map your emotional triggers and patterns',
+            'Identify core values driving your reactions',
+            'Practice reframing and cognitive restructuring',
+            'Develop personalized self-regulation strategies'
+          ],
+          source: 'Conger (2024); Day et al. (2021)'
+        },
+        {
+          id: 'personality_instruments',
+          title: 'Self-Assessment Instruments',
+          type: 'assess',
+          duration: '30-60 min',
+          mechanism: 'Introspection connecting personality to leadership behaviors',
+          description: 'Validated personality and style assessments to surface strengths and blind spots.',
+          activities: [
+            'Complete Big Five personality assessment',
+            'Review your KLI competency profile',
+            'Explore emotional intelligence assessment',
+            'Discuss results with a coach or peer'
+          ],
+          source: 'Day et al. (2021); Conger (2024)'
+        },
+        {
+          id: 'guided_dialogues',
+          title: 'Guided Reflection Dialogues',
+          type: 'coach',
+          duration: '60 min sessions',
+          mechanism: 'Intentional self-reflection and values-behavior alignment',
+          description: 'Structured reflective discussions with a facilitator or coach.',
+          activities: [
+            'Examine a recent leadership decision in depth',
+            'Explore emotional responses to workplace dynamics',
+            'Align values, behavior, and leadership identity',
+            'Identify patterns across multiple situations'
+          ],
+          source: 'Cornett & Parsons (2009)'
+        },
+        {
+          id: 'awareness_workshop',
+          title: 'Self-Awareness Workshop',
+          type: 'program',
+          duration: '1-2 days',
+          mechanism: 'Emotional grounding and self-concept coherence',
+          description: 'Intensive sessions combining mindfulness, values clarification, and storytelling.',
+          activities: [
+            'Mindfulness and body awareness exercises',
+            'Values clarification and prioritization',
+            'Personal leadership storytelling',
+            'Peer feedback and reflection'
+          ],
+          source: 'Larsson et al. (2018); Day et al. (2021)'
+        }
+      ]
+    },
+    efficacy: {
+      id: 'efficacy',
+      title: 'Leadership Self-Efficacy',
+      subtitle: 'Confidence to lead',
+      icon: '💪',
+      color: 'green',
+      gradient: 'from-green-500 to-emerald-500',
+      description: 'Leadership self-efficacy is your confidence in your ability to lead effectively. It\'s built through mastery experiences, role models, social persuasion, and reframing anxiety.',
+      source: 'Day (2024), Chapter 4; Bandura (1997)',
+      assessment: SELF_VIEW_ASSESSMENTS.leadershipSelfEfficacy,
+      keyQuestion: 'Do you believe you can lead effectively?',
+      interventions: [
+        {
+          id: 'mastery_experiences',
+          title: 'Mastery Experiences',
+          type: 'practice',
+          duration: 'Ongoing',
+          mechanism: 'Direct experience of success builds strongest efficacy',
+          description: 'Structured opportunities to succeed at progressively challenging leadership tasks.',
+          activities: [
+            'Start with small leadership wins you\'re likely to succeed at',
+            'Gradually increase challenge level',
+            'Celebrate and document successes',
+            'Analyze what made you successful'
+          ],
+          source: 'Bandura (1997); Day et al. (2021)'
+        },
+        {
+          id: 'vicarious_learning',
+          title: 'Vicarious Learning & Role Models',
+          type: 'observe',
+          duration: 'Ongoing',
+          mechanism: 'Seeing similar others succeed increases belief in own capability',
+          description: 'Learn from observing leaders you identify with who have succeeded.',
+          activities: [
+            'Identify leaders similar to you who\'ve succeeded',
+            'Study their approaches and strategies',
+            'Shadow or observe them in action',
+            'Discuss their journey and struggles with them'
+          ],
+          source: 'Bandura (1997); Day et al. (2021)'
+        },
+        {
+          id: 'social_persuasion',
+          title: 'Social Persuasion & Encouragement',
+          type: 'feedback',
+          duration: 'Ongoing',
+          mechanism: 'Verbal encouragement from credible sources',
+          description: 'Build confidence through encouragement and recognition from others.',
+          activities: [
+            'Seek feedback focused on your leadership strengths',
+            'Ask mentors to highlight your capabilities',
+            'Build a support network that believes in you',
+            'Accept compliments without deflecting'
+          ],
+          source: 'Bandura (1997)'
+        },
+        {
+          id: 'anxiety_reframing',
+          title: 'Physiological Reframing',
+          type: 'reflect',
+          duration: '15-30 min',
+          mechanism: 'Reinterpret anxiety as excitement and readiness',
+          description: 'Learn to interpret nervous energy as positive arousal rather than fear.',
+          activities: [
+            'Notice physical sensations before leadership moments',
+            'Reframe "I\'m nervous" as "I\'m excited and ready"',
+            'Use breathing techniques to manage arousal',
+            'Visualize successful outcomes'
+          ],
+          source: 'Bandura (1997); Brooks (2014)'
+        },
+        {
+          id: 'stretch_assignments',
+          title: 'Developmental Stretch Assignments',
+          type: 'practice',
+          duration: '4-12 weeks',
+          mechanism: 'Growth through challenging but achievable tasks',
+          description: 'Take on assignments that stretch your capabilities with appropriate support.',
+          activities: [
+            'Identify a challenge slightly beyond current abilities',
+            'Negotiate for appropriate support and resources',
+            'Set milestones to track progress',
+            'Debrief learning regardless of outcome'
+          ],
+          source: 'McCall (2010); Day et al. (2021)'
+        }
+      ]
+    },
+    regulation: {
+      id: 'regulation',
+      title: 'Self-Regulation',
+      subtitle: 'Managing yourself',
+      icon: '⚙️',
+      color: 'violet',
+      gradient: 'from-violet-500 to-purple-500',
+      description: 'Self-regulation is the ability to manage your thoughts, emotions, and behaviors in service of your goals. It enables deliberate practice and sustained development.',
+      source: 'Day (2024), Chapter 5; Ericsson (2016)',
+      assessment: null,
+      keyQuestion: 'Can you manage yourself effectively under pressure?',
+      interventions: [
+        {
+          id: 'deliberate_practice',
+          title: 'Deliberate Leadership Practice',
+          type: 'practice',
+          duration: 'Ongoing',
+          mechanism: 'Focused practice at the edge of ability with feedback',
+          description: 'Structured practice on specific leadership skills with immediate feedback.',
+          activities: [
+            'Identify one specific skill to develop',
+            'Design practice opportunities with clear goals',
+            'Get immediate feedback on performance',
+            'Adjust and repeat until mastery'
+          ],
+          source: 'Ericsson (2016); Day et al. (2021)'
+        },
+        {
+          id: 'emotional_regulation',
+          title: 'Emotional Regulation Training',
+          type: 'reflect',
+          duration: '4-6 weeks',
+          mechanism: 'Managing emotional responses adaptively',
+          description: 'Develop ability to recognize and regulate emotional responses.',
+          activities: [
+            'Track emotional patterns in a journal',
+            'Identify triggers and early warning signs',
+            'Practice pause-and-respond techniques',
+            'Develop go-to regulation strategies'
+          ],
+          source: 'Goleman (1995); Day et al. (2021)'
+        },
+        {
+          id: 'mindfulness_practice',
+          title: 'Mindfulness for Leaders',
+          type: 'reflect',
+          duration: '10-15 min daily',
+          mechanism: 'Present-moment awareness and non-reactive observation',
+          description: 'Cultivate mindful awareness to improve self-regulation and decision-making.',
+          activities: [
+            'Daily mindfulness meditation (start with 5 min)',
+            'Mindful transitions between meetings',
+            'Body scan before difficult conversations',
+            'Non-judgmental awareness of thoughts and feelings'
+          ],
+          source: 'Good et al. (2016)'
+        },
+        {
+          id: 'habit_formation',
+          title: 'Leadership Habit Formation',
+          type: 'practice',
+          duration: '8-12 weeks',
+          mechanism: 'Automatizing positive leadership behaviors',
+          description: 'Build automatic leadership habits through deliberate repetition.',
+          activities: [
+            'Identify one leadership behavior to habitualize',
+            'Design cue-routine-reward loops',
+            'Track habit streak and consistency',
+            'Stack new habits onto existing routines'
+          ],
+          source: 'Clear (2018); Duhigg (2012)'
+        },
+        {
+          id: 'goal_setting',
+          title: 'Strategic Goal Setting',
+          type: 'envision',
+          duration: '2-3 hours',
+          mechanism: 'Self-regulatory focus through clear goals',
+          description: 'Set and pursue meaningful leadership development goals.',
+          activities: [
+            'Define SMART development goals',
+            'Break into weekly action items',
+            'Identify obstacles and mitigation strategies',
+            'Regular progress review and adjustment'
+          ],
+          source: 'Locke & Latham (2002)'
         }
       ]
     }
-  ];
+  };
+
+  const currentArea = developmentAreas[activeArea];
+  
+  // Intervention type icons and colors
+  const typeConfig = {
+    reflect: { icon: '📝', label: 'Reflect', color: 'blue' },
+    feedback: { icon: '🔄', label: 'Feedback', color: 'teal' },
+    practice: { icon: '🎯', label: 'Practice', color: 'green' },
+    coach: { icon: '💬', label: 'Coach', color: 'violet' },
+    assess: { icon: '📊', label: 'Assess', color: 'amber' },
+    envision: { icon: '🔮', label: 'Envision', color: 'indigo' },
+    observe: { icon: '👀', label: 'Observe', color: 'orange' },
+    program: { icon: '📚', label: 'Program', color: 'rose' }
+  };
 
   return (
-    <div className="space-y-4">
+    <div className="animate-fadeIn">
       {/* Header */}
-      <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
-        <h2 className="font-semibold text-amber-800 mb-2">{LEADER_DEVELOPMENT.title}</h2>
+      <div className="bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200 rounded-xl p-5 mb-6">
+        <h2 className="font-bold text-xl text-amber-800 mb-2">{LEADER_DEVELOPMENT.title}</h2>
         <p className="text-sm text-stone-600 mb-2">{LEADER_DEVELOPMENT.description}</p>
         <p className="text-xs text-stone-500">Source: {LEADER_DEVELOPMENT.source}</p>
       </div>
 
-      {/* Collapsible Sections */}
-      {sections.map(section => (
-        <div key={section.id} className="bg-white rounded-xl border border-stone-200 overflow-hidden">
-          {/* Section Header - Clickable */}
+      {/* Area Navigation Tabs */}
+      <div className="flex gap-2 mb-6 overflow-x-auto pb-2">
+        {Object.values(developmentAreas).map(area => (
           <button
-            onClick={() => toggleSection(section.id)}
-            className={`w-full p-4 flex items-center justify-between text-left transition-colors ${
-              expandedSection === section.id 
-                ? section.color === 'amber' ? 'bg-amber-50' : section.color === 'violet' ? 'bg-violet-50' : 'bg-blue-50'
-                : 'hover:bg-stone-50'
+            key={area.id}
+            onClick={() => { setActiveArea(area.id); setExpandedIntervention(null); }}
+            className={`flex items-center gap-2 px-4 py-3 rounded-xl font-medium whitespace-nowrap transition-all ${
+              activeArea === area.id
+                ? `bg-gradient-to-r ${area.gradient} text-white shadow-lg`
+                : 'bg-white border border-stone-200 text-stone-600 hover:border-stone-300'
             }`}
           >
-            <div className="flex items-center gap-3">
-              <span className="text-2xl">{section.icon}</span>
-              <div>
-                <h3 className="font-semibold text-stone-800">{section.title}</h3>
-                <p className="text-xs text-stone-500">{section.subtitle}</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className={`text-xs px-2 py-1 rounded-full ${
-                section.color === 'amber' ? 'bg-amber-100 text-amber-700' :
-                section.color === 'violet' ? 'bg-violet-100 text-violet-700' :
-                'bg-blue-100 text-blue-700'
-              }`}>{section.subsections.length} areas</span>
-              <Icons.ChevronDown className={`transition-transform ${expandedSection === section.id ? 'rotate-180' : ''}`} />
-            </div>
+            <span className="text-lg">{area.icon}</span>
+            <span className="text-sm">{area.title}</span>
           </button>
+        ))}
+      </div>
 
-          {/* Section Content - Expandable */}
-          {expandedSection === section.id && (
-            <div className="border-t border-stone-100 p-4">
-              <p className="text-sm text-stone-600 mb-4">{section.description}</p>
-              
-              {/* Subsection Cards */}
-              <div className="space-y-3">
-                {section.subsections.map(sub => (
-                  <div 
-                    key={sub.id} 
-                    className={`rounded-xl border p-4 ${
-                      section.color === 'amber' ? 'border-amber-200 bg-amber-50/50' :
-                      section.color === 'violet' ? 'border-violet-200 bg-violet-50/50' :
-                      'border-blue-200 bg-blue-50/50'
-                    }`}
-                  >
-                    <div className="flex justify-between items-start mb-2">
-                      <h4 className="font-semibold text-stone-800">{sub.title}</h4>
-                      {sub.url && <Icons.ExternalLink className="w-4 h-4 text-stone-400" />}
-                    </div>
-                    <p className="text-sm text-stone-600 mb-3">{sub.description}</p>
-                    
-                    {/* Key Insight */}
-                    <div className={`text-xs p-2 rounded-lg mb-3 ${
-                      section.color === 'amber' ? 'bg-amber-100/50 text-amber-800' :
-                      section.color === 'violet' ? 'bg-violet-100/50 text-violet-800' :
-                      'bg-blue-100/50 text-blue-800'
-                    }`}>
-                      💡 {sub.keyInsight}
-                    </div>
-
-                    {/* Action Buttons */}
-                    <div className="flex flex-wrap gap-2">
-                      {/* External Link */}
-                      {sub.url && (
-                        <a
-                          href={sub.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex items-center gap-1 px-3 py-2 bg-white border border-stone-200 rounded-lg text-sm font-medium text-stone-700 hover:bg-stone-50"
-                        >
-                          <Icons.ExternalLink className="w-4 h-4" />
-                          Take Assessment ({sub.duration})
-                        </a>
-                      )}
-                      
-                      {/* Assessment Button */}
-                      {sub.assessment && (
-                        <button
-                          onClick={() => setCurrentView(`assessment-${sub.assessment.id}`)}
-                          className={`flex items-center gap-1 px-3 py-2 rounded-lg text-sm font-medium text-white ${
-                            section.color === 'amber' ? 'bg-amber-600 hover:bg-amber-700' :
-                            section.color === 'violet' ? 'bg-violet-600 hover:bg-violet-700' :
-                            'bg-blue-600 hover:bg-blue-700'
-                          }`}
-                        >
-                          📋 Take Assessment
-                          <span className="text-xs opacity-80">({sub.assessment.timeToComplete})</span>
-                        </button>
-                      )}
-                      
-                      {/* Intervention Button */}
-                      {sub.intervention && (
-                        <button
-                          onClick={() => setCurrentView(`intervention-${sub.intervention.id}`)}
-                          className="flex items-center gap-1 px-3 py-2 bg-white border border-stone-300 rounded-lg text-sm font-medium text-stone-700 hover:bg-stone-50"
-                        >
-                          🎯 Development Program
-                          <span className="text-xs text-stone-500">({sub.intervention.duration})</span>
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                ))}
+      {/* Current Area Detail */}
+      <div className="space-y-4">
+        {/* Area Header Card */}
+        <div className={`bg-gradient-to-br ${
+          currentArea.color === 'amber' ? 'from-amber-50 to-orange-50 border-amber-200' :
+          currentArea.color === 'blue' ? 'from-blue-50 to-indigo-50 border-blue-200' :
+          currentArea.color === 'green' ? 'from-green-50 to-emerald-50 border-green-200' :
+          'from-violet-50 to-purple-50 border-violet-200'
+        } border rounded-xl p-5`}>
+          <div className="flex items-start justify-between mb-3">
+            <div>
+              <div className="flex items-center gap-2 mb-1">
+                <span className="text-2xl">{currentArea.icon}</span>
+                <h3 className="text-lg font-bold text-stone-800">{currentArea.title}</h3>
               </div>
+              <p className="text-sm text-stone-600">{currentArea.subtitle}</p>
             </div>
-          )}
+            {currentArea.assessment && (
+              <button
+                onClick={() => setCurrentView(`assessment-${currentArea.assessment.id}`)}
+                className={`px-4 py-2 rounded-lg text-sm font-medium text-white bg-gradient-to-r ${currentArea.gradient} shadow hover:shadow-md transition-shadow`}
+              >
+                📋 Take Assessment
+              </button>
+            )}
+          </div>
+          
+          <p className="text-sm text-stone-600 mb-3">{currentArea.description}</p>
+          
+          <div className={`${
+            currentArea.color === 'amber' ? 'bg-amber-100/50 text-amber-800' :
+            currentArea.color === 'blue' ? 'bg-blue-100/50 text-blue-800' :
+            currentArea.color === 'green' ? 'bg-green-100/50 text-green-800' :
+            'bg-violet-100/50 text-violet-800'
+          } text-sm p-3 rounded-lg`}>
+            <span className="font-medium">Key Question:</span> {currentArea.keyQuestion}
+          </div>
+          
+          <p className="text-xs text-stone-500 mt-3">Source: {currentArea.source}</p>
         </div>
-      ))}
+
+        {/* Intervention Type Legend */}
+        <div className="bg-white rounded-xl border border-stone-200 p-4">
+          <p className="text-xs font-medium text-stone-500 mb-3">INTERVENTION TYPES</p>
+          <div className="flex flex-wrap gap-2">
+            {Object.entries(typeConfig).map(([key, config]) => (
+              <span key={key} className="flex items-center gap-1 text-xs text-stone-600 bg-stone-50 px-2 py-1 rounded-full">
+                <span>{config.icon}</span>
+                <span>{config.label}</span>
+              </span>
+            ))}
+          </div>
+        </div>
+
+        {/* Interventions Grid */}
+        <div>
+          <h4 className="font-semibold text-stone-800 mb-3">
+            {currentArea.interventions.length} Development Interventions
+          </h4>
+          <div className="space-y-3">
+            {currentArea.interventions.map((intervention, idx) => {
+              const typeInfo = typeConfig[intervention.type];
+              const isExpanded = expandedIntervention === intervention.id;
+              
+              return (
+                <div
+                  key={intervention.id}
+                  className={`bg-white rounded-xl border transition-all ${
+                    isExpanded ? 'border-stone-300 shadow-md' : 'border-stone-200 hover:border-stone-300'
+                  }`}
+                >
+                  {/* Intervention Header */}
+                  <button
+                    onClick={() => setExpandedIntervention(isExpanded ? null : intervention.id)}
+                    className="w-full p-4 text-left"
+                  >
+                    <div className="flex items-start gap-3">
+                      {/* Number Badge */}
+                      <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-white text-sm font-bold bg-gradient-to-br ${currentArea.gradient}`}>
+                        {idx + 1}
+                      </div>
+                      
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-1">
+                          <h5 className="font-semibold text-stone-800">{intervention.title}</h5>
+                          <span className={`text-xs px-2 py-0.5 rounded-full ${
+                            typeInfo.color === 'blue' ? 'bg-blue-100 text-blue-700' :
+                            typeInfo.color === 'teal' ? 'bg-teal-100 text-teal-700' :
+                            typeInfo.color === 'green' ? 'bg-green-100 text-green-700' :
+                            typeInfo.color === 'violet' ? 'bg-violet-100 text-violet-700' :
+                            typeInfo.color === 'amber' ? 'bg-amber-100 text-amber-700' :
+                            typeInfo.color === 'indigo' ? 'bg-indigo-100 text-indigo-700' :
+                            typeInfo.color === 'orange' ? 'bg-orange-100 text-orange-700' :
+                            'bg-rose-100 text-rose-700'
+                          }`}>
+                            {typeInfo.icon} {typeInfo.label}
+                          </span>
+                        </div>
+                        
+                        <p className="text-sm text-stone-600">{intervention.description}</p>
+                        
+                        <div className="flex items-center gap-4 mt-2">
+                          <span className="text-xs text-stone-500">⏱️ {intervention.duration}</span>
+                        </div>
+                      </div>
+                      
+                      <Icons.ChevronDown className={`text-stone-400 transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
+                    </div>
+                  </button>
+                  
+                  {/* Expanded Content */}
+                  {isExpanded && (
+                    <div className="px-4 pb-4 pt-0 border-t border-stone-100">
+                      {/* Mechanism */}
+                      <div className={`${
+                        currentArea.color === 'amber' ? 'bg-amber-50 border-amber-200' :
+                        currentArea.color === 'blue' ? 'bg-blue-50 border-blue-200' :
+                        currentArea.color === 'green' ? 'bg-green-50 border-green-200' :
+                        'bg-violet-50 border-violet-200'
+                      } border rounded-lg p-3 mt-4 mb-4`}>
+                        <p className="text-xs font-medium text-stone-500 mb-1">HOW IT WORKS</p>
+                        <p className="text-sm text-stone-700">{intervention.mechanism}</p>
+                      </div>
+                      
+                      {/* Activities */}
+                      <div className="mb-4">
+                        <p className="text-xs font-medium text-stone-500 mb-2">ACTIVITIES</p>
+                        <div className="space-y-2">
+                          {intervention.activities.map((activity, actIdx) => (
+                            <div key={actIdx} className="flex items-start gap-2">
+                              <span className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-medium text-white bg-gradient-to-br ${currentArea.gradient}`}>
+                                {actIdx + 1}
+                              </span>
+                              <p className="text-sm text-stone-600 flex-1">{activity}</p>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                      
+                      {/* Source */}
+                      <p className="text-xs text-stone-500">📚 {intervention.source}</p>
+                      
+                      {/* Action Buttons */}
+                      <div className="flex gap-2 mt-4">
+                        <button
+                          onClick={() => setCurrentView('journal')}
+                          className="flex-1 px-4 py-2 bg-stone-100 rounded-lg text-sm font-medium text-stone-700 hover:bg-stone-200 transition-colors"
+                        >
+                          📝 Start in Journal
+                        </button>
+                        <button
+                          onClick={() => setCurrentView('coaches')}
+                          className="flex-1 px-4 py-2 bg-stone-100 rounded-lg text-sm font-medium text-stone-700 hover:bg-stone-200 transition-colors"
+                        >
+                          💬 Discuss with Coach
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* External Resources */}
+        <div className="bg-stone-50 rounded-xl border border-stone-200 p-4 mt-6">
+          <h4 className="font-semibold text-stone-800 mb-3">🔗 External Assessments</h4>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <a
+              href="https://principlesyou.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-3 p-3 bg-white rounded-lg border border-stone-200 hover:border-blue-300 transition-colors"
+            >
+              <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                <Icons.ExternalLink className="w-5 h-5 text-blue-600" />
+              </div>
+              <div>
+                <p className="font-medium text-stone-800">PrinciplesYou</p>
+                <p className="text-xs text-stone-500">17-trait assessment by Grant & Dalio</p>
+              </div>
+            </a>
+            <a
+              href="https://www.outofservice.com/bigfive/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-3 p-3 bg-white rounded-lg border border-stone-200 hover:border-blue-300 transition-colors"
+            >
+              <div className="w-10 h-10 bg-violet-100 rounded-lg flex items-center justify-center">
+                <Icons.ExternalLink className="w-5 h-5 text-violet-600" />
+              </div>
+              <div>
+                <p className="font-medium text-stone-800">Big Five (Short)</p>
+                <p className="text-xs text-stone-500">Quick personality assessment</p>
+              </div>
+            </a>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
@@ -5047,6 +5864,258 @@ function AssessmentView({ assessmentId, setCurrentView, user }) {
             See Results
           </button>
         )}
+      </div>
+    </div>
+  );
+}
+
+// ============================================================================
+// LEADER IDENTITY HUB (Rich Visual Interface for Identity Interventions)
+// ============================================================================
+
+function LeaderIdentityHub({ setCurrentView, user }) {
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [expandedIntervention, setExpandedIntervention] = useState(null);
+  const [expandedActivity, setExpandedActivity] = useState(null);
+  
+  const data = LEADER_IDENTITY_INTERVENTIONS;
+  
+  const filteredInterventions = selectedCategory === 'all' 
+    ? data.interventions 
+    : data.interventions.filter(i => i.category === selectedCategory);
+  
+  const getEffortBadge = (effort) => {
+    switch (effort) {
+      case 'low': return { label: 'Light', color: 'bg-green-100 text-green-700', dots: 1 };
+      case 'moderate': return { label: 'Moderate', color: 'bg-amber-100 text-amber-700', dots: 2 };
+      case 'high': return { label: 'Intensive', color: 'bg-orange-100 text-orange-700', dots: 3 };
+      default: return { label: 'Varies', color: 'bg-stone-100 text-stone-600', dots: 2 };
+    }
+  };
+  
+  const getCategoryColor = (categoryId) => {
+    const cat = data.categories.find(c => c.id === categoryId);
+    switch (cat?.color) {
+      case 'violet': return { bg: 'bg-violet-50', border: 'border-violet-200', text: 'text-violet-700', accent: 'bg-violet-500' };
+      case 'amber': return { bg: 'bg-amber-50', border: 'border-amber-200', text: 'text-amber-700', accent: 'bg-amber-500' };
+      case 'teal': return { bg: 'bg-teal-50', border: 'border-teal-200', text: 'text-teal-700', accent: 'bg-teal-500' };
+      case 'blue': return { bg: 'bg-blue-50', border: 'border-blue-200', text: 'text-blue-700', accent: 'bg-blue-500' };
+      default: return { bg: 'bg-stone-50', border: 'border-stone-200', text: 'text-stone-700', accent: 'bg-stone-500' };
+    }
+  };
+
+  return (
+    <div className="animate-fadeIn">
+      <button onClick={() => setCurrentView('develop')} className="flex items-center gap-1 text-stone-500 hover:text-stone-700 mb-4 text-sm">
+        <Icons.ChevronLeft /> Back to Develop
+      </button>
+
+      {/* Header */}
+      <div className="bg-gradient-to-br from-amber-50 via-orange-50 to-rose-50 border border-amber-200 rounded-2xl p-6 mb-6">
+        <div className="flex items-start gap-4">
+          <div className="w-14 h-14 bg-gradient-to-br from-amber-500 to-orange-500 rounded-xl flex items-center justify-center text-white text-2xl shadow-lg">
+            🪞
+          </div>
+          <div className="flex-1">
+            <h1 className="text-xl font-bold text-stone-800 mb-1">{data.title}</h1>
+            <p className="text-sm text-stone-600 mb-3">{data.description}</p>
+            <button
+              onClick={() => setCurrentView(`assessment-${data.assessment}`)}
+              className="inline-flex items-center gap-2 px-4 py-2 bg-amber-600 text-white rounded-lg text-sm font-medium hover:bg-amber-700 transition-colors"
+            >
+              📋 Take Identity Assessment First
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Category Filter */}
+      <div className="mb-6">
+        <h2 className="text-sm font-semibold text-stone-700 mb-3">Filter by Approach</h2>
+        <div className="flex flex-wrap gap-2">
+          <button
+            onClick={() => setSelectedCategory('all')}
+            className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+              selectedCategory === 'all' 
+                ? 'bg-stone-800 text-white' 
+                : 'bg-stone-100 text-stone-600 hover:bg-stone-200'
+            }`}
+          >
+            All ({data.interventions.length})
+          </button>
+          {data.categories.map(cat => {
+            const count = data.interventions.filter(i => i.category === cat.id).length;
+            const colors = getCategoryColor(cat.id);
+            return (
+              <button
+                key={cat.id}
+                onClick={() => setSelectedCategory(cat.id)}
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-colors flex items-center gap-2 ${
+                  selectedCategory === cat.id 
+                    ? `${colors.accent} text-white` 
+                    : `${colors.bg} ${colors.text} hover:opacity-80`
+                }`}
+              >
+                <span>{cat.icon}</span>
+                <span>{cat.name}</span>
+                <span className="opacity-70">({count})</span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Category Description (when filtered) */}
+      {selectedCategory !== 'all' && (
+        <div className={`${getCategoryColor(selectedCategory).bg} ${getCategoryColor(selectedCategory).border} border rounded-xl p-4 mb-6`}>
+          <p className="text-sm text-stone-600">
+            {data.categories.find(c => c.id === selectedCategory)?.description}
+          </p>
+        </div>
+      )}
+
+      {/* Intervention Cards */}
+      <div className="space-y-4">
+        {filteredInterventions.map(intervention => {
+          const colors = getCategoryColor(intervention.category);
+          const effort = getEffortBadge(intervention.effort);
+          const isExpanded = expandedIntervention === intervention.id;
+          const category = data.categories.find(c => c.id === intervention.category);
+          
+          return (
+            <div 
+              key={intervention.id} 
+              className={`bg-white rounded-xl border ${isExpanded ? colors.border : 'border-stone-200'} overflow-hidden transition-all duration-300 ${isExpanded ? 'shadow-lg' : 'hover:shadow-md'}`}
+            >
+              {/* Card Header */}
+              <button
+                onClick={() => setExpandedIntervention(isExpanded ? null : intervention.id)}
+                className="w-full p-5 text-left"
+              >
+                <div className="flex items-start gap-4">
+                  {/* Category Icon */}
+                  <div className={`w-12 h-12 ${colors.bg} rounded-xl flex items-center justify-center text-xl flex-shrink-0`}>
+                    {category?.icon}
+                  </div>
+                  
+                  {/* Content */}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-start justify-between gap-2 mb-2">
+                      <h3 className="font-semibold text-stone-800">{intervention.title}</h3>
+                      <Icons.ChevronDown className={`w-5 h-5 text-stone-400 transition-transform flex-shrink-0 ${isExpanded ? 'rotate-180' : ''}`} />
+                    </div>
+                    
+                    <p className="text-sm text-stone-600 mb-3 line-clamp-2">{intervention.description}</p>
+                    
+                    {/* Meta badges */}
+                    <div className="flex flex-wrap gap-2">
+                      <span className="inline-flex items-center gap-1 text-xs px-2 py-1 bg-stone-100 text-stone-600 rounded-full">
+                        <Icons.Clock /> {intervention.duration}
+                      </span>
+                      <span className={`inline-flex items-center gap-1 text-xs px-2 py-1 rounded-full ${effort.color}`}>
+                        {'●'.repeat(effort.dots)}{'○'.repeat(3-effort.dots)} {effort.label}
+                      </span>
+                      <span className="text-xs px-2 py-1 bg-stone-100 text-stone-600 rounded-full">
+                        {intervention.format}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </button>
+              
+              {/* Expanded Content */}
+              {isExpanded && (
+                <div className={`border-t ${colors.border}`}>
+                  {/* Mechanism */}
+                  <div className={`${colors.bg} px-5 py-3`}>
+                    <p className="text-xs font-medium text-stone-500 mb-1">Learning Mechanism</p>
+                    <p className={`text-sm ${colors.text} font-medium`}>💡 {intervention.mechanism}</p>
+                  </div>
+                  
+                  {/* Activities */}
+                  <div className="p-5">
+                    <h4 className="font-semibold text-stone-800 mb-4">
+                      Activities ({intervention.activities.length})
+                    </h4>
+                    
+                    <div className="space-y-3">
+                      {intervention.activities.map((activity, idx) => {
+                        const activityKey = `${intervention.id}-${idx}`;
+                        const isActivityExpanded = expandedActivity === activityKey;
+                        
+                        return (
+                          <div 
+                            key={idx}
+                            className={`rounded-xl border ${isActivityExpanded ? colors.border : 'border-stone-200'} overflow-hidden`}
+                          >
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setExpandedActivity(isActivityExpanded ? null : activityKey);
+                              }}
+                              className={`w-full px-4 py-3 text-left flex items-center justify-between ${isActivityExpanded ? colors.bg : 'hover:bg-stone-50'}`}
+                            >
+                              <div className="flex items-center gap-3">
+                                <span className={`w-7 h-7 rounded-full ${colors.accent} text-white flex items-center justify-center text-sm font-medium`}>
+                                  {idx + 1}
+                                </span>
+                                <div>
+                                  <p className="font-medium text-stone-800">{activity.title}</p>
+                                  <p className="text-xs text-stone-500">{activity.duration}</p>
+                                </div>
+                              </div>
+                              <Icons.ChevronDown className={`w-4 h-4 text-stone-400 transition-transform ${isActivityExpanded ? 'rotate-180' : ''}`} />
+                            </button>
+                            
+                            {isActivityExpanded && (
+                              <div className="px-4 pb-4 pt-2 border-t border-stone-100">
+                                <div className="mb-4">
+                                  <p className="text-xs font-medium text-stone-500 mb-1">Instructions</p>
+                                  <p className="text-sm text-stone-700">{activity.instructions}</p>
+                                </div>
+                                <div className={`${colors.bg} rounded-lg p-3`}>
+                                  <p className="text-xs font-medium text-stone-500 mb-1">Reflection Question</p>
+                                  <p className={`text-sm ${colors.text} italic`}>"{activity.reflection}"</p>
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                    
+                    {/* Sources */}
+                    <p className="text-xs text-stone-400 mt-4 pt-4 border-t border-stone-100">
+                      Sources: {intervention.sources}
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+      
+      {/* Bottom CTA */}
+      <div className="mt-8 p-6 bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl border border-amber-200">
+        <h3 className="font-semibold text-stone-800 mb-2">Not sure where to start?</h3>
+        <p className="text-sm text-stone-600 mb-4">
+          Take the Leader Identity Assessment first to understand your baseline, then choose interventions based on your specific development needs.
+        </p>
+        <div className="flex flex-wrap gap-3">
+          <button
+            onClick={() => setCurrentView(`assessment-${data.assessment}`)}
+            className="px-4 py-2 bg-amber-600 text-white rounded-lg text-sm font-medium hover:bg-amber-700"
+          >
+            📋 Take Assessment
+          </button>
+          <button
+            onClick={() => setCurrentView('coach-advisor-text')}
+            className="px-4 py-2 bg-white border border-stone-300 text-stone-700 rounded-lg text-sm font-medium hover:bg-stone-50"
+          >
+            💬 Discuss with Day Advisor
+          </button>
+        </div>
       </div>
     </div>
   );
@@ -5925,6 +6994,7 @@ export default function DayByDayApp() {
     </div>
   );
 }
+
 
 
 
