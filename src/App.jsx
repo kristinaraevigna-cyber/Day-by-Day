@@ -5612,8 +5612,8 @@ function LeaderDevelopmentTab({ setCurrentView }) {
           mechanism: 'Believing abilities can be developed leads to greater effort, learning, and resilience.',
           description: 'Cultivate a growth mindset by reframing challenges as opportunities to learn.',
           activities: [
-            'Notice fixed mindset thoughts ("I can't do this")',
-            'Reframe to growth mindset ("I can't do this yet")',
+            "Notice fixed mindset thoughts (e.g., 'I cannot do this')",
+            "Reframe to growth mindset (e.g., 'I cannot do this yet')",
             'Celebrate effort and learning, not just outcomes',
             'View feedback as information for growth, not judgment'
           ],
@@ -7953,5 +7953,3 @@ export default function DayByDayApp() {
     </div>
   );
 }
-
-
