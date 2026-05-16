@@ -7898,10 +7898,292 @@ function MyDataView({ user, setCurrentView, onSignOut }) {
   );
 }
 
+// ============================================================================
+// INTAKE FORM (required once, after signup + consent)
+// ============================================================================
+
+// Example competencies for the development-focus step (Lombardo & Eichinger,
+// 2009). Presented as examples, not an exhaustive list — users add their own.
+const INTAKE_COMPETENCY_EXAMPLES = [
+  'Purposefulness', 'Self-Confidence', 'Self-Awareness',
+  'Self-Regulation', 'Balance', 'Decision-Making', 'Perseverance',
+  'Innovative Thinking', 'Love of Learning', 'Vision Casting', 'Enterprise Initiative',
+  'Cross-Cultural Resourcefulness', 'Ethical Responsibility', 'Empathic Engagement',
+  'Conflict Management', 'Team-Building', 'Collaboration', 'Delegation',
+  'Negotiation', 'Development', 'Effective Communication'
+];
+
+const INTAKE_STEPS = [
+  {
+    title: 'About you',
+    subtitle: 'A little background to personalize your experience.',
+    fields: [
+      { key: 'age_range', label: 'Age range', type: 'single', required: true,
+        options: ['Under 30', '30–39', '40–49', '50–59', '60+', 'Prefer not to say'] },
+      { key: 'gender', label: 'Gender', type: 'single', required: true,
+        options: ['Woman', 'Man', 'Non-binary', 'Prefer to self-describe', 'Prefer not to say'] },
+      { key: 'race_ethnicity', label: 'Race / ethnicity', help: 'Select all that apply.', type: 'multi', required: true,
+        options: ['American Indian or Alaska Native', 'Asian', 'Black or African American', 'Hispanic or Latino/a/x', 'Middle Eastern or North African', 'Native Hawaiian or Pacific Islander', 'White', 'Another race or ethnicity', 'Prefer not to say'] },
+      { key: 'nationality', label: 'Nationality', type: 'text', required: true },
+      { key: 'primary_language', label: 'Primary language', type: 'text', required: true },
+      { key: 'education', label: 'Highest education completed', type: 'single', required: true,
+        options: ['High school', 'Some college', 'Associate degree', "Bachelor's degree", "Master's degree", 'Doctoral or professional degree (MD, PhD, JD…)', 'Other', 'Prefer not to say'] },
+      { key: 'role', label: 'Your role', type: 'single', required: true,
+        options: ['Nurse Manager', 'Charge Nurse', 'Nursing Director', 'Chief Nursing Officer', 'Physician Leader', 'Medical Director', 'Chief Medical Officer', 'Hospital or Clinic Administrator', 'Allied Health Leader', 'Other Healthcare Leader', 'Non-healthcare leader'] },
+      { key: 'department', label: 'Department / clinical area', help: 'Optional.', type: 'text', required: false }
+    ]
+  },
+  {
+    title: 'Leadership level & experience',
+    subtitle: 'Where you are in your leadership journey.',
+    fields: [
+      { key: 'leadership_level', label: 'Leadership level', type: 'single', required: true,
+        options: ['Emerging', 'Frontline', 'Mid-level', 'Senior', 'Executive'] },
+      { key: 'years_leadership', label: 'Years in a leadership role', type: 'single', required: true,
+        options: ['Less than 1', '1–3', '4–7', '8–15', '15+'] },
+      { key: 'years_healthcare', label: 'Years in healthcare', type: 'single', required: true,
+        options: ['Less than 1', '1–3', '4–7', '8–15', '15+'] },
+      { key: 'direct_reports', label: 'Number of direct reports', type: 'single', required: true,
+        options: ['None', '1–5', '6–15', '16+'] },
+      { key: 'prior_leadership_development', label: 'Prior leadership-development experience', type: 'single', required: true,
+        options: ['None', 'A workshop or short course', 'One formal program', 'Multiple formal programs'] }
+    ]
+  },
+  {
+    title: 'Coaching',
+    subtitle: 'Your experience with and interest in coaching.',
+    fields: [
+      { key: 'coached_before', label: 'Have you worked with a leadership coach before?', type: 'yesno', required: true },
+      { key: 'currently_coached', label: 'Are you currently working with a coach?', type: 'yesno', required: true },
+      { key: 'coaching_interest', label: 'How interested are you in coaching through this program?', type: 'single', required: true,
+        options: ['Not now', 'Somewhat', 'Very'] }
+    ]
+  },
+  {
+    title: 'Development focus',
+    subtitle: 'You choose what to work on — nothing is prescribed.',
+    fields: [
+      { key: 'focus_competencies', label: 'Which competencies do you want to work on?',
+        help: 'Examples to consider — this list is not exhaustive. Pick any that resonate, and add your own.',
+        type: 'competencies', required: true }
+    ]
+  },
+  {
+    title: 'Your goals',
+    subtitle: 'What success looks like for you.',
+    fields: [
+      { key: 'goals', label: 'What do you hope to get from this program?', type: 'textarea', required: true }
+    ]
+  }
+];
+
+function IntakeForm({ user, onComplete }) {
+  const [step, setStep] = useState(0);
+  const [values, setValues] = useState({ race_ethnicity: [], focus_competencies: [] });
+  const [customComp, setCustomComp] = useState('');
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState(null);
+
+  const currentStep = INTAKE_STEPS[step];
+  const isLastStep = step === INTAKE_STEPS.length - 1;
+
+  const setValue = (key, val) => setValues(v => ({ ...v, [key]: val }));
+  const toggleMulti = (key, opt) => setValues(v => {
+    const arr = v[key] || [];
+    return { ...v, [key]: arr.includes(opt) ? arr.filter(x => x !== opt) : [...arr, opt] };
+  });
+  const addCustom = () => {
+    const t = customComp.trim();
+    if (!t) return;
+    const arr = values.focus_competencies || [];
+    if (!arr.includes(t)) setValue('focus_competencies', [...arr, t]);
+    setCustomComp('');
+  };
+
+  const fieldComplete = (f) => {
+    if (!f.required) return true;
+    const val = values[f.key];
+    if (f.type === 'multi' || f.type === 'competencies') return Array.isArray(val) && val.length > 0;
+    if (f.type === 'yesno') return typeof val === 'boolean';
+    return val !== undefined && String(val).trim() !== '';
+  };
+  const stepComplete = currentStep.fields.every(fieldComplete);
+
+  const handleContinue = async () => {
+    if (!stepComplete || saving) return;
+    if (!isLastStep) { setStep(step + 1); window.scrollTo(0, 0); return; }
+    setSaving(true);
+    setError(null);
+    const payload = {
+      user_id: user.id,
+      completed_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    };
+    INTAKE_STEPS.forEach(s => s.fields.forEach(f => {
+      const v = values[f.key];
+      payload[f.key] = v === undefined
+        ? (f.type === 'multi' || f.type === 'competencies' ? [] : null)
+        : v;
+    }));
+    const { error: e } = await supabase
+      .from('user_intake')
+      .upsert(payload, { onConflict: 'user_id' });
+    setSaving(false);
+    if (e) { setError(e.message || 'Could not save your intake. Please try again.'); return; }
+    onComplete();
+  };
+
+  const renderField = (f) => {
+    const val = values[f.key];
+    if (f.type === 'text') {
+      return (
+        <input type="text" value={val || ''} onChange={e => setValue(f.key, e.target.value)}
+          className="w-full border border-stone-300 rounded-lg px-3 py-2.5 text-stone-700 focus:outline-none focus:ring-2 focus:ring-amber-200" />
+      );
+    }
+    if (f.type === 'textarea') {
+      return (
+        <textarea value={val || ''} onChange={e => setValue(f.key, e.target.value)}
+          placeholder="Write a sentence or two…"
+          className="w-full border border-stone-300 rounded-lg px-3 py-2.5 text-stone-700 min-h-[120px] focus:outline-none focus:ring-2 focus:ring-amber-200" />
+      );
+    }
+    if (f.type === 'yesno') {
+      return (
+        <div className="flex gap-3">
+          {[{ l: 'Yes', v: true }, { l: 'No', v: false }].map(o => (
+            <button key={o.l} type="button" onClick={() => setValue(f.key, o.v)}
+              className={`flex-1 py-2.5 rounded-lg border text-sm font-medium transition-colors ${val === o.v ? 'bg-amber-600 text-white border-amber-600' : 'bg-white text-stone-600 border-stone-300 hover:border-stone-400'}`}>
+              {o.l}
+            </button>
+          ))}
+        </div>
+      );
+    }
+    if (f.type === 'single') {
+      return (
+        <div className="space-y-2">
+          {f.options.map(opt => (
+            <button key={opt} type="button" onClick={() => setValue(f.key, opt)}
+              className={`w-full text-left px-3 py-2.5 rounded-lg border text-sm transition-colors ${val === opt ? 'bg-amber-50 border-amber-500 text-amber-800' : 'bg-white border-stone-200 text-stone-700 hover:border-stone-300'}`}>
+              {opt}
+            </button>
+          ))}
+        </div>
+      );
+    }
+    if (f.type === 'multi') {
+      const arr = val || [];
+      return (
+        <div className="space-y-2">
+          {f.options.map(opt => (
+            <button key={opt} type="button" onClick={() => toggleMulti(f.key, opt)}
+              className={`w-full text-left px-3 py-2.5 rounded-lg border text-sm transition-colors flex items-center gap-2 ${arr.includes(opt) ? 'bg-amber-50 border-amber-500 text-amber-800' : 'bg-white border-stone-200 text-stone-700 hover:border-stone-300'}`}>
+              <span className={`w-4 h-4 rounded border flex items-center justify-center text-xs ${arr.includes(opt) ? 'bg-amber-500 border-amber-500 text-white' : 'border-stone-300'}`}>{arr.includes(opt) ? '✓' : ''}</span>
+              {opt}
+            </button>
+          ))}
+        </div>
+      );
+    }
+    if (f.type === 'competencies') {
+      const selected = val || [];
+      const custom = selected.filter(c => !INTAKE_COMPETENCY_EXAMPLES.includes(c));
+      return (
+        <div>
+          <div className="flex flex-wrap gap-2 mb-3">
+            {INTAKE_COMPETENCY_EXAMPLES.map(c => (
+              <button key={c} type="button" onClick={() => toggleMulti(f.key, c)}
+                className={`text-sm px-3 py-1.5 rounded-full border transition-colors ${selected.includes(c) ? 'bg-amber-600 text-white border-amber-600' : 'bg-white text-stone-600 border-stone-300 hover:border-stone-400'}`}>
+                {c}
+              </button>
+            ))}
+          </div>
+          {custom.length > 0 && (
+            <div className="flex flex-wrap gap-2 mb-3">
+              {custom.map(c => (
+                <button key={c} type="button" onClick={() => toggleMulti(f.key, c)}
+                  className="text-sm px-3 py-1.5 rounded-full bg-amber-600 text-white border border-amber-600">
+                  {c}  ✕
+                </button>
+              ))}
+            </div>
+          )}
+          <div className="flex gap-2">
+            <input type="text" value={customComp} onChange={e => setCustomComp(e.target.value)}
+              onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); addCustom(); } }}
+              placeholder="Add your own competency"
+              className="flex-1 border border-stone-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-200" />
+            <button type="button" onClick={addCustom}
+              className="px-4 py-2 bg-stone-800 text-white rounded-lg text-sm font-medium">Add</button>
+          </div>
+        </div>
+      );
+    }
+    return null;
+  };
+
+  return (
+    <div className="min-h-screen bg-stone-50 py-8 px-5">
+      <div className="max-w-lg mx-auto">
+        <div className="mb-6">
+          <h1 className="font-serif text-2xl text-stone-800 mb-1">Welcome to Day by Day</h1>
+          <p className="text-stone-500 text-sm">A few questions before you begin — this takes about 3 minutes.</p>
+        </div>
+
+        <div className="mb-6">
+          <div className="flex justify-between text-xs text-stone-500 mb-2">
+            <span>Step {step + 1} of {INTAKE_STEPS.length} · {currentStep.title}</span>
+            <span>{Math.round(((step + 1) / INTAKE_STEPS.length) * 100)}%</span>
+          </div>
+          <div className="h-2 bg-stone-200 rounded-full overflow-hidden">
+            <div className="h-full bg-amber-500 transition-all duration-300"
+              style={{ width: `${((step + 1) / INTAKE_STEPS.length) * 100}%` }} />
+          </div>
+        </div>
+
+        <div className="bg-white rounded-xl border border-stone-200 p-5 mb-4">
+          <h2 className="font-semibold text-stone-800 mb-1">{currentStep.title}</h2>
+          <p className="text-sm text-stone-500 mb-5">{currentStep.subtitle}</p>
+          <div className="space-y-6">
+            {currentStep.fields.map(f => (
+              <div key={f.key}>
+                <label className="block text-sm font-medium text-stone-700 mb-1">
+                  {f.label}{!f.required && <span className="text-stone-400 font-normal"> (optional)</span>}
+                </label>
+                {f.help && <p className="text-xs text-stone-500 mb-2">{f.help}</p>}
+                <div className="mt-2">{renderField(f)}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {error && (
+          <div className="bg-red-50 border border-red-200 rounded-lg p-3 mb-4 text-sm text-red-700">{error}</div>
+        )}
+
+        <div className="flex gap-3">
+          {step > 0 && (
+            <button type="button" onClick={() => { setStep(step - 1); window.scrollTo(0, 0); }}
+              className="px-5 py-3 border border-stone-300 rounded-xl text-stone-600 text-sm font-medium hover:bg-stone-50">
+              Back
+            </button>
+          )}
+          <button type="button" onClick={handleContinue} disabled={!stepComplete || saving}
+            className="flex-1 bg-amber-600 text-white py-3 rounded-xl font-medium disabled:opacity-50">
+            {saving ? 'Saving…' : isLastStep ? 'Finish & enter Day by Day' : 'Continue'}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function DayByDayApp() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [hasConsent, setHasConsent] = useState(null);
+  const [hasIntake, setHasIntake] = useState(null);
   const [currentView, setCurrentView] = useState('dashboard');
   const [streak, setStreak] = useState(0);
   const [actions, setActions] = useState([]);
@@ -7919,6 +8201,7 @@ export default function DayByDayApp() {
   useEffect(() => {
     if (user) {
       checkConsent();
+      checkIntake();
       loadUserData();
       loadProfile();
     }
@@ -7934,6 +8217,15 @@ export default function DayByDayApp() {
     // User has consent if they've accepted privacy policy and data processing
     const consentGiven = data?.privacy_policy_accepted && data?.data_processing_consent;
     setHasConsent(consentGiven);
+  };
+
+  const checkIntake = async () => {
+    const { data } = await supabase
+      .from('user_intake')
+      .select('completed_at')
+      .eq('user_id', user.id)
+      .maybeSingle();
+    setHasIntake(!!data?.completed_at);
   };
 
   const loadUserData = async () => {
@@ -7997,6 +8289,7 @@ export default function DayByDayApp() {
     await supabase.auth.signOut();
     setUser(null);
     setHasConsent(null);
+    setHasIntake(null);
     setUserProfile(null);
     setConstructUnlocks([]);
   };
@@ -8011,6 +8304,14 @@ export default function DayByDayApp() {
   
   // Still checking consent
   if (hasConsent === null) {
+    return <div className="min-h-screen bg-stone-50 flex items-center justify-center"><Icons.Loader /></div>;
+  }
+
+  // Require the intake form before the app is accessible
+  if (hasIntake === false) {
+    return <IntakeForm user={user} onComplete={() => setHasIntake(true)} />;
+  }
+  if (hasIntake === null) {
     return <div className="min-h-screen bg-stone-50 flex items-center justify-center"><Icons.Loader /></div>;
   }
 
