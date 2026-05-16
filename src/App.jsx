@@ -3826,7 +3826,6 @@ function Sidebar({ currentView, setCurrentView, user, onSignOut, userProfile, on
     <aside className="hidden lg:flex flex-col w-64 bg-white border-r border-stone-200 min-h-screen fixed left-0 top-0">
       <div className="p-6 border-b border-stone-200">
         <h1 className="font-serif text-xl font-semibold text-stone-800">Day by Day</h1>
-        <p className="text-xs text-stone-500 mt-1">KLI Leadership Development</p>
       </div>
       <nav className="flex-1 p-4 space-y-1">
         {navItems.map(item => (
