@@ -3809,7 +3809,7 @@ function TextCoach({ coachType, setCurrentView, user, setActions, actions }) {
 // NAVIGATION COMPONENTS
 // ============================================================================
 
-function Sidebar({ currentView, setCurrentView, user, onSignOut }) {
+function Sidebar({ currentView, setCurrentView, user, onSignOut, userProfile, onToggleDemoMode }) {
   const navItems = [
     { id: 'dashboard', label: 'Home', icon: Icons.Home },
     { id: 'develop', label: 'Develop', icon: Icons.Award },
@@ -3845,6 +3845,15 @@ function Sidebar({ currentView, setCurrentView, user, onSignOut }) {
             <p className="text-xs text-stone-500 truncate">{user?.email}</p>
           </div>
         </div>
+        {userProfile?.is_admin && (
+          <button onClick={onToggleDemoMode}
+            className={`w-full flex items-center justify-between px-4 py-2 rounded-xl text-sm mb-1 transition-colors ${userProfile.demo_mode_active ? 'bg-amber-100 text-amber-800' : 'text-stone-600 hover:bg-stone-50'}`}>
+            <span className="flex items-center gap-3"><Icons.Award /><span>Demo Mode</span></span>
+            <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${userProfile.demo_mode_active ? 'bg-amber-500 text-white' : 'bg-stone-200 text-stone-500'}`}>
+              {userProfile.demo_mode_active ? 'ON' : 'OFF'}
+            </span>
+          </button>
+        )}
         <button onClick={() => setCurrentView('privacy-settings')} className="w-full flex items-center gap-3 px-4 py-2 text-stone-600 hover:bg-stone-50 rounded-xl text-sm mb-1">
           <Icons.Shield /><span>Privacy Settings</span>
         </button>
@@ -7726,6 +7735,8 @@ export default function DayByDayApp() {
   const [streak, setStreak] = useState(0);
   const [actions, setActions] = useState([]);
   const [journalEntries, setJournalEntries] = useState([]);
+  const [userProfile, setUserProfile] = useState(null);
+  const [constructUnlocks, setConstructUnlocks] = useState([]);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => { setUser(session?.user ?? null); setLoading(false); });
@@ -7734,10 +7745,11 @@ export default function DayByDayApp() {
   }, []);
 
   // Check for consent when user logs in
-  useEffect(() => { 
+  useEffect(() => {
     if (user) {
       checkConsent();
-      loadUserData(); 
+      loadUserData();
+      loadProfile();
     }
   }, [user]);
 
@@ -7762,7 +7774,61 @@ export default function DayByDayApp() {
     if (streakData) setStreak(streakData.current_streak);
   };
 
-  const handleSignOut = async () => { await supabase.auth.signOut(); setUser(null); setHasConsent(null); };
+  // Load (and lazily create) the user's profile + construct unlocks.
+  // Well-being is unlocked for everyone; every other construct starts locked.
+  const loadProfile = async () => {
+    let { data: profile } = await supabase
+      .from('user_profiles')
+      .select('*')
+      .eq('user_id', user.id)
+      .maybeSingle();
+
+    if (!profile) {
+      const { data: created } = await supabase
+        .from('user_profiles')
+        .insert({ user_id: user.id })
+        .select()
+        .single();
+      profile = created;
+    }
+    setUserProfile(profile);
+
+    const { data: unlockRows } = await supabase
+      .from('user_construct_unlocks')
+      .select('construct_id')
+      .eq('user_id', user.id);
+    let unlocked = (unlockRows || []).map(r => r.construct_id);
+    if (!unlocked.includes('wellbeing')) {
+      await supabase
+        .from('user_construct_unlocks')
+        .insert({ user_id: user.id, construct_id: 'wellbeing' });
+      unlocked = [...unlocked, 'wellbeing'];
+    }
+    setConstructUnlocks(unlocked);
+  };
+
+  // A construct is open if demo mode is on (admin override) or it's unlocked.
+  const isConstructUnlocked = (constructId) =>
+    userProfile?.demo_mode_active === true || constructUnlocks.includes(constructId);
+
+  // Admin-only: flip demo mode, which unlocks every construct for this user.
+  const toggleDemoMode = async () => {
+    if (!userProfile) return;
+    const next = !userProfile.demo_mode_active;
+    setUserProfile({ ...userProfile, demo_mode_active: next });
+    await supabase
+      .from('user_profiles')
+      .update({ demo_mode_active: next, updated_at: new Date().toISOString() })
+      .eq('user_id', user.id);
+  };
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+    setUser(null);
+    setHasConsent(null);
+    setUserProfile(null);
+    setConstructUnlocks([]);
+  };
 
   if (loading) return <div className="min-h-screen bg-stone-50 flex items-center justify-center"><Icons.Loader /></div>;
   if (!user) return <AuthScreen onAuth={setUser} />;
@@ -7797,7 +7863,7 @@ export default function DayByDayApp() {
     
     switch (currentView) {
       case 'dashboard': return <Dashboard setCurrentView={setCurrentView} streak={streak} user={user} actions={actions} journalEntries={journalEntries} />;
-      case 'develop': return <DevelopView setCurrentView={setCurrentView} user={user} />;
+      case 'develop': return <DevelopView setCurrentView={setCurrentView} user={user} isConstructUnlocked={isConstructUnlocked} />;
       case 'practice': return <PracticeView setCurrentView={setCurrentView} user={user} />;
       case 'chapters': return <ChaptersView setCurrentView={setCurrentView} />;
       case 'journal': return <JournalView user={user} journalEntries={journalEntries} setJournalEntries={setJournalEntries} />;
@@ -7823,7 +7889,7 @@ export default function DayByDayApp() {
         .animate-spin { animation: spin 1s linear infinite; }
         .line-clamp-1 { display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
       `}</style>
-      <Sidebar currentView={currentView} setCurrentView={setCurrentView} user={user} onSignOut={handleSignOut} />
+      <Sidebar currentView={currentView} setCurrentView={setCurrentView} user={user} onSignOut={handleSignOut} userProfile={userProfile} onToggleDemoMode={toggleDemoMode} />
       <Header streak={streak} />
       <main className="px-5 py-6 max-w-lg mx-auto pb-24 lg:ml-64 lg:max-w-4xl lg:pb-8">{renderView()}</main>
       <BottomNav currentView={currentView} setCurrentView={setCurrentView} />
