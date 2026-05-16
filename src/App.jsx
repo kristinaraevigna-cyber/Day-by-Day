@@ -3812,7 +3812,8 @@ function TextCoach({ coachType, setCurrentView, user, setActions, actions }) {
 function Sidebar({ currentView, setCurrentView, user, onSignOut, userProfile, onToggleDemoMode }) {
   const navItems = [
     { id: 'dashboard', label: 'Home', icon: Icons.Home },
-    { id: 'develop', label: 'Develop', icon: Icons.Award },
+    { id: 'leader-development', label: 'Leader Development', icon: Icons.User },
+    { id: 'leadership-development', label: 'Leadership Development', icon: Icons.Users },
     { id: 'practice', label: 'Practice', icon: Icons.Target },
     { id: 'chapters', label: "Day's Book", icon: Icons.BookOpen },
     { id: 'journal', label: 'Journal', icon: Icons.Edit },
@@ -3883,7 +3884,7 @@ function Header({ streak }) {
 function BottomNav({ currentView, setCurrentView }) {
   const navItems = [
     { id: 'dashboard', label: 'Home', icon: Icons.Home },
-    { id: 'develop', label: 'Develop', icon: Icons.Award },
+    { id: 'leader-development', label: 'Develop', icon: Icons.Award },
     { id: 'chapters', label: 'Book', icon: Icons.BookOpen },
     { id: 'coaches', label: 'Coach', icon: Icons.MessageCircle },
     { id: 'library', label: 'More', icon: Icons.Book }
@@ -4004,11 +4005,11 @@ function Dashboard({ setCurrentView, streak, user, actions, journalEntries }) {
       <div className="mb-6">
         <div className="flex items-center justify-between mb-3">
           <h3 className="font-semibold text-stone-800">Develop</h3>
-          <button onClick={() => setCurrentView('develop')} className="text-amber-700 text-sm font-medium flex items-center gap-1">All <Icons.ChevronRight /></button>
+          <button onClick={() => setCurrentView('leader-development')} className="text-amber-700 text-sm font-medium flex items-center gap-1">All <Icons.ChevronRight /></button>
         </div>
         <div className="grid grid-cols-2 gap-3">
           <button
-            onClick={() => setCurrentView('develop')}
+            onClick={() => setCurrentView('leader-development')}
             className="bg-gradient-to-br from-amber-50 to-amber-100 border border-amber-200 rounded-xl p-4 text-left hover:shadow-md transition-all"
           >
             <div className="text-2xl mb-2">👤</div>
@@ -4016,7 +4017,7 @@ function Dashboard({ setCurrentView, streak, user, actions, journalEntries }) {
             <p className="text-xs text-amber-600">Self-views & assessments</p>
           </button>
           <button
-            onClick={() => setCurrentView('develop')}
+            onClick={() => setCurrentView('leadership-development')}
             className="bg-gradient-to-br from-teal-50 to-teal-100 border border-teal-200 rounded-xl p-4 text-left hover:shadow-md transition-all"
           >
             <div className="text-2xl mb-2">👥</div>
@@ -6232,6 +6233,177 @@ function LeadershipDevelopmentTab({ setCurrentView }) {
 }
 
 // ============================================================================
+// DEVELOPMENT PAGES (Leader / Leadership) — construct card-grid hubs
+// ============================================================================
+
+// Construct metadata for the card-grid hubs. construct id 'wellbeing' matches
+// the row seeded into user_construct_unlocks; all other constructs stay locked.
+const LEADER_CONSTRUCTS = [
+  {
+    id: 'wellbeing', title: 'Well-being', route: 'wellbeing',
+    blurb: 'Your capacity to flourish at work — the foundation for sustainable leadership.',
+    measure: 'the 9-item PERMA+4 short form (Donaldson)'
+  },
+  {
+    id: 'self-views', title: 'Self-Views',
+    blurb: 'How clearly and accurately you see yourself as a leader.',
+    measure: 'SRIS — Self-Reflection & Insight Scale (Grant et al., 2002)',
+    lockLabel: 'Unlocks next'
+  },
+  {
+    id: 'identity', title: 'Leader Identity',
+    blurb: 'The degree to which being a leader is part of who you are.',
+    measure: 'the Leader Identity Scale (Day & Sin, 2011)',
+    lockLabel: 'Coming week 3'
+  },
+  {
+    id: 'self-efficacy', title: 'Leadership Self-Efficacy',
+    blurb: 'Your confidence in your ability to lead effectively.',
+    measure: 'LEQ — Leader Efficacy Questionnaire (Hannah et al., 2012)',
+    lockLabel: 'Coming week 4'
+  },
+  {
+    id: 'self-regulation', title: 'Self-Regulation',
+    blurb: 'Managing thoughts, emotions, and behavior in service of your goals.',
+    measure: 'a measure confirmed when this construct unlocks',
+    lockLabel: 'Coming later in your program'
+  }
+];
+
+const LEADERSHIP_CONSTRUCTS = [
+  {
+    id: 'team-learning', title: 'Team Learning & Action',
+    blurb: 'Building collective capacity through shared, real-world problem-solving.',
+    measure: 'a team-level measure confirmed when this construct unlocks',
+    lockLabel: 'Coming later in your program'
+  },
+  {
+    id: 'team-coaching', title: 'Team Coaching & Dialogue',
+    blurb: 'Strengthening trust and communication through facilitated dialogue.',
+    measure: 'Team Psychological Safety (Edmondson, 1999)',
+    lockLabel: 'Coming later in your program'
+  },
+  {
+    id: 'networks', title: 'Networks & Boundaries',
+    blurb: 'Leadership that spans teams, functions, and organizations.',
+    measure: 'a team-level measure confirmed when this construct unlocks',
+    lockLabel: 'Coming later in your program'
+  },
+  {
+    id: 'systems', title: 'Communities & Systems',
+    blurb: 'Structures and practices that enable collective learning at scale.',
+    measure: 'Collective Leadership Efficacy (Bandura, 1997)',
+    lockLabel: 'Coming later in your program'
+  }
+];
+
+function ConstructCard({ construct, unlocked, onOpen }) {
+  if (unlocked) {
+    return (
+      <button
+        onClick={onOpen}
+        className="text-left bg-white rounded-2xl border-2 border-emerald-300 p-5 hover:shadow-lg transition-all"
+      >
+        <div className="flex items-center justify-between mb-3">
+          <span className="text-xs font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full">● Open now</span>
+          <Icons.ArrowRight className="text-emerald-500" />
+        </div>
+        <h3 className="font-semibold text-stone-800 text-lg mb-1">{construct.title}</h3>
+        <p className="text-sm text-stone-600 mb-4">{construct.blurb}</p>
+        <p className="text-xs text-stone-500">Measured with {construct.measure}.</p>
+      </button>
+    );
+  }
+  return (
+    <div className="bg-stone-50 rounded-2xl border border-stone-200 p-5">
+      <div className="flex items-center justify-between mb-3">
+        <span className="text-xs font-medium text-stone-400 flex items-center gap-1">🔒 Locked</span>
+        <span className="text-xs text-stone-400">{construct.lockLabel}</span>
+      </div>
+      <h3 className="font-semibold text-stone-500 text-lg mb-1">{construct.title}</h3>
+      <p className="text-sm text-stone-400 mb-4">{construct.blurb}</p>
+      <p className="text-xs text-stone-400">Will be measured with {construct.measure}.</p>
+    </div>
+  );
+}
+
+function LeaderDevelopmentPage({ setCurrentView, isConstructUnlocked }) {
+  return (
+    <div className="animate-fadeIn pb-8">
+      <div className="mb-6">
+        <h1 className="font-serif text-2xl lg:text-3xl text-stone-800 mb-1">Leader Development</h1>
+        <p className="text-stone-500 text-sm">Building individual leadership capacity — based on David Day's framework.</p>
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {LEADER_CONSTRUCTS.map(c => (
+          <ConstructCard
+            key={c.id}
+            construct={c}
+            unlocked={isConstructUnlocked(c.id)}
+            onOpen={() => c.route && setCurrentView(c.route)}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function LeadershipDevelopmentPage({ setCurrentView, isConstructUnlocked }) {
+  return (
+    <div className="animate-fadeIn pb-8">
+      <div className="mb-6">
+        <h1 className="font-serif text-2xl lg:text-3xl text-stone-800 mb-1">Leadership Development</h1>
+        <p className="text-stone-500 text-sm">Building collective leadership capacity across teams and systems.</p>
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {LEADERSHIP_CONSTRUCTS.map(c => (
+          <ConstructCard
+            key={c.id}
+            construct={c}
+            unlocked={isConstructUnlocked(c.id)}
+            onOpen={() => c.route && setCurrentView(c.route)}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// Scaffold for the Well-being page. The four sections (framing, assessment,
+// results, practices) are built out in subsequent commits.
+function WellbeingPage({ setCurrentView }) {
+  const sections = [
+    { n: 1, title: 'Why Well-being Matters', desc: 'Framing — the PERMA+4 framework and why well-being is a leadership and workforce outcome.' },
+    { n: 2, title: 'Take the Assessment', desc: 'The 9-item PERMA+4 short form — one item per screen, 0–10 scale.' },
+    { n: 3, title: 'Your Results', desc: 'A 9-spoke radar of your scores, with plain-language interpretation.' },
+    { n: 4, title: 'Practices', desc: 'Evidence-based well-being interventions to try, with completion tracking.' }
+  ];
+  return (
+    <div className="animate-fadeIn pb-8">
+      <button onClick={() => setCurrentView('leader-development')} className="flex items-center gap-1 text-stone-500 hover:text-stone-700 mb-4 text-sm">
+        <Icons.ChevronLeft /> Leader Development
+      </button>
+      <div className="bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-200 rounded-2xl p-6 mb-6">
+        <h1 className="font-serif text-2xl text-stone-800 mb-1">Well-being</h1>
+        <p className="text-stone-600 text-sm">Your capacity to flourish at work — the foundation for sustainable leadership.</p>
+      </div>
+      <div className="space-y-3">
+        {sections.map(s => (
+          <div key={s.n} className="bg-white rounded-xl border border-stone-200 p-4 flex items-start gap-3">
+            <div className="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-sm shrink-0">{s.n}</div>
+            <div>
+              <h3 className="font-semibold text-stone-800">{s.title}</h3>
+              <p className="text-sm text-stone-500">{s.desc}</p>
+              <span className="inline-block mt-2 text-xs text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full">Building next</span>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ============================================================================
 // ASSESSMENT VIEW (Take Self-View Assessments)
 // ============================================================================
 
@@ -7863,7 +8035,10 @@ export default function DayByDayApp() {
     
     switch (currentView) {
       case 'dashboard': return <Dashboard setCurrentView={setCurrentView} streak={streak} user={user} actions={actions} journalEntries={journalEntries} />;
-      case 'develop': return <DevelopView setCurrentView={setCurrentView} user={user} isConstructUnlocked={isConstructUnlocked} />;
+      case 'leader-development': return <LeaderDevelopmentPage setCurrentView={setCurrentView} isConstructUnlocked={isConstructUnlocked} />;
+      case 'leadership-development': return <LeadershipDevelopmentPage setCurrentView={setCurrentView} isConstructUnlocked={isConstructUnlocked} />;
+      case 'wellbeing': return <WellbeingPage setCurrentView={setCurrentView} user={user} />;
+      case 'develop': return <LeaderDevelopmentPage setCurrentView={setCurrentView} isConstructUnlocked={isConstructUnlocked} />;
       case 'practice': return <PracticeView setCurrentView={setCurrentView} user={user} />;
       case 'chapters': return <ChaptersView setCurrentView={setCurrentView} />;
       case 'journal': return <JournalView user={user} journalEntries={journalEntries} setJournalEntries={setJournalEntries} />;
