@@ -3812,6 +3812,7 @@ function TextCoach({ coachType, setCurrentView, user, setActions, actions }) {
 function Sidebar({ currentView, setCurrentView, user, onSignOut, userProfile, onToggleDemoMode }) {
   const navItems = [
     { id: 'dashboard', label: 'Home', icon: Icons.Home },
+    { id: 'assessments', label: 'Assessments', icon: Icons.CheckSquare },
     { id: 'leader-development', label: 'Leader Development', icon: Icons.User },
     { id: 'leadership-development', label: 'Leadership Development', icon: Icons.Users },
     { id: 'practice', label: 'Practice', icon: Icons.Target },
@@ -8227,6 +8228,60 @@ function MeasureAssessment({ measure, phase, user, onComplete }) {
   );
 }
 
+// ============================================================================
+// ASSESSMENTS — multi-wave battery (top-level page)
+// ============================================================================
+
+// The four program waves. Mirrors the seeded assessment_waves table.
+const ASSESSMENT_WAVES = [
+  { number: 1, label: 'Pre / Baseline', triggerWeek: 0, description: 'Your baseline battery, taken at the start of the program.' },
+  { number: 2, label: 'Week 2 check-in', triggerWeek: 2, description: 'A short check-in two weeks in.' },
+  { number: 3, label: 'Week 4 midpoint', triggerWeek: 4, description: 'The mid-program assessment.' },
+  { number: 4, label: 'Week 8 post-program', triggerWeek: 8, description: 'The post-program assessment.' }
+];
+
+function AssessmentsPage() {
+  // Step 2 scaffold — static statuses. Real wave-eligibility logic is Step 4.
+  const statusFor = (wave) => wave.number === 1
+    ? { label: 'Available now', cls: 'bg-amber-100 text-amber-700' }
+    : { label: 'Not yet available', cls: 'bg-stone-100 text-stone-500' };
+
+  return (
+    <div className="animate-fadeIn pb-8">
+      <div className="mb-6">
+        <h1 className="font-serif text-2xl lg:text-3xl text-stone-800 mb-1">Assessments</h1>
+        <p className="text-stone-500 text-sm">A short battery of validated measures, taken at four points across your program — so you can see how you're developing over time.</p>
+      </div>
+
+      <div className="space-y-3">
+        {ASSESSMENT_WAVES.map(wave => {
+          const status = statusFor(wave);
+          return (
+            <div key={wave.number} className="bg-white rounded-xl border border-stone-200 p-5">
+              <div className="flex items-start justify-between gap-3 mb-1">
+                <h3 className="font-semibold text-stone-800">Wave {wave.number} — {wave.label}</h3>
+                <span className={`text-xs font-medium px-2 py-0.5 rounded-full shrink-0 ${status.cls}`}>{status.label}</span>
+              </div>
+              <p className="text-sm text-stone-600 mb-2">{wave.description}</p>
+              <p className="text-xs text-stone-400">
+                {wave.triggerWeek === 0 ? 'Opens at enrollment' : `Opens at week ${wave.triggerWeek}`} · 5 measures, ~40 questions
+              </p>
+            </div>
+          );
+        })}
+
+        <div className="bg-white rounded-xl border border-stone-200 p-5">
+          <div className="flex items-start justify-between gap-3 mb-1">
+            <h3 className="font-semibold text-stone-800">My Trajectory</h3>
+            <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-stone-100 text-stone-500 shrink-0">Coming soon</span>
+          </div>
+          <p className="text-sm text-stone-600">Your results across every wave you've completed, measure by measure.</p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function DayByDayApp() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -8414,6 +8469,7 @@ export default function DayByDayApp() {
     
     switch (currentView) {
       case 'dashboard': return <Dashboard setCurrentView={setCurrentView} user={user} actions={actions} journalEntries={journalEntries} sessionCount={sessionCount} intakeFocus={intakeFocus} />;
+      case 'assessments': return <AssessmentsPage />;
       case 'leader-development': return <LeaderDevelopmentPage setCurrentView={setCurrentView} isConstructUnlocked={isConstructUnlocked} />;
       case 'leadership-development': return <LeadershipDevelopmentPage setCurrentView={setCurrentView} isConstructUnlocked={isConstructUnlocked} />;
       case 'wellbeing': return <WellbeingPage setCurrentView={setCurrentView} user={user} />;
