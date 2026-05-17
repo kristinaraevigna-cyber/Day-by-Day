@@ -8284,7 +8284,7 @@ const MEASURES = {
 
 // Generic one-item-per-screen assessment runner for any measure in MEASURES.
 // Saves an assessment_responses row tagged with the given phase.
-function MeasureAssessment({ measure, phase, user, onComplete }) {
+function MeasureAssessment({ measure, phase, waveNumber, user, onComplete, embedded }) {
   const [idx, setIdx] = useState(0);
   const [responses, setResponses] = useState({});
   const [saving, setSaving] = useState(false);
@@ -8318,7 +8318,8 @@ function MeasureAssessment({ measure, phase, user, onComplete }) {
     const { error: e } = await supabase.from('assessment_responses').insert({
       user_id: user.id,
       assessment_id: measure.id,
-      phase,
+      phase: phase ?? null,
+      wave_number: waveNumber ?? null,
       responses,
       results,
       completed_at: new Date().toISOString()
@@ -8329,10 +8330,10 @@ function MeasureAssessment({ measure, phase, user, onComplete }) {
   };
 
   return (
-    <div className="min-h-screen bg-stone-50 py-8 px-5">
-      <div className="max-w-lg mx-auto">
+    <div className={embedded ? 'animate-fadeIn pb-8' : 'min-h-screen bg-stone-50 py-8 px-5'}>
+      <div className={embedded ? '' : 'max-w-lg mx-auto'}>
         <div className="mb-6">
-          <p className="text-xs font-medium text-amber-700 mb-1">{PHASE_LABELS[phase]} assessment</p>
+          <p className="text-xs font-medium text-amber-700 mb-1">{waveNumber ? `Wave ${waveNumber}` : PHASE_LABELS[phase]} assessment</p>
           <h1 className="font-serif text-2xl text-stone-800 mb-1">{measure.name}</h1>
           <p className="text-stone-500 text-sm">{measure.intro}</p>
         </div>
@@ -8476,8 +8477,23 @@ const WAVE_STATUS_PILL = {
   missed: { label: 'Missed — still open', cls: 'bg-orange-100 text-orange-700' }
 };
 
-function AssessmentsPage({ userProfile }) {
+function AssessmentsPage({ userProfile, user }) {
+  const [taking, setTaking] = useState(null);
   const waves = computeWaveStatuses(userProfile?.enrolled_at, userProfile?.demo_wave_override);
+
+  // Step 5: an available/missed wave runs PERMA+4 (the only built measure).
+  // Steps 7-13 add the rest of the battery and full wave completion.
+  if (taking) {
+    return (
+      <div className="animate-fadeIn">
+        <button onClick={() => setTaking(null)} className="flex items-center gap-1 text-stone-500 hover:text-stone-700 mb-4 text-sm">
+          <Icons.ChevronLeft /> Back to Assessments
+        </button>
+        <MeasureAssessment measure={MEASURES.perma4} waveNumber={taking} embedded user={user}
+          onComplete={() => setTaking(null)} />
+      </div>
+    );
+  }
 
   return (
     <div className="animate-fadeIn pb-8">
@@ -8489,8 +8505,9 @@ function AssessmentsPage({ userProfile }) {
       <div className="space-y-3">
         {waves.map(wave => {
           const pill = WAVE_STATUS_PILL[wave.status];
-          return (
-            <div key={wave.number} className="bg-white rounded-xl border border-stone-200 p-5">
+          const clickable = wave.status === 'available' || wave.status === 'missed';
+          const inner = (
+            <>
               <div className="flex items-start justify-between gap-3 mb-1">
                 <h3 className="font-semibold text-stone-800">Wave {wave.number} — {wave.label}</h3>
                 <span className={`text-xs font-medium px-2 py-0.5 rounded-full shrink-0 ${pill.cls}`}>{pill.label}</span>
@@ -8499,6 +8516,16 @@ function AssessmentsPage({ userProfile }) {
               <p className="text-xs text-stone-400">
                 {wave.triggerWeek === 0 ? 'Opens at enrollment' : `Opens at week ${wave.triggerWeek}`} · 6 measures, ~50 questions
               </p>
+            </>
+          );
+          return clickable ? (
+            <button key={wave.number} onClick={() => setTaking(wave.number)}
+              className="w-full text-left bg-white rounded-xl border border-stone-200 p-5 hover:shadow-md hover:border-stone-300 transition-all">
+              {inner}
+            </button>
+          ) : (
+            <div key={wave.number} className="bg-white rounded-xl border border-stone-200 p-5">
+              {inner}
             </div>
           );
         })}
@@ -8745,7 +8772,7 @@ export default function DayByDayApp() {
     
     switch (currentView) {
       case 'dashboard': return <Dashboard setCurrentView={setCurrentView} user={user} actions={actions} journalEntries={journalEntries} sessionCount={sessionCount} intakeFocus={intakeFocus} />;
-      case 'assessments': return <AssessmentsPage userProfile={userProfile} />;
+      case 'assessments': return <AssessmentsPage userProfile={userProfile} user={user} />;
       case 'leader-development': return <LeaderDevelopmentPage setCurrentView={setCurrentView} isConstructUnlocked={isConstructUnlocked} />;
       case 'leadership-development': return <LeadershipDevelopmentPage setCurrentView={setCurrentView} isConstructUnlocked={isConstructUnlocked} />;
       case 'wellbeing': return <WellbeingPage setCurrentView={setCurrentView} user={user} />;
