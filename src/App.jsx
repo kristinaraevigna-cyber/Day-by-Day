@@ -3907,23 +3907,29 @@ function BottomNav({ currentView, setCurrentView }) {
 // DASHBOARD
 // ============================================================================
 
-function Dashboard({ setCurrentView, user, journalEntries }) {
+function Dashboard({ setCurrentView, user, actions, journalEntries, sessionCount, intakeFocus }) {
   const hour = new Date().getHours();
   const partOfDay = hour < 12 ? 'morning' : hour < 18 ? 'afternoon' : 'evening';
   const firstName = user?.user_metadata?.full_name?.split(' ')[0];
   const dateStr = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
 
-  const lastEntry = journalEntries?.[0];
-  let journalSub = 'Start your first entry';
-  if (lastEntry?.created_at) {
-    const days = Math.floor((Date.now() - new Date(lastEntry.created_at).getTime()) / 86400000);
-    journalSub = days <= 0 ? 'Last entry today' : days === 1 ? 'Last entry yesterday' : `Last entry ${days} days ago`;
-  }
+  // Daily recommended VCoL practice — stable for the day, drawn from the
+  // user's focus competencies when any activities match.
+  const focusSet = new Set(intakeFocus || []);
+  const matched = ACTIVITIES.filter(a => (ACTIVITY_FOCUS_TAGS[a.id] || []).some(t => focusSet.has(t)));
+  const pool = matched.length > 0 ? matched : ACTIVITIES;
+  const todayActivity = pool[Math.floor(Date.now() / 86400000) % pool.length];
 
-  const cards = [
-    { title: 'Continue developing', sub: 'Leader Development', icon: <Icons.Award />, view: 'leader-development' },
-    { title: 'Talk to your coach', sub: 'ICF Coach · Day Advisor', icon: <Icons.MessageCircle />, view: 'coaches' },
-    { title: 'Reflect in your journal', sub: journalSub, icon: <Icons.Edit />, view: 'journal' }
+  const stats = [
+    { n: actions?.length || 0, label: 'Actions', view: 'actions' },
+    { n: sessionCount || 0, label: 'Coaching sessions', view: 'coaches' },
+    { n: journalEntries?.length || 0, label: 'Journal entries', view: 'journal' }
+  ];
+
+  const links = [
+    { title: 'Continue developing', icon: <Icons.Award />, view: 'leader-development' },
+    { title: 'Talk to your coach', icon: <Icons.MessageCircle />, view: 'coaches' },
+    { title: 'Reflect in your journal', icon: <Icons.Edit />, view: 'journal' }
   ];
 
   return (
@@ -3935,20 +3941,47 @@ function Dashboard({ setCurrentView, user, journalEntries }) {
         </h2>
       </div>
 
-      <div className="space-y-3">
-        {cards.map(card => (
+      <div className="grid grid-cols-3 gap-3 mb-4">
+        {stats.map(s => (
           <button
-            key={card.view}
-            onClick={() => setCurrentView(card.view)}
-            className="w-full bg-white rounded-2xl border border-stone-200 p-5 text-left hover:shadow-md hover:border-stone-300 transition-all flex items-center gap-4"
+            key={s.label}
+            onClick={() => setCurrentView(s.view)}
+            className="bg-white rounded-xl border border-stone-200 p-4 text-center hover:shadow-md hover:border-stone-300 transition-all"
           >
-            <div className="w-12 h-12 rounded-xl bg-amber-50 text-amber-700 flex items-center justify-center shrink-0">
-              {card.icon}
-            </div>
+            <p className="text-2xl font-bold text-stone-800">{s.n}</p>
+            <p className="text-xs text-stone-500 mt-0.5">{s.label}</p>
+          </button>
+        ))}
+      </div>
+
+      {todayActivity && (
+        <button
+          onClick={() => setCurrentView(`practice-${todayActivity.id}`)}
+          className="w-full bg-gradient-to-br from-amber-500 to-orange-500 rounded-2xl p-5 text-left hover:shadow-lg transition-all mb-6"
+        >
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center text-2xl shrink-0">🎯</div>
             <div className="flex-1 min-w-0">
-              <h3 className="font-semibold text-stone-800">{card.title}</h3>
-              <p className="text-sm text-stone-500">{card.sub}</p>
+              <p className="text-white/80 text-xs font-medium mb-0.5">
+                Today's practice{matched.length > 0 ? ' · matches your focus' : ''}
+              </p>
+              <h3 className="text-white font-semibold">{todayActivity.title}</h3>
+              <p className="text-white/70 text-sm">{todayActivity.duration} · VCoL exercise</p>
             </div>
+            <Icons.ArrowRight className="text-white shrink-0" />
+          </div>
+        </button>
+      )}
+
+      <div className="space-y-2">
+        {links.map(l => (
+          <button
+            key={l.view}
+            onClick={() => setCurrentView(l.view)}
+            className="w-full bg-white rounded-xl border border-stone-200 p-4 text-left hover:shadow-md hover:border-stone-300 transition-all flex items-center gap-3"
+          >
+            <div className="w-10 h-10 rounded-lg bg-amber-50 text-amber-700 flex items-center justify-center shrink-0">{l.icon}</div>
+            <span className="flex-1 font-medium text-stone-800">{l.title}</span>
             <Icons.ArrowRight className="text-stone-400 shrink-0" />
           </button>
         ))}
@@ -8055,6 +8088,7 @@ export default function DayByDayApp() {
   const [intakeFocus, setIntakeFocus] = useState([]);
   const [currentView, setCurrentView] = useState('dashboard');
   const [streak, setStreak] = useState(0);
+  const [sessionCount, setSessionCount] = useState(0);
   const [actions, setActions] = useState([]);
   const [journalEntries, setJournalEntries] = useState([]);
   const [userProfile, setUserProfile] = useState(null);
@@ -8105,6 +8139,8 @@ export default function DayByDayApp() {
     if (journalData) setJournalEntries(journalData);
     const { data: streakData } = await supabase.from('streaks').select('current_streak').eq('user_id', user.id).single();
     if (streakData) setStreak(streakData.current_streak);
+    const { count: sessions } = await supabase.from('coaching_sessions').select('id', { count: 'exact', head: true }).eq('user_id', user.id);
+    setSessionCount(sessions || 0);
   };
 
   // Load (and lazily create) the user's profile + construct unlocks.
@@ -8161,6 +8197,7 @@ export default function DayByDayApp() {
     setHasConsent(null);
     setHasIntake(null);
     setIntakeFocus([]);
+    setSessionCount(0);
     setUserProfile(null);
     setConstructUnlocks([]);
   };
@@ -8205,7 +8242,7 @@ export default function DayByDayApp() {
     }
     
     switch (currentView) {
-      case 'dashboard': return <Dashboard setCurrentView={setCurrentView} streak={streak} user={user} actions={actions} journalEntries={journalEntries} />;
+      case 'dashboard': return <Dashboard setCurrentView={setCurrentView} user={user} actions={actions} journalEntries={journalEntries} sessionCount={sessionCount} intakeFocus={intakeFocus} />;
       case 'leader-development': return <LeaderDevelopmentPage setCurrentView={setCurrentView} isConstructUnlocked={isConstructUnlocked} />;
       case 'leadership-development': return <LeadershipDevelopmentPage setCurrentView={setCurrentView} isConstructUnlocked={isConstructUnlocked} />;
       case 'wellbeing': return <WellbeingPage setCurrentView={setCurrentView} user={user} />;
@@ -8222,7 +8259,7 @@ export default function DayByDayApp() {
       case 'library': return <LibraryView setCurrentView={setCurrentView} />;
       case 'privacy-settings': return <PrivacySettingsView user={user} setCurrentView={setCurrentView} />;
       case 'my-data': return <MyDataView user={user} setCurrentView={setCurrentView} onSignOut={handleSignOut} />;
-      default: return <Dashboard setCurrentView={setCurrentView} streak={streak} user={user} actions={actions} journalEntries={journalEntries} />;
+      default: return <Dashboard setCurrentView={setCurrentView} user={user} actions={actions} journalEntries={journalEntries} sessionCount={sessionCount} intakeFocus={intakeFocus} />;
     }
   };
 
