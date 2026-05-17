@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, ResponsiveContainer } from 'recharts';
+import { RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
 import { supabase } from './lib/supabase';
 
 // ============================================================================
@@ -8745,9 +8745,105 @@ const WAVE_STATUS_PILL = {
   missed: { label: 'Missed — still open', cls: 'bg-orange-100 text-orange-700' }
 };
 
+const TRAJECTORY_COLORS = ['#0d9488', '#d97706', '#7c3aed', '#2563eb', '#db2777', '#16a34a', '#dc2626', '#0891b2', '#ca8a04'];
+
+// Multi-wave trajectory — a line chart per measure across completed waves.
+function TrajectoryView({ user, onBack }) {
+  const [rows, setRows] = useState(undefined);
+
+  useEffect(() => {
+    if (!user) return;
+    let active = true;
+    supabase.from('assessment_responses')
+      .select('assessment_id, wave_number, results, completed_at')
+      .eq('user_id', user.id)
+      .not('wave_number', 'is', null)
+      .order('completed_at', { ascending: true })
+      .then(({ data }) => { if (active) setRows(data || []); });
+    return () => { active = false; };
+  }, [user]);
+
+  // byMW[assessment_id][wave] = results — ascending order, so latest wins.
+  const byMW = {};
+  (rows || []).forEach(r => {
+    if (!byMW[r.assessment_id]) byMW[r.assessment_id] = {};
+    byMW[r.assessment_id][r.wave_number] = r.results;
+  });
+  const totalWaves = new Set((rows || []).map(r => r.wave_number)).size;
+
+  return (
+    <div className="animate-fadeIn pb-8">
+      <button onClick={onBack} className="flex items-center gap-1 text-stone-500 hover:text-stone-700 mb-4 text-sm">
+        <Icons.ChevronLeft /> Back to Assessments
+      </button>
+      <div className="mb-6">
+        <h1 className="font-serif text-2xl lg:text-3xl text-stone-800 mb-1">My Trajectory</h1>
+        <p className="text-stone-500 text-sm">How your scores move across waves. Development in healthcare leadership is gradual — look for direction over weeks, not single-point change.</p>
+      </div>
+
+      {rows === undefined && <p className="text-sm text-stone-400">Loading…</p>}
+      {rows && totalWaves === 0 && (
+        <p className="text-sm text-stone-500">Complete an assessment wave to start your trajectory.</p>
+      )}
+      {rows && totalWaves === 1 && (
+        <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 mb-4 text-sm text-stone-600">
+          You've completed one wave. Your trajectory takes shape once you complete Wave 2 and beyond.
+        </div>
+      )}
+
+      <div className="space-y-4">
+        {rows && MEASURE_ORDER.map(id => {
+          const measure = MEASURES[id];
+          const waveData = byMW[id];
+          if (!measure || !waveData) return null;
+          const subscales = [...new Set(measure.items.map(i => i.subscale))];
+          const chartData = Object.keys(waveData)
+            .map(Number)
+            .sort((a, b) => a - b)
+            .map(w => {
+              const point = { wave: `Wave ${w}` };
+              const dims = waveData[w].dimensions || {};
+              subscales.forEach(s => { point[s] = dims[s]; });
+              return point;
+            });
+          return (
+            <div key={id} className="bg-white rounded-xl border border-stone-200 p-4">
+              <h3 className="font-semibold text-stone-800 mb-3">{measure.name}</h3>
+              <div className="h-48 -mx-2">
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={chartData} margin={{ top: 5, right: 12, bottom: 5, left: -12 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#f5f5f4" />
+                    <XAxis dataKey="wave" tick={{ fontSize: 11, fill: '#78716c' }} />
+                    <YAxis domain={[measure.scale.min, measure.scale.max]} tick={{ fontSize: 10, fill: '#a8a29e' }} />
+                    <Tooltip />
+                    {subscales.map((s, i) => (
+                      <Line key={s} type="monotone" dataKey={s} stroke={TRAJECTORY_COLORS[i % TRAJECTORY_COLORS.length]} strokeWidth={2} dot={{ r: 3 }} />
+                    ))}
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+              {subscales.length > 1 && (
+                <div className="flex flex-wrap gap-x-3 gap-y-1 mt-1">
+                  {subscales.map((s, i) => (
+                    <span key={s} className="text-xs text-stone-500 flex items-center gap-1">
+                      <span className="w-2.5 h-2.5 rounded-full inline-block" style={{ background: TRAJECTORY_COLORS[i % TRAJECTORY_COLORS.length] }} />
+                      {s}
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 function AssessmentsPage({ userProfile, user, setCurrentView }) {
   const [taking, setTaking] = useState(null);
   const [reviewing, setReviewing] = useState(null);
+  const [showTrajectory, setShowTrajectory] = useState(false);
   const [completions, setCompletions] = useState({});
 
   useEffect(() => {
@@ -8789,6 +8885,10 @@ function AssessmentsPage({ userProfile, user, setCurrentView }) {
     );
   }
 
+  if (showTrajectory) {
+    return <TrajectoryView user={user} onBack={() => setShowTrajectory(false)} />;
+  }
+
   return (
     <div className="animate-fadeIn pb-8">
       <div className="mb-6">
@@ -8828,13 +8928,14 @@ function AssessmentsPage({ userProfile, user, setCurrentView }) {
           );
         })}
 
-        <div className="bg-white rounded-xl border border-stone-200 p-5">
+        <button onClick={() => setShowTrajectory(true)}
+          className="w-full text-left bg-white rounded-xl border border-stone-200 p-5 hover:shadow-md hover:border-stone-300 transition-all">
           <div className="flex items-start justify-between gap-3 mb-1">
             <h3 className="font-semibold text-stone-800">My Trajectory</h3>
-            <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-stone-100 text-stone-500 shrink-0">Coming soon</span>
+            <Icons.ArrowRight className="text-stone-400 shrink-0" />
           </div>
           <p className="text-sm text-stone-600">Your results across every wave you've completed, measure by measure.</p>
-        </div>
+        </button>
       </div>
     </div>
   );
