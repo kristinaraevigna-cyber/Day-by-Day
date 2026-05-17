@@ -8281,6 +8281,57 @@ const MEASURES = {
       { id: 5, subscale: 'Leader Identity', text: 'I have always seen myself as a leader.' }
     ]
   },
+  bfi10: {
+    id: 'bfi10',
+    name: 'Personality',
+    construct: 'personality',
+    source: 'BFI-10 (Rammstedt & John, 2007)',
+    intro: 'Ten short statements about your personality. Rate how well each describes you.',
+    scale: { min: 1, max: 5, minLabel: 'Disagree strongly', maxLabel: 'Agree strongly' },
+    stem: 'I see myself as someone who…',
+    items: [
+      { id: 1, subscale: 'Extraversion', text: 'is reserved', reverse: true },
+      { id: 2, subscale: 'Agreeableness', text: 'is generally trusting' },
+      { id: 3, subscale: 'Conscientiousness', text: 'tends to be lazy', reverse: true },
+      { id: 4, subscale: 'Emotional Stability', text: 'is relaxed, handles stress well' },
+      { id: 5, subscale: 'Openness', text: 'has few artistic interests', reverse: true },
+      { id: 6, subscale: 'Extraversion', text: 'is outgoing, sociable' },
+      { id: 7, subscale: 'Agreeableness', text: 'tends to find fault with others', reverse: true },
+      { id: 8, subscale: 'Conscientiousness', text: 'does a thorough job' },
+      { id: 9, subscale: 'Emotional Stability', text: 'gets nervous easily', reverse: true },
+      { id: 10, subscale: 'Openness', text: 'has an active imagination' }
+    ]
+  },
+  sris: {
+    id: 'sris',
+    name: 'Self-Reflection and Insight',
+    construct: 'self-views',
+    source: 'Self-Reflection and Insight Scale (Grant, Franklin & Langford, 2002)',
+    intro: 'Twenty statements about how you think about your own thoughts, feelings, and behavior.',
+    scale: { min: 1, max: 6, minLabel: 'Strongly disagree', maxLabel: 'Strongly agree' },
+    items: [
+      { id: 1, subscale: 'Self-Reflection', text: "I don't often think about my thoughts.", reverse: true },
+      { id: 2, subscale: 'Self-Reflection', text: 'I am not really interested in analyzing my behavior.', reverse: true },
+      { id: 3, subscale: 'Self-Reflection', text: 'It is important for me to evaluate the things that I do.' },
+      { id: 4, subscale: 'Self-Reflection', text: 'It is important to me to try to understand what my feelings mean.' },
+      { id: 5, subscale: 'Self-Reflection', text: 'I have a definite need to understand the way that my mind works.' },
+      { id: 6, subscale: 'Self-Reflection', text: 'It is important to me to be able to understand how my thoughts arise.' },
+      { id: 7, subscale: 'Self-Reflection', text: "I don't really think about why I behave in the way that I do.", reverse: true },
+      { id: 8, subscale: 'Self-Reflection', text: 'I frequently examine my feelings.' },
+      { id: 9, subscale: 'Self-Reflection', text: 'I rarely spend time in self-reflection.', reverse: true },
+      { id: 10, subscale: 'Self-Reflection', text: 'I frequently take time to reflect on my thoughts.' },
+      { id: 11, subscale: 'Self-Reflection', text: 'I often think about the way I feel about things.' },
+      { id: 12, subscale: 'Self-Reflection', text: 'I am not really interested in thinking about why I do the things I do.', reverse: true },
+      { id: 13, subscale: 'Insight', text: 'I am usually aware of my thoughts.' },
+      { id: 14, subscale: 'Insight', text: "I'm often confused about the way that I really feel about things.", reverse: true },
+      { id: 15, subscale: 'Insight', text: 'It is difficult for me to make sense of the way I feel about things.', reverse: true },
+      { id: 16, subscale: 'Insight', text: "I usually have a very clear idea about why I've behaved in a certain way." },
+      { id: 17, subscale: 'Insight', text: "I'm often aware that I'm having a feeling, but I often don't quite know what it is.", reverse: true },
+      { id: 18, subscale: 'Insight', text: 'My behavior often puzzles me.', reverse: true },
+      { id: 19, subscale: 'Insight', text: 'Thinking about my thoughts makes me more confused.', reverse: true },
+      { id: 20, subscale: 'Insight', text: 'Often I find it difficult to make sense of the way I think about things.', reverse: true }
+    ]
+  },
   perma4: {
     id: 'perma4',
     name: 'Well-being',
