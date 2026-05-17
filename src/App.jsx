@@ -8037,7 +8037,7 @@ const INTAKE_STEPS = [
     title: 'Your goals',
     subtitle: 'What success looks like for you.',
     fields: [
-      { key: 'goals', label: 'What do you hope to get from this program?', type: 'textarea', required: true }
+      { key: 'goals', label: 'What do you want to get out of this experience?', type: 'textarea', required: true }
     ]
   }
 ];
@@ -8542,21 +8542,36 @@ function MeasureAssessment({ measure, phase, waveNumber, user, onComplete, embed
 
 // Runs the full assessment battery for a wave — every measure in
 // MEASURE_ORDER that is currently defined, in sequence.
-function WaveBattery({ waveNumber, user, onComplete }) {
+function WaveBattery({ waveNumber, user, onComplete, embedded }) {
   const measures = MEASURE_ORDER.map(id => MEASURES[id]).filter(Boolean);
   const [idx, setIdx] = useState(0);
+  const done = idx >= measures.length;
 
-  if (idx >= measures.length) {
+  // Record the wave as completed once every measure is finished.
+  useEffect(() => {
+    if (!done || !user) return;
+    supabase.from('user_wave_completions').upsert({
+      user_id: user.id,
+      wave_number: waveNumber,
+      status: 'completed',
+      completed_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    }, { onConflict: 'user_id,wave_number' });
+  }, [done]);
+
+  if (done) {
     return (
-      <div className="animate-fadeIn pb-8 text-center">
-        <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-8 mb-4">
-          <div className="text-4xl mb-3">✓</div>
-          <h2 className="font-serif text-xl text-stone-800 mb-1">Wave {waveNumber} complete</h2>
-          <p className="text-sm text-stone-600">You've completed all {measures.length} measures. Your responses are saved.</p>
+      <div className={embedded ? 'animate-fadeIn pb-8' : 'min-h-screen bg-stone-50 py-8 px-5'}>
+        <div className={embedded ? '' : 'max-w-lg mx-auto'}>
+          <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-8 mb-4 text-center">
+            <div className="text-4xl mb-3">✓</div>
+            <h2 className="font-serif text-xl text-stone-800 mb-1">Wave {waveNumber} complete</h2>
+            <p className="text-sm text-stone-600">You've completed all {measures.length} measures. Your responses are saved.</p>
+          </div>
+          <button onClick={onComplete} className="w-full bg-amber-600 text-white py-3 rounded-xl font-medium">
+            {embedded ? 'Back to Assessments' : 'Continue'}
+          </button>
         </div>
-        <button onClick={onComplete} className="w-full bg-amber-600 text-white py-3 rounded-xl font-medium">
-          Back to Assessments
-        </button>
       </div>
     );
   }
@@ -8567,7 +8582,7 @@ function WaveBattery({ waveNumber, user, onComplete }) {
       key={measure.id}
       measure={measure}
       waveNumber={waveNumber}
-      embedded
+      embedded={embedded}
       user={user}
       measureProgress={`Measure ${idx + 1} of ${measures.length}`}
       onComplete={() => setIdx(i => i + 1)}
@@ -8662,7 +8677,22 @@ const WAVE_STATUS_PILL = {
 
 function AssessmentsPage({ userProfile, user }) {
   const [taking, setTaking] = useState(null);
-  const waves = computeWaveStatuses(userProfile?.enrolled_at, userProfile?.demo_wave_override);
+  const [completions, setCompletions] = useState({});
+
+  useEffect(() => {
+    if (!user) return;
+    let active = true;
+    supabase.from('user_wave_completions').select('wave_number, status').eq('user_id', user.id)
+      .then(({ data }) => {
+        if (!active) return;
+        const map = {};
+        (data || []).forEach(r => { map[r.wave_number] = r.status; });
+        setCompletions(map);
+      });
+    return () => { active = false; };
+  }, [user, taking]);
+
+  const waves = computeWaveStatuses(userProfile?.enrolled_at, userProfile?.demo_wave_override, completions);
 
   // Step 5: an available/missed wave runs PERMA+4 (the only built measure).
   // Steps 7-13 add the rest of the battery and full wave completion.
@@ -8672,7 +8702,7 @@ function AssessmentsPage({ userProfile, user }) {
         <button onClick={() => setTaking(null)} className="flex items-center gap-1 text-stone-500 hover:text-stone-700 mb-4 text-sm">
           <Icons.ChevronLeft /> Back to Assessments
         </button>
-        <WaveBattery waveNumber={taking} user={user} onComplete={() => setTaking(null)} />
+        <WaveBattery waveNumber={taking} user={user} embedded onComplete={() => setTaking(null)} />
       </div>
     );
   }
@@ -8730,7 +8760,7 @@ export default function DayByDayApp() {
   const [hasConsent, setHasConsent] = useState(null);
   const [hasIntake, setHasIntake] = useState(null);
   const [intakeFocus, setIntakeFocus] = useState([]);
-  const [hasBaseline, setHasBaseline] = useState(null);
+  const [wave1Done, setWave1Done] = useState(null);
   const [welcomeSeen, setWelcomeSeen] = useState(null);
   const [currentView, setCurrentView] = useState('dashboard');
   const [streak, setStreak] = useState(0);
@@ -8751,7 +8781,7 @@ export default function DayByDayApp() {
     if (user) {
       checkConsent();
       checkIntake();
-      checkBaseline();
+      checkWave1();
       checkWelcome();
       loadUserData();
       loadProfile();
@@ -8780,17 +8810,15 @@ export default function DayByDayApp() {
     setIntakeFocus(Array.isArray(data?.focus_competencies) ? data.focus_competencies : []);
   };
 
-  // Baseline is complete once the PERMA+4 has been taken at the baseline phase.
-  const checkBaseline = async () => {
+  // Wave 1 gates the app — complete once the full battery is finished.
+  const checkWave1 = async () => {
     const { data } = await supabase
-      .from('assessment_responses')
-      .select('id')
+      .from('user_wave_completions')
+      .select('status')
       .eq('user_id', user.id)
-      .eq('assessment_id', 'perma4')
-      .eq('phase', 'baseline')
-      .limit(1)
+      .eq('wave_number', 1)
       .maybeSingle();
-    setHasBaseline(!!data);
+    setWave1Done(data?.status === 'completed');
   };
 
   // "A message from David" — shown once after the baseline assessment.
@@ -8890,7 +8918,7 @@ export default function DayByDayApp() {
     setHasConsent(null);
     setHasIntake(null);
     setIntakeFocus([]);
-    setHasBaseline(null);
+    setWave1Done(null);
     setWelcomeSeen(null);
     setSessionCount(0);
     setUserProfile(null);
@@ -8918,11 +8946,11 @@ export default function DayByDayApp() {
     return <div className="min-h-screen bg-stone-50 flex items-center justify-center"><Icons.Loader /></div>;
   }
 
-  // Require the baseline assessment immediately after intake
-  if (hasBaseline === false) {
-    return <MeasureAssessment measure={MEASURES.perma4} phase="baseline" user={user} onComplete={() => setHasBaseline(true)} />;
+  // Require the full Wave 1 battery immediately after intake
+  if (wave1Done === false) {
+    return <WaveBattery waveNumber={1} user={user} onComplete={() => setWave1Done(true)} />;
   }
-  if (hasBaseline === null) {
+  if (wave1Done === null) {
     return <div className="min-h-screen bg-stone-50 flex items-center justify-center"><Icons.Loader /></div>;
   }
 
