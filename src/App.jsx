@@ -8244,6 +8244,46 @@ function MeasureAssessment({ measure, phase, user, onComplete }) {
 }
 
 // ============================================================================
+// WELCOME — "A message from David", shown once after the baseline assessment
+// ============================================================================
+
+function WelcomeMessage({ onBegin }) {
+  return (
+    <div className="min-h-screen bg-stone-50 py-8 px-5">
+      <div className="max-w-lg mx-auto">
+        <div className="bg-white rounded-2xl border border-stone-200 p-6 mb-4">
+          <p className="text-xs font-medium text-amber-700 mb-1">A message from David</p>
+          <h1 className="font-serif text-2xl text-stone-800 mb-4">Welcome to Day by Day</h1>
+          <div className="space-y-4 text-sm text-stone-600 leading-relaxed">
+            <p>You've just completed your first assessment — thank you. That's your starting point. Everything from here is about what you choose to do with it.</p>
+            <div>
+              <h2 className="font-semibold text-stone-800 mb-1">This isn't a training program.</h2>
+              <p>Most leadership "development" is an event — a workshop, a course, a retreat. You attend, you feel inspired, and then ordinary work resumes and little actually changes. The evidence is clear that one-off programs rarely produce lasting growth. Real development happens in the daily practice of leading — small, deliberate reps, reflected on over time. This app isn't a course to finish. It's a practice to keep.</p>
+            </div>
+            <div>
+              <h2 className="font-semibold text-stone-800 mb-1">Development can't be done to you.</h2>
+              <p>My first principle is simple, and a little uncomfortable: no program, no coach, and no app can make you develop as a leader. Development takes your ownership and your agency. You have to choose to engage, to practice mindsets and behaviors outside your comfort zone, and to keep going when it's hard. Seeing yourself as someone who is becoming a leader is what sustains the work.</p>
+            </div>
+            <div>
+              <h2 className="font-semibold text-stone-800 mb-1">It takes time, and real effort.</h2>
+              <p>Developing yourself as a leader — and building leadership capacity in the people around you — are both long games. They unfold over months and years, not days. Growth comes from sustained, deliberate practice, paired with honest assessment, genuine challenge, and people who support you. There are no shortcuts. But the work compounds.</p>
+            </div>
+            <div>
+              <h2 className="font-semibold text-stone-800 mb-1">Day by day.</h2>
+              <p>That's the whole idea. Small, evidence-based practices. Honest reflection. Repeated over time. Start where you are — and keep showing up.</p>
+            </div>
+            <p className="text-stone-500">— David</p>
+          </div>
+        </div>
+        <button onClick={onBegin} className="w-full bg-amber-600 text-white py-3 rounded-xl font-medium">
+          Begin
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================================
 // ASSESSMENTS — multi-wave battery (top-level page)
 // ============================================================================
 
@@ -8308,6 +8348,7 @@ export default function DayByDayApp() {
   const [hasIntake, setHasIntake] = useState(null);
   const [intakeFocus, setIntakeFocus] = useState([]);
   const [hasBaseline, setHasBaseline] = useState(null);
+  const [welcomeSeen, setWelcomeSeen] = useState(null);
   const [currentView, setCurrentView] = useState('dashboard');
   const [streak, setStreak] = useState(0);
   const [sessionCount, setSessionCount] = useState(0);
@@ -8328,6 +8369,7 @@ export default function DayByDayApp() {
       checkConsent();
       checkIntake();
       checkBaseline();
+      checkWelcome();
       loadUserData();
       loadProfile();
     }
@@ -8366,6 +8408,27 @@ export default function DayByDayApp() {
       .limit(1)
       .maybeSingle();
     setHasBaseline(!!data);
+  };
+
+  // "A message from David" — shown once after the baseline assessment.
+  // Defensive: if the welcome_seen_at column isn't there yet, skip the gate
+  // rather than break the app.
+  const checkWelcome = async () => {
+    const { data, error } = await supabase
+      .from('user_profiles')
+      .select('welcome_seen_at')
+      .eq('user_id', user.id)
+      .maybeSingle();
+    if (error) { setWelcomeSeen(true); return; }
+    setWelcomeSeen(!!data?.welcome_seen_at);
+  };
+
+  const completeWelcome = async () => {
+    setWelcomeSeen(true);
+    await supabase.from('user_profiles').upsert(
+      { user_id: user.id, welcome_seen_at: new Date().toISOString(), updated_at: new Date().toISOString() },
+      { onConflict: 'user_id' }
+    );
   };
 
   const loadUserData = async () => {
@@ -8445,6 +8508,7 @@ export default function DayByDayApp() {
     setHasIntake(null);
     setIntakeFocus([]);
     setHasBaseline(null);
+    setWelcomeSeen(null);
     setSessionCount(0);
     setUserProfile(null);
     setConstructUnlocks([]);
@@ -8476,6 +8540,14 @@ export default function DayByDayApp() {
     return <MeasureAssessment measure={MEASURES.perma4} phase="baseline" user={user} onComplete={() => setHasBaseline(true)} />;
   }
   if (hasBaseline === null) {
+    return <div className="min-h-screen bg-stone-50 flex items-center justify-center"><Icons.Loader /></div>;
+  }
+
+  // "A message from David" — once, right after the baseline assessment
+  if (welcomeSeen === false) {
+    return <WelcomeMessage onBegin={completeWelcome} />;
+  }
+  if (welcomeSeen === null) {
     return <div className="min-h-screen bg-stone-50 flex items-center justify-center"><Icons.Loader /></div>;
   }
 
