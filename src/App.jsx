@@ -8295,15 +8295,41 @@ const ASSESSMENT_WAVES = [
   { number: 4, label: 'Week 8 post-program', triggerWeek: 8, description: 'The post-program assessment.' }
 ];
 
-function AssessmentsPage({ demoWaveOverride }) {
-  // Current wave: the admin demo override when set, else wave 1 for now.
-  // Step 4 replaces the fallback with date-based eligibility logic.
-  const currentWave = demoWaveOverride || 1;
-  const statusFor = (wave) => {
-    if (wave.number < currentWave) return { label: 'Completed', cls: 'bg-emerald-100 text-emerald-700' };
-    if (wave.number === currentWave) return { label: 'Available now', cls: 'bg-amber-100 text-amber-700' };
-    return { label: 'Not yet available', cls: 'bg-stone-100 text-stone-500' };
-  };
+// Compute each wave's status from enrollment date + admin demo override.
+// `completions` ({ waveNumber: 'completed' }) is wired in a later step.
+function computeWaveStatuses(enrolledAt, demoWaveOverride, completions = {}) {
+  const now = Date.now();
+  const enrolled = enrolledAt ? new Date(enrolledAt).getTime() : now;
+  const weeksSince = (now - enrolled) / (7 * 86400000);
+
+  return ASSESSMENT_WAVES.map(wave => {
+    if (completions[wave.number] === 'completed') return { ...wave, status: 'completed' };
+    // Admin demo override pins which wave is current.
+    if (demoWaveOverride) {
+      if (wave.number < demoWaveOverride) return { ...wave, status: 'completed' };
+      if (wave.number === demoWaveOverride) return { ...wave, status: 'available' };
+      return { ...wave, status: 'locked' };
+    }
+    // Date-based: a wave opens once enough weeks have passed; if it's been
+    // open more than 72h and isn't done, it's "missed" but still completable.
+    if (weeksSince >= wave.triggerWeek) {
+      const dueAt = enrolled + wave.triggerWeek * 7 * 86400000;
+      const overdue = now - dueAt > 72 * 3600000;
+      return { ...wave, status: overdue ? 'missed' : 'available' };
+    }
+    return { ...wave, status: 'locked' };
+  });
+}
+
+const WAVE_STATUS_PILL = {
+  completed: { label: 'Completed', cls: 'bg-emerald-100 text-emerald-700' },
+  available: { label: 'Available now', cls: 'bg-amber-100 text-amber-700' },
+  locked: { label: 'Not yet available', cls: 'bg-stone-100 text-stone-500' },
+  missed: { label: 'Missed — still open', cls: 'bg-orange-100 text-orange-700' }
+};
+
+function AssessmentsPage({ userProfile }) {
+  const waves = computeWaveStatuses(userProfile?.enrolled_at, userProfile?.demo_wave_override);
 
   return (
     <div className="animate-fadeIn pb-8">
@@ -8313,17 +8339,17 @@ function AssessmentsPage({ demoWaveOverride }) {
       </div>
 
       <div className="space-y-3">
-        {ASSESSMENT_WAVES.map(wave => {
-          const status = statusFor(wave);
+        {waves.map(wave => {
+          const pill = WAVE_STATUS_PILL[wave.status];
           return (
             <div key={wave.number} className="bg-white rounded-xl border border-stone-200 p-5">
               <div className="flex items-start justify-between gap-3 mb-1">
                 <h3 className="font-semibold text-stone-800">Wave {wave.number} — {wave.label}</h3>
-                <span className={`text-xs font-medium px-2 py-0.5 rounded-full shrink-0 ${status.cls}`}>{status.label}</span>
+                <span className={`text-xs font-medium px-2 py-0.5 rounded-full shrink-0 ${pill.cls}`}>{pill.label}</span>
               </div>
               <p className="text-sm text-stone-600 mb-2">{wave.description}</p>
               <p className="text-xs text-stone-400">
-                {wave.triggerWeek === 0 ? 'Opens at enrollment' : `Opens at week ${wave.triggerWeek}`} · 5 measures, ~40 questions
+                {wave.triggerWeek === 0 ? 'Opens at enrollment' : `Opens at week ${wave.triggerWeek}`} · 6 measures, ~50 questions
               </p>
             </div>
           );
@@ -8571,7 +8597,7 @@ export default function DayByDayApp() {
     
     switch (currentView) {
       case 'dashboard': return <Dashboard setCurrentView={setCurrentView} user={user} actions={actions} journalEntries={journalEntries} sessionCount={sessionCount} intakeFocus={intakeFocus} />;
-      case 'assessments': return <AssessmentsPage demoWaveOverride={userProfile?.demo_wave_override} />;
+      case 'assessments': return <AssessmentsPage userProfile={userProfile} />;
       case 'leader-development': return <LeaderDevelopmentPage setCurrentView={setCurrentView} isConstructUnlocked={isConstructUnlocked} />;
       case 'leadership-development': return <LeadershipDevelopmentPage setCurrentView={setCurrentView} isConstructUnlocked={isConstructUnlocked} />;
       case 'wellbeing': return <WellbeingPage setCurrentView={setCurrentView} user={user} />;
