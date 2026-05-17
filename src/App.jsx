@@ -3907,157 +3907,51 @@ function BottomNav({ currentView, setCurrentView }) {
 // DASHBOARD
 // ============================================================================
 
-function Dashboard({ setCurrentView, streak, user, actions, journalEntries }) {
+function Dashboard({ setCurrentView, user, journalEntries }) {
+  const hour = new Date().getHours();
+  const partOfDay = hour < 12 ? 'morning' : hour < 18 ? 'afternoon' : 'evening';
+  const firstName = user?.user_metadata?.full_name?.split(' ')[0];
   const dateStr = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
-  const pendingActions = actions.filter(a => !a.completed).length;
-  const todayActivity = ACTIVITIES[Math.floor(Math.random() * ACTIVITIES.length)];
-  const activityCompetency = KLI_COMPETENCIES.find(c => c.id === todayActivity.competency);
 
-  const competencyColors = {
-    courage: 'from-amber-500 to-orange-600',
-    creativity: 'from-violet-500 to-purple-600',
-    collaboration: 'from-teal-500 to-cyan-600'
-  };
+  const lastEntry = journalEntries?.[0];
+  let journalSub = 'Start your first entry';
+  if (lastEntry?.created_at) {
+    const days = Math.floor((Date.now() - new Date(lastEntry.created_at).getTime()) / 86400000);
+    journalSub = days <= 0 ? 'Last entry today' : days === 1 ? 'Last entry yesterday' : `Last entry ${days} days ago`;
+  }
+
+  const cards = [
+    { title: 'Continue developing', sub: 'Leader Development', icon: <Icons.Award />, view: 'leader-development' },
+    { title: 'Talk to your coach', sub: 'ICF Coach · Day Advisor', icon: <Icons.MessageCircle />, view: 'coaches' },
+    { title: 'Reflect in your journal', sub: journalSub, icon: <Icons.Edit />, view: 'journal' }
+  ];
 
   return (
     <div className="animate-fadeIn pb-8">
       <div className="mb-6">
         <p className="text-stone-500 text-sm mb-1">{dateStr}</p>
         <h2 className="font-serif text-2xl lg:text-3xl text-stone-800">
-          {user?.user_metadata?.full_name ? `Welcome, ${user.user_metadata.full_name.split(' ')[0]}` : 'Welcome back'}
+          Good {partOfDay}{firstName ? `, ${firstName}` : ''}
         </h2>
       </div>
 
-      {/* Daily Practice Card */}
-      <button onClick={() => setCurrentView(`practice-${todayActivity.id}`)}
-        className={`w-full bg-gradient-to-br ${competencyColors[todayActivity.competency]} rounded-2xl p-5 text-left hover:shadow-lg transition-all mb-4`}>
-        <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center text-white text-2xl">🎯</div>
-          <div className="flex-1">
-            <p className="text-white/80 text-xs font-medium mb-1">Today's Practice • {activityCompetency?.name}</p>
-            <h3 className="text-base font-semibold text-white mb-1">{todayActivity.title}</h3>
-            <p className="text-white/70 text-sm">{todayActivity.duration} • VCoL Framework</p>
-          </div>
-          <Icons.ArrowRight className="text-white" />
-        </div>
-      </button>
-
-      <button onClick={() => setCurrentView('coaches')}
-        className="w-full bg-gradient-to-br from-stone-800 to-stone-900 rounded-2xl p-5 text-left hover:from-stone-700 transition-all mb-4">
-        <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-xl bg-amber-500 flex items-center justify-center text-white"><Icons.MessageCircle /></div>
-          <div className="flex-1">
-            <h3 className="text-base font-semibold text-white mb-1">Talk to Your Coach</h3>
-            <p className="text-stone-400 text-sm">ICF Coach or Day Advisor - Voice or Text</p>
-          </div>
-          <Icons.ArrowRight className="text-white" />
-        </div>
-      </button>
-
-      <div className="grid grid-cols-3 gap-3 mb-6">
-        <div className="bg-white rounded-xl p-4 border border-stone-200 text-center">
-          <div className="flex justify-center mb-1 text-amber-600"><Icons.Flame /></div>
-          <p className="text-xl font-bold text-stone-800">{streak}</p>
-          <p className="text-xs text-stone-500">Streak</p>
-        </div>
-        <div className="bg-white rounded-xl p-4 border border-stone-200 text-center">
-          <div className="flex justify-center mb-1 text-teal-600"><Icons.CheckSquare /></div>
-          <p className="text-xl font-bold text-stone-800">{pendingActions}</p>
-          <p className="text-xs text-stone-500">Actions</p>
-        </div>
-        <div className="bg-white rounded-xl p-4 border border-stone-200 text-center">
-          <div className="flex justify-center mb-1 text-violet-600"><Icons.Edit /></div>
-          <p className="text-xl font-bold text-stone-800">{journalEntries.length}</p>
-          <p className="text-xs text-stone-500">Journal</p>
-        </div>
-      </div>
-
-      {/* KLI Competencies Quick Access */}
-      <div className="mb-6">
-        <div className="flex items-center justify-between mb-3">
-          <h3 className="font-semibold text-stone-800">Practice by Competency</h3>
-          <button onClick={() => setCurrentView('practice')} className="text-amber-700 text-sm font-medium flex items-center gap-1">All <Icons.ChevronRight /></button>
-        </div>
-        <div className="grid grid-cols-3 gap-3">
-          {KLI_COMPETENCIES.map(comp => {
-            const colors = {
-              courage: 'bg-amber-50 border-amber-200 text-amber-700',
-              creativity: 'bg-violet-50 border-violet-200 text-violet-700',
-              collaboration: 'bg-teal-50 border-teal-200 text-teal-700'
-            };
-            const activityCount = ACTIVITIES.filter(a => a.competency === comp.id).length;
-            return (
-              <button
-                key={comp.id}
-                onClick={() => setCurrentView('practice')}
-                className={`${colors[comp.id]} border rounded-xl p-3 text-center hover:shadow-md transition-all`}
-              >
-                <p className="font-semibold text-sm">{comp.name}</p>
-                <p className="text-xs opacity-70">{activityCount} activities</p>
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* Leader & Leadership Development */}
-      <div className="mb-6">
-        <div className="flex items-center justify-between mb-3">
-          <h3 className="font-semibold text-stone-800">Develop</h3>
-          <button onClick={() => setCurrentView('leader-development')} className="text-amber-700 text-sm font-medium flex items-center gap-1">All <Icons.ChevronRight /></button>
-        </div>
-        <div className="grid grid-cols-2 gap-3">
+      <div className="space-y-3">
+        {cards.map(card => (
           <button
-            onClick={() => setCurrentView('leader-development')}
-            className="bg-gradient-to-br from-amber-50 to-amber-100 border border-amber-200 rounded-xl p-4 text-left hover:shadow-md transition-all"
+            key={card.view}
+            onClick={() => setCurrentView(card.view)}
+            className="w-full bg-white rounded-2xl border border-stone-200 p-5 text-left hover:shadow-md hover:border-stone-300 transition-all flex items-center gap-4"
           >
-            <div className="text-2xl mb-2">👤</div>
-            <p className="font-semibold text-amber-800 text-sm">Leader Development</p>
-            <p className="text-xs text-amber-600">Self-views & assessments</p>
-          </button>
-          <button
-            onClick={() => setCurrentView('leadership-development')}
-            className="bg-gradient-to-br from-teal-50 to-teal-100 border border-teal-200 rounded-xl p-4 text-left hover:shadow-md transition-all"
-          >
-            <div className="text-2xl mb-2">👥</div>
-            <p className="font-semibold text-teal-800 text-sm">Leadership Development</p>
-            <p className="text-xs text-teal-600">Collective capacity</p>
-          </button>
-        </div>
-      </div>
-
-      <div className="mb-6">
-        <div className="flex items-center justify-between mb-3">
-          <h3 className="font-semibold text-stone-800">Day's Book</h3>
-          <button onClick={() => setCurrentView('chapters')} className="text-amber-700 text-sm font-medium flex items-center gap-1">All <Icons.ChevronRight /></button>
-        </div>
-        <button onClick={() => setCurrentView('chapter-1')}
-          className="w-full bg-white rounded-2xl border border-stone-200 overflow-hidden hover:shadow-lg transition-all text-left">
-          <div className="flex">
-            <img src={CHAPTERS[0].image} alt="" className="w-28 h-28 object-cover" />
-            <div className="flex-1 p-4">
-              <div className="flex items-center gap-2 mb-1">
-                <span className="text-xs font-medium text-amber-700">Chapter 1</span>
-                <span className="text-xs text-stone-400 flex items-center gap-1"><Icons.Clock /> {CHAPTERS[0].duration}</span>
-              </div>
-              <h4 className="font-semibold text-stone-800 mb-1">{CHAPTERS[0].title}</h4>
-              <p className="text-sm text-stone-500">{CHAPTERS[0].subtitle}</p>
+            <div className="w-12 h-12 rounded-xl bg-amber-50 text-amber-700 flex items-center justify-center shrink-0">
+              {card.icon}
             </div>
-          </div>
-        </button>
-      </div>
-
-      <div className="grid grid-cols-2 gap-3">
-        <button onClick={() => setCurrentView('journal')} className="bg-white rounded-xl border border-stone-200 p-4 text-left hover:shadow-md transition-all">
-          <div className="w-10 h-10 rounded-lg bg-violet-100 text-violet-600 flex items-center justify-center mb-2"><Icons.Edit /></div>
-          <p className="font-medium text-stone-800 text-sm">Journal</p>
-          <p className="text-xs text-stone-500">Reflect on your growth</p>
-        </button>
-        <button onClick={() => setCurrentView('actions')} className="bg-white rounded-xl border border-stone-200 p-4 text-left hover:shadow-md transition-all">
-          <div className="w-10 h-10 rounded-lg bg-teal-100 text-teal-600 flex items-center justify-center mb-2"><Icons.CheckSquare /></div>
-          <p className="font-medium text-stone-800 text-sm">Actions</p>
-          <p className="text-xs text-stone-500">{pendingActions} pending</p>
-        </button>
+            <div className="flex-1 min-w-0">
+              <h3 className="font-semibold text-stone-800">{card.title}</h3>
+              <p className="text-sm text-stone-500">{card.sub}</p>
+            </div>
+            <Icons.ArrowRight className="text-stone-400 shrink-0" />
+          </button>
+        ))}
       </div>
     </div>
   );
