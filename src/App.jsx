@@ -8365,6 +8365,27 @@ const MEASURES = {
       { id: 4, subscale: 'Learning Goal Orientation', text: 'For me, development of my work ability is important enough to take risks.' },
       { id: 5, subscale: 'Learning Goal Orientation', text: 'I prefer to work in situations that require a high level of ability and talent.' }
     ]
+  },
+  leq_short: {
+    id: 'leq_short',
+    name: 'Leader Self and Means Efficacy',
+    construct: 'self-efficacy',
+    source: 'LEQ 9-item short-form pilot (Hannah, Avolio, Walumbwa & Chan, 2012)',
+    intro: 'For each item, indicate your level of confidence as a leader in your current organization. 100 means complete confidence; 0 means no confidence at all.',
+    note: '9-item short-form pilot from the Leader Efficacy Questionnaire (Hannah, Avolio, Walumbwa & Chan, 2012). Used with permission from Avolio.',
+    scale: { min: 0, max: 100, input: 'slider', minLabel: 'Not at all confident', midLabel: 'Moderately confident', maxLabel: 'Completely confident' },
+    stem: 'As a leader I can…',
+    items: [
+      { id: 1, subscale: 'Self-Regulation Efficacy', text: 'think up innovative solutions to challenging problems.' },
+      { id: 2, subscale: 'Self-Regulation Efficacy', text: 'determine what leadership style is needed in each situation.' },
+      { id: 3, subscale: 'Self-Regulation Efficacy', text: 'motivate myself to perform at levels that inspire others to excellence.' },
+      { id: 4, subscale: 'Action Efficacy', text: 'coach followers to assume greater responsibilities for leadership.' },
+      { id: 5, subscale: 'Action Efficacy', text: 'get followers to identify with the central focus of our mission.' },
+      { id: 6, subscale: 'Action Efficacy', text: 'energize my followers to achieve their best.' },
+      { id: 7, subscale: 'Means Efficacy', text: 'rely on my organization to provide the resources needed to be effective.' },
+      { id: 8, subscale: 'Means Efficacy', text: 'rely on my leaders to come up with ways to stimulate my creativity.' },
+      { id: 9, subscale: 'Means Efficacy', text: "effectively lead working within the boundaries of my organization's policies." }
+    ]
   }
 };
 
@@ -8379,6 +8400,7 @@ function MeasureAssessment({ measure, phase, waveNumber, user, onComplete, embed
   const item = measure.items[idx];
   const total = measure.items.length;
   const isLast = idx === total - 1;
+  const isSlider = measure.scale.input === 'slider';
   const allAnswered = measure.items.every(i => responses[i.id] !== undefined);
   const scalePoints = Array.from(
     { length: measure.scale.max - measure.scale.min + 1 },
@@ -8450,18 +8472,37 @@ function MeasureAssessment({ measure, phase, waveNumber, user, onComplete, embed
           <p className="text-xs font-medium text-stone-400 mb-2">{item.subscale}</p>
           {measure.stem && <p className="text-sm text-stone-500 mb-1">{measure.stem}</p>}
           <p className="text-lg text-stone-800 mb-5 leading-relaxed">{item.text}</p>
-          <div className="flex justify-between gap-1">
-            {scalePoints.map(n => (
-              <button key={n} onClick={() => choose(n)}
-                className={`flex-1 aspect-square rounded-lg border text-sm font-medium transition-colors ${responses[item.id] === n ? 'bg-amber-600 text-white border-amber-600' : 'bg-white text-stone-600 border-stone-200 hover:border-amber-300'}`}>
-                {n}
-              </button>
-            ))}
-          </div>
-          <div className="flex justify-between text-xs text-stone-400 mt-2">
-            <span>{measure.scale.minLabel}</span>
-            <span>{measure.scale.maxLabel}</span>
-          </div>
+          {isSlider ? (
+            <div>
+              <div className="text-center text-3xl font-bold text-stone-800 mb-3">
+                {responses[item.id] !== undefined ? responses[item.id] : '—'}
+              </div>
+              <input type="range" min={measure.scale.min} max={measure.scale.max} step={1}
+                value={responses[item.id] ?? 50}
+                onChange={e => setResponses(r => ({ ...r, [item.id]: Number(e.target.value) }))}
+                className="w-full accent-amber-600" />
+              <div className="flex justify-between text-xs text-stone-400 mt-2">
+                <span>{measure.scale.minLabel}</span>
+                {measure.scale.midLabel && <span>{measure.scale.midLabel}</span>}
+                <span>{measure.scale.maxLabel}</span>
+              </div>
+            </div>
+          ) : (
+            <>
+              <div className="flex justify-between gap-1">
+                {scalePoints.map(n => (
+                  <button key={n} onClick={() => choose(n)}
+                    className={`flex-1 aspect-square rounded-lg border text-sm font-medium transition-colors ${responses[item.id] === n ? 'bg-amber-600 text-white border-amber-600' : 'bg-white text-stone-600 border-stone-200 hover:border-amber-300'}`}>
+                    {n}
+                  </button>
+                ))}
+              </div>
+              <div className="flex justify-between text-xs text-stone-400 mt-2">
+                <span>{measure.scale.minLabel}</span>
+                <span>{measure.scale.maxLabel}</span>
+              </div>
+            </>
+          )}
         </div>
 
         {error && (
@@ -8480,12 +8521,20 @@ function MeasureAssessment({ measure, phase, waveNumber, user, onComplete, embed
               className="flex-1 bg-amber-600 text-white py-3 rounded-xl font-medium disabled:opacity-50">
               {saving ? 'Saving…' : 'Submit assessment'}
             </button>
+          ) : isSlider && !isLast ? (
+            <button onClick={() => setIdx(i => i + 1)} disabled={responses[item.id] === undefined}
+              className="flex-1 bg-amber-600 text-white py-3 rounded-xl font-medium disabled:opacity-50">
+              Next
+            </button>
           ) : (
             <div className="flex-1 text-center text-sm text-stone-400 py-3">
-              {responses[item.id] !== undefined ? 'Review your answers or continue' : 'Choose a number to continue'}
+              {responses[item.id] !== undefined ? 'Review your answers or continue' : isSlider ? 'Move the slider to continue' : 'Choose a number to continue'}
             </div>
           )}
         </div>
+        {measure.note && (
+          <p className="text-xs text-stone-400 mt-4 leading-relaxed">{measure.note}</p>
+        )}
       </div>
     </div>
   );
