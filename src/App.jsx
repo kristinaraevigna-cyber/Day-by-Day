@@ -8261,7 +8261,7 @@ const PHASE_LABELS = {
 // slot in here as their constructs unlock.
 // Battery administration order. The wave runner runs whichever of these
 // ids are currently defined in MEASURES, in this order.
-const MEASURE_ORDER = ['leader_identity', 'bfi10', 'perma4', 'sris', 'goal_orientation_learning', 'leq_short'];
+const MEASURE_ORDER = ['leader_identity', 'bfi10', 'sris', 'goal_orientation_learning', 'leq_short', 'perma4'];
 
 // Each item: { id, subscale, text, reverse? }. Scoring reverse-codes flagged
 // items (min+max-raw) and averages within each subscale.
@@ -8540,9 +8540,92 @@ function MeasureAssessment({ measure, phase, waveNumber, user, onComplete, embed
   );
 }
 
+// Results landing page for a completed wave — one card per measure
+// showing its subscale scores, read from the latest assessment_responses.
+function WaveResults({ waveNumber, user, onContinue, embedded, setCurrentView }) {
+  const [rows, setRows] = useState(undefined);
+
+  useEffect(() => {
+    if (!user) return;
+    let active = true;
+    supabase.from('assessment_responses')
+      .select('assessment_id, results, completed_at')
+      .eq('user_id', user.id)
+      .eq('wave_number', waveNumber)
+      .order('completed_at', { ascending: false })
+      .then(({ data }) => { if (active) setRows(data || []); });
+    return () => { active = false; };
+  }, [user, waveNumber]);
+
+  const latest = {};
+  (rows || []).forEach(r => { if (!latest[r.assessment_id]) latest[r.assessment_id] = r; });
+
+  return (
+    <div className={embedded ? 'animate-fadeIn pb-8' : 'min-h-screen bg-stone-50 py-8 px-5'}>
+      <div className={embedded ? '' : 'max-w-lg mx-auto'}>
+        <div className="mb-6">
+          <p className="text-xs font-medium text-amber-700 mb-1">Wave {waveNumber} results</p>
+          <h1 className="font-serif text-2xl text-stone-800 mb-1">Your assessment results</h1>
+          <p className="text-stone-500 text-sm">A snapshot across every measure. As you complete more waves, you'll see how these change over time.</p>
+        </div>
+
+        {rows === undefined && <p className="text-sm text-stone-400">Loading…</p>}
+        {rows && rows.length === 0 && <p className="text-sm text-stone-500">No results found for this wave.</p>}
+
+        <div className="space-y-3">
+          {rows && MEASURE_ORDER.map(id => {
+            const measure = MEASURES[id];
+            const row = latest[id];
+            if (!measure || !row) return null;
+            const dims = row.results?.dimensions || {};
+            const max = measure.scale.max;
+            return (
+              <div key={id} className="bg-white rounded-xl border border-stone-200 p-4">
+                <h3 className="font-semibold text-stone-800 mb-3">{measure.name}</h3>
+                <div className="space-y-2">
+                  {Object.entries(dims).map(([sub, score]) => (
+                    <div key={sub}>
+                      <div className="flex justify-between text-xs mb-1">
+                        <span className="text-stone-500">{sub}</span>
+                        <span className="font-medium text-stone-700">{score} / {max}</span>
+                      </div>
+                      <div className="h-2 bg-stone-100 rounded-full overflow-hidden">
+                        <div className="h-full bg-amber-500 rounded-full" style={{ width: `${Math.max(0, Math.min(100, (score / max) * 100))}%` }} />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {setCurrentView && (
+          <div className="grid grid-cols-2 gap-3 mt-4">
+            <button onClick={() => setCurrentView('coaches')} className="bg-white rounded-xl border border-stone-200 p-4 text-left hover:shadow-md transition-all">
+              <div className="w-10 h-10 rounded-lg bg-amber-50 text-amber-700 flex items-center justify-center mb-2"><Icons.MessageCircle /></div>
+              <p className="font-medium text-stone-800 text-sm">Discuss with a coach</p>
+            </button>
+            <button onClick={() => setCurrentView('journal')} className="bg-white rounded-xl border border-stone-200 p-4 text-left hover:shadow-md transition-all">
+              <div className="w-10 h-10 rounded-lg bg-violet-50 text-violet-700 flex items-center justify-center mb-2"><Icons.Edit /></div>
+              <p className="font-medium text-stone-800 text-sm">Save a reflection</p>
+            </button>
+          </div>
+        )}
+
+        {onContinue && (
+          <button onClick={onContinue} className="w-full bg-amber-600 text-white py-3 rounded-xl font-medium mt-4">
+            {embedded ? 'Back to Assessments' : 'Continue'}
+          </button>
+        )}
+      </div>
+    </div>
+  );
+}
+
 // Runs the full assessment battery for a wave — every measure in
 // MEASURE_ORDER that is currently defined, in sequence.
-function WaveBattery({ waveNumber, user, onComplete, embedded }) {
+function WaveBattery({ waveNumber, user, onComplete, embedded, setCurrentView }) {
   const measures = MEASURE_ORDER.map(id => MEASURES[id]).filter(Boolean);
   const [idx, setIdx] = useState(0);
   const done = idx >= measures.length;
@@ -8560,20 +8643,7 @@ function WaveBattery({ waveNumber, user, onComplete, embedded }) {
   }, [done]);
 
   if (done) {
-    return (
-      <div className={embedded ? 'animate-fadeIn pb-8' : 'min-h-screen bg-stone-50 py-8 px-5'}>
-        <div className={embedded ? '' : 'max-w-lg mx-auto'}>
-          <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-8 mb-4 text-center">
-            <div className="text-4xl mb-3">✓</div>
-            <h2 className="font-serif text-xl text-stone-800 mb-1">Wave {waveNumber} complete</h2>
-            <p className="text-sm text-stone-600">You've completed all {measures.length} measures. Your responses are saved.</p>
-          </div>
-          <button onClick={onComplete} className="w-full bg-amber-600 text-white py-3 rounded-xl font-medium">
-            {embedded ? 'Back to Assessments' : 'Continue'}
-          </button>
-        </div>
-      </div>
-    );
+    return <WaveResults waveNumber={waveNumber} user={user} embedded={embedded} setCurrentView={setCurrentView} onContinue={onComplete} />;
   }
 
   const measure = measures[idx];
@@ -8675,8 +8745,9 @@ const WAVE_STATUS_PILL = {
   missed: { label: 'Missed — still open', cls: 'bg-orange-100 text-orange-700' }
 };
 
-function AssessmentsPage({ userProfile, user }) {
+function AssessmentsPage({ userProfile, user, setCurrentView }) {
   const [taking, setTaking] = useState(null);
+  const [reviewing, setReviewing] = useState(null);
   const [completions, setCompletions] = useState({});
 
   useEffect(() => {
@@ -8702,7 +8773,18 @@ function AssessmentsPage({ userProfile, user }) {
         <button onClick={() => setTaking(null)} className="flex items-center gap-1 text-stone-500 hover:text-stone-700 mb-4 text-sm">
           <Icons.ChevronLeft /> Back to Assessments
         </button>
-        <WaveBattery waveNumber={taking} user={user} embedded onComplete={() => setTaking(null)} />
+        <WaveBattery waveNumber={taking} user={user} embedded setCurrentView={setCurrentView} onComplete={() => setTaking(null)} />
+      </div>
+    );
+  }
+
+  if (reviewing) {
+    return (
+      <div className="animate-fadeIn">
+        <button onClick={() => setReviewing(null)} className="flex items-center gap-1 text-stone-500 hover:text-stone-700 mb-4 text-sm">
+          <Icons.ChevronLeft /> Back to Assessments
+        </button>
+        <WaveResults waveNumber={reviewing} user={user} embedded setCurrentView={setCurrentView} onContinue={() => setReviewing(null)} />
       </div>
     );
   }
@@ -8717,7 +8799,11 @@ function AssessmentsPage({ userProfile, user }) {
       <div className="space-y-3">
         {waves.map(wave => {
           const pill = WAVE_STATUS_PILL[wave.status];
-          const clickable = wave.status === 'available' || wave.status === 'missed';
+          const action = wave.status === 'completed'
+            ? () => setReviewing(wave.number)
+            : (wave.status === 'available' || wave.status === 'missed')
+              ? () => setTaking(wave.number)
+              : null;
           const inner = (
             <>
               <div className="flex items-start justify-between gap-3 mb-1">
@@ -8730,8 +8816,8 @@ function AssessmentsPage({ userProfile, user }) {
               </p>
             </>
           );
-          return clickable ? (
-            <button key={wave.number} onClick={() => setTaking(wave.number)}
+          return action ? (
+            <button key={wave.number} onClick={action}
               className="w-full text-left bg-white rounded-xl border border-stone-200 p-5 hover:shadow-md hover:border-stone-300 transition-all">
               {inner}
             </button>
@@ -8982,7 +9068,7 @@ export default function DayByDayApp() {
     
     switch (currentView) {
       case 'dashboard': return <Dashboard setCurrentView={setCurrentView} user={user} actions={actions} journalEntries={journalEntries} sessionCount={sessionCount} intakeFocus={intakeFocus} />;
-      case 'assessments': return <AssessmentsPage userProfile={userProfile} user={user} />;
+      case 'assessments': return <AssessmentsPage userProfile={userProfile} user={user} setCurrentView={setCurrentView} />;
       case 'leader-development': return <LeaderDevelopmentPage setCurrentView={setCurrentView} isConstructUnlocked={isConstructUnlocked} />;
       case 'leadership-development': return <LeadershipDevelopmentPage setCurrentView={setCurrentView} isConstructUnlocked={isConstructUnlocked} />;
       case 'wellbeing': return <WellbeingPage setCurrentView={setCurrentView} user={user} />;
