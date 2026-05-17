@@ -8080,12 +8080,160 @@ function IntakeForm({ user, onComplete }) {
   );
 }
 
+// ============================================================================
+// MEASURES — validated instruments administered across program phases
+// ============================================================================
+
+// Program phases. Baseline is taken right after intake; the rest are
+// scheduled by weeks since enrollment (wired up in a later increment).
+const PHASE_LABELS = {
+  baseline: 'Baseline',
+  midpoint: 'Mid-program',
+  post: 'End of program',
+  'check-in': '2-month follow-up'
+};
+
+// Measure registry. Generic by design — additional measures (SRIS, LEQ, …)
+// slot in here as their constructs unlock.
+const MEASURES = {
+  perma4: {
+    id: 'perma4',
+    name: 'PERMA+4 Well-being',
+    construct: 'wellbeing',
+    source: 'PERMA+4 9-item short form (Donaldson)',
+    intro: 'Nine quick questions about how work has felt for you recently. There are no right answers — go with your first response.',
+    scale: { min: 0, max: 10, minLabel: 'Not at all', maxLabel: 'Completely' },
+    phases: ['baseline', 'midpoint', 'post', 'check-in'],
+    items: [
+      { id: 1, dimension: 'Positive emotion', text: 'I felt positive at work.' },
+      { id: 2, dimension: 'Engagement', text: 'I was deeply engaged and interested in my work.' },
+      { id: 3, dimension: 'Relationships', text: 'I was encouraging and supportive of others.' },
+      { id: 4, dimension: 'Meaning', text: 'I felt that the work I did was valuable and worthwhile.' },
+      { id: 5, dimension: 'Accomplishment', text: 'I set and achieved clear goals.' },
+      { id: 6, dimension: 'Health', text: 'I felt physically healthy and strong.' },
+      { id: 7, dimension: 'Mindset', text: 'I had a bright future at my current workplace.' },
+      { id: 8, dimension: 'Environment', text: 'My physical work environment (e.g., office space) allowed me to focus on my work.' },
+      { id: 9, dimension: 'Economic security', text: 'I was comfortable with my current income.' }
+    ]
+  }
+};
+
+// Generic one-item-per-screen assessment runner for any measure in MEASURES.
+// Saves an assessment_responses row tagged with the given phase.
+function MeasureAssessment({ measure, phase, user, onComplete }) {
+  const [idx, setIdx] = useState(0);
+  const [responses, setResponses] = useState({});
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState(null);
+
+  const item = measure.items[idx];
+  const total = measure.items.length;
+  const isLast = idx === total - 1;
+  const allAnswered = measure.items.every(i => responses[i.id] !== undefined);
+  const scalePoints = Array.from(
+    { length: measure.scale.max - measure.scale.min + 1 },
+    (_, n) => n + measure.scale.min
+  );
+
+  const choose = (val) => {
+    setResponses(r => ({ ...r, [item.id]: val }));
+    if (!isLast) setTimeout(() => setIdx(i => i + 1), 200);
+  };
+
+  const submit = async () => {
+    if (!allAnswered || saving) return;
+    setSaving(true);
+    setError(null);
+    const dimensions = {};
+    measure.items.forEach(i => { dimensions[i.dimension] = responses[i.id]; });
+    const vals = Object.values(responses);
+    const results = {
+      dimensions,
+      overall: Number((vals.reduce((a, b) => a + b, 0) / vals.length).toFixed(2))
+    };
+    const { error: e } = await supabase.from('assessment_responses').insert({
+      user_id: user.id,
+      assessment_id: measure.id,
+      phase,
+      responses,
+      results,
+      completed_at: new Date().toISOString()
+    });
+    setSaving(false);
+    if (e) { setError(e.message || 'Could not save the assessment. Please try again.'); return; }
+    onComplete(results);
+  };
+
+  return (
+    <div className="min-h-screen bg-stone-50 py-8 px-5">
+      <div className="max-w-lg mx-auto">
+        <div className="mb-6">
+          <p className="text-xs font-medium text-amber-700 mb-1">{PHASE_LABELS[phase]} assessment</p>
+          <h1 className="font-serif text-2xl text-stone-800 mb-1">{measure.name}</h1>
+          <p className="text-stone-500 text-sm">{measure.intro}</p>
+        </div>
+
+        <div className="mb-6">
+          <div className="flex justify-between text-xs text-stone-500 mb-2">
+            <span>Question {idx + 1} of {total}</span>
+            <span>{Math.round(((idx + 1) / total) * 100)}%</span>
+          </div>
+          <div className="h-2 bg-stone-200 rounded-full overflow-hidden">
+            <div className="h-full bg-amber-500 transition-all duration-300" style={{ width: `${((idx + 1) / total) * 100}%` }} />
+          </div>
+        </div>
+
+        <div className="bg-white rounded-xl border border-stone-200 p-5 mb-4">
+          <p className="text-xs font-medium text-stone-400 mb-2">{item.dimension}</p>
+          <p className="text-lg text-stone-800 mb-5 leading-relaxed">{item.text}</p>
+          <div className="flex justify-between gap-1">
+            {scalePoints.map(n => (
+              <button key={n} onClick={() => choose(n)}
+                className={`flex-1 aspect-square rounded-lg border text-sm font-medium transition-colors ${responses[item.id] === n ? 'bg-amber-600 text-white border-amber-600' : 'bg-white text-stone-600 border-stone-200 hover:border-amber-300'}`}>
+                {n}
+              </button>
+            ))}
+          </div>
+          <div className="flex justify-between text-xs text-stone-400 mt-2">
+            <span>{measure.scale.minLabel}</span>
+            <span>{measure.scale.maxLabel}</span>
+          </div>
+        </div>
+
+        {error && (
+          <div className="bg-red-50 border border-red-200 rounded-lg p-3 mb-4 text-sm text-red-700">{error}</div>
+        )}
+
+        <div className="flex gap-3">
+          {idx > 0 && (
+            <button onClick={() => setIdx(i => i - 1)}
+              className="px-5 py-3 border border-stone-300 rounded-xl text-stone-600 text-sm font-medium hover:bg-stone-50">
+              Back
+            </button>
+          )}
+          {allAnswered ? (
+            <button onClick={submit} disabled={saving}
+              className="flex-1 bg-amber-600 text-white py-3 rounded-xl font-medium disabled:opacity-50">
+              {saving ? 'Saving…' : 'Submit assessment'}
+            </button>
+          ) : (
+            <div className="flex-1 text-center text-sm text-stone-400 py-3">
+              {responses[item.id] !== undefined ? 'Review your answers or continue' : 'Choose a number to continue'}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function DayByDayApp() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [hasConsent, setHasConsent] = useState(null);
   const [hasIntake, setHasIntake] = useState(null);
   const [intakeFocus, setIntakeFocus] = useState([]);
+  const [hasBaseline, setHasBaseline] = useState(null);
   const [currentView, setCurrentView] = useState('dashboard');
   const [streak, setStreak] = useState(0);
   const [sessionCount, setSessionCount] = useState(0);
@@ -8105,6 +8253,7 @@ export default function DayByDayApp() {
     if (user) {
       checkConsent();
       checkIntake();
+      checkBaseline();
       loadUserData();
       loadProfile();
     }
@@ -8130,6 +8279,19 @@ export default function DayByDayApp() {
       .maybeSingle();
     setHasIntake(!!data?.completed_at);
     setIntakeFocus(Array.isArray(data?.focus_competencies) ? data.focus_competencies : []);
+  };
+
+  // Baseline is complete once the PERMA+4 has been taken at the baseline phase.
+  const checkBaseline = async () => {
+    const { data } = await supabase
+      .from('assessment_responses')
+      .select('id')
+      .eq('user_id', user.id)
+      .eq('assessment_id', 'perma4')
+      .eq('phase', 'baseline')
+      .limit(1)
+      .maybeSingle();
+    setHasBaseline(!!data);
   };
 
   const loadUserData = async () => {
@@ -8197,6 +8359,7 @@ export default function DayByDayApp() {
     setHasConsent(null);
     setHasIntake(null);
     setIntakeFocus([]);
+    setHasBaseline(null);
     setSessionCount(0);
     setUserProfile(null);
     setConstructUnlocks([]);
@@ -8220,6 +8383,14 @@ export default function DayByDayApp() {
     return <IntakeForm user={user} onComplete={() => setHasIntake(true)} />;
   }
   if (hasIntake === null) {
+    return <div className="min-h-screen bg-stone-50 flex items-center justify-center"><Icons.Loader /></div>;
+  }
+
+  // Require the baseline assessment immediately after intake
+  if (hasBaseline === false) {
+    return <MeasureAssessment measure={MEASURES.perma4} phase="baseline" user={user} onComplete={() => setHasBaseline(true)} />;
+  }
+  if (hasBaseline === null) {
     return <div className="min-h-screen bg-stone-50 flex items-center justify-center"><Icons.Loader /></div>;
   }
 
