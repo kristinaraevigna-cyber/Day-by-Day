@@ -8259,32 +8259,67 @@ const PHASE_LABELS = {
 
 // Measure registry. Generic by design — additional measures (SRIS, LEQ, …)
 // slot in here as their constructs unlock.
+// Battery administration order. The wave runner runs whichever of these
+// ids are currently defined in MEASURES, in this order.
+const MEASURE_ORDER = ['leader_identity', 'bfi10', 'perma4', 'sris', 'goal_orientation_learning', 'leq_short'];
+
+// Each item: { id, subscale, text, reverse? }. Scoring reverse-codes flagged
+// items (min+max-raw) and averages within each subscale.
 const MEASURES = {
+  leader_identity: {
+    id: 'leader_identity',
+    name: 'Leader Identity',
+    construct: 'identity',
+    source: 'Leader Identity scale (Hiller, 2005)',
+    intro: 'Five statements about how you see yourself as a leader. Go with your honest first response.',
+    scale: { min: 1, max: 7, minLabel: 'Strongly disagree', maxLabel: 'Strongly agree' },
+    items: [
+      { id: 1, subscale: 'Leader Identity', text: 'I am a leader.' },
+      { id: 2, subscale: 'Leader Identity', text: 'I see myself as a leader.' },
+      { id: 3, subscale: 'Leader Identity', text: 'If I had to describe myself to others, I would include the word "leader."' },
+      { id: 4, subscale: 'Leader Identity', text: 'I prefer being seen by others as a leader.' },
+      { id: 5, subscale: 'Leader Identity', text: 'I have always seen myself as a leader.' }
+    ]
+  },
   perma4: {
     id: 'perma4',
-    name: 'PERMA+4 Well-being',
+    name: 'Well-being',
     construct: 'wellbeing',
     source: 'PERMA+4 9-item short form (Donaldson)',
     intro: 'Nine quick questions about how work has felt for you recently. There are no right answers — go with your first response.',
     scale: { min: 0, max: 10, minLabel: 'Not at all', maxLabel: 'Completely' },
-    phases: ['baseline', 'midpoint', 'post', 'check-in'],
     items: [
-      { id: 1, dimension: 'Positive emotion', text: 'I felt positive at work.' },
-      { id: 2, dimension: 'Engagement', text: 'I was deeply engaged and interested in my work.' },
-      { id: 3, dimension: 'Relationships', text: 'I was encouraging and supportive of others.' },
-      { id: 4, dimension: 'Meaning', text: 'I felt that the work I did was valuable and worthwhile.' },
-      { id: 5, dimension: 'Accomplishment', text: 'I set and achieved clear goals.' },
-      { id: 6, dimension: 'Health', text: 'I felt physically healthy and strong.' },
-      { id: 7, dimension: 'Mindset', text: 'I had a bright future at my current workplace.' },
-      { id: 8, dimension: 'Environment', text: 'My physical work environment (e.g., office space) allowed me to focus on my work.' },
-      { id: 9, dimension: 'Economic security', text: 'I was comfortable with my current income.' }
+      { id: 1, subscale: 'Positive emotion', text: 'I felt positive at work.' },
+      { id: 2, subscale: 'Engagement', text: 'I was deeply engaged and interested in my work.' },
+      { id: 3, subscale: 'Relationships', text: 'I was encouraging and supportive of others.' },
+      { id: 4, subscale: 'Meaning', text: 'I felt that the work I did was valuable and worthwhile.' },
+      { id: 5, subscale: 'Accomplishment', text: 'I set and achieved clear goals.' },
+      { id: 6, subscale: 'Health', text: 'I felt physically healthy and strong.' },
+      { id: 7, subscale: 'Mindset', text: 'I had a bright future at my current workplace.' },
+      { id: 8, subscale: 'Environment', text: 'My physical work environment (e.g., office space) allowed me to focus on my work.' },
+      { id: 9, subscale: 'Economic security', text: 'I was comfortable with my current income.' }
+    ]
+  },
+  goal_orientation_learning: {
+    id: 'goal_orientation_learning',
+    name: 'Learning Goal Orientation',
+    construct: 'goal_orientation',
+    source: 'Learning Goal Orientation subscale (VandeWalle, 1997)',
+    intro: 'Five statements about how you approach learning and challenge at work.',
+    scale: { min: 1, max: 6, minLabel: 'Strongly disagree', maxLabel: 'Strongly agree' },
+    items: [
+      { id: 1, subscale: 'Learning Goal Orientation', text: 'I am willing to select a challenging work assignment that I can learn a lot from.' },
+      { id: 2, subscale: 'Learning Goal Orientation', text: 'I often look for opportunities to develop new skills and knowledge.' },
+      { id: 3, subscale: 'Learning Goal Orientation', text: "I enjoy challenging and difficult tasks at work where I'll learn new skills." },
+      { id: 4, subscale: 'Learning Goal Orientation', text: 'For me, development of my work ability is important enough to take risks.' },
+      { id: 5, subscale: 'Learning Goal Orientation', text: 'I prefer to work in situations that require a high level of ability and talent.' }
     ]
   }
 };
 
 // Generic one-item-per-screen assessment runner for any measure in MEASURES.
 // Saves an assessment_responses row tagged with the given phase.
-function MeasureAssessment({ measure, phase, waveNumber, user, onComplete, embedded }) {
+function MeasureAssessment({ measure, phase, waveNumber, user, onComplete, embedded, measureProgress }) {
   const [idx, setIdx] = useState(0);
   const [responses, setResponses] = useState({});
   const [saving, setSaving] = useState(false);
@@ -8308,12 +8343,24 @@ function MeasureAssessment({ measure, phase, waveNumber, user, onComplete, embed
     if (!allAnswered || saving) return;
     setSaving(true);
     setError(null);
+    // Reverse-code flagged items (min + max - raw), then average per subscale.
+    const scoreOf = (it) => {
+      const raw = responses[it.id];
+      return it.reverse ? (measure.scale.min + measure.scale.max - raw) : raw;
+    };
+    const bySubscale = {};
+    measure.items.forEach(it => {
+      if (!bySubscale[it.subscale]) bySubscale[it.subscale] = [];
+      bySubscale[it.subscale].push(scoreOf(it));
+    });
     const dimensions = {};
-    measure.items.forEach(i => { dimensions[i.dimension] = responses[i.id]; });
-    const vals = Object.values(responses);
+    Object.entries(bySubscale).forEach(([sub, vals]) => {
+      dimensions[sub] = Number((vals.reduce((a, b) => a + b, 0) / vals.length).toFixed(2));
+    });
+    const allScored = measure.items.map(scoreOf);
     const results = {
       dimensions,
-      overall: Number((vals.reduce((a, b) => a + b, 0) / vals.length).toFixed(2))
+      overall: Number((allScored.reduce((a, b) => a + b, 0) / allScored.length).toFixed(2))
     };
     const { error: e } = await supabase.from('assessment_responses').insert({
       user_id: user.id,
@@ -8340,7 +8387,7 @@ function MeasureAssessment({ measure, phase, waveNumber, user, onComplete, embed
 
         <div className="mb-6">
           <div className="flex justify-between text-xs text-stone-500 mb-2">
-            <span>Question {idx + 1} of {total}</span>
+            <span>Question {idx + 1} of {total}{measureProgress ? ` · ${measureProgress}` : ''}</span>
             <span>{Math.round(((idx + 1) / total) * 100)}%</span>
           </div>
           <div className="h-2 bg-stone-200 rounded-full overflow-hidden">
@@ -8349,7 +8396,8 @@ function MeasureAssessment({ measure, phase, waveNumber, user, onComplete, embed
         </div>
 
         <div className="bg-white rounded-xl border border-stone-200 p-5 mb-4">
-          <p className="text-xs font-medium text-stone-400 mb-2">{item.dimension}</p>
+          <p className="text-xs font-medium text-stone-400 mb-2">{item.subscale}</p>
+          {measure.stem && <p className="text-sm text-stone-500 mb-1">{measure.stem}</p>}
           <p className="text-lg text-stone-800 mb-5 leading-relaxed">{item.text}</p>
           <div className="flex justify-between gap-1">
             {scalePoints.map(n => (
@@ -8389,6 +8437,41 @@ function MeasureAssessment({ measure, phase, waveNumber, user, onComplete, embed
         </div>
       </div>
     </div>
+  );
+}
+
+// Runs the full assessment battery for a wave — every measure in
+// MEASURE_ORDER that is currently defined, in sequence.
+function WaveBattery({ waveNumber, user, onComplete }) {
+  const measures = MEASURE_ORDER.map(id => MEASURES[id]).filter(Boolean);
+  const [idx, setIdx] = useState(0);
+
+  if (idx >= measures.length) {
+    return (
+      <div className="animate-fadeIn pb-8 text-center">
+        <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-8 mb-4">
+          <div className="text-4xl mb-3">✓</div>
+          <h2 className="font-serif text-xl text-stone-800 mb-1">Wave {waveNumber} complete</h2>
+          <p className="text-sm text-stone-600">You've completed all {measures.length} measures. Your responses are saved.</p>
+        </div>
+        <button onClick={onComplete} className="w-full bg-amber-600 text-white py-3 rounded-xl font-medium">
+          Back to Assessments
+        </button>
+      </div>
+    );
+  }
+
+  const measure = measures[idx];
+  return (
+    <MeasureAssessment
+      key={measure.id}
+      measure={measure}
+      waveNumber={waveNumber}
+      embedded
+      user={user}
+      measureProgress={`Measure ${idx + 1} of ${measures.length}`}
+      onComplete={() => setIdx(i => i + 1)}
+    />
   );
 }
 
@@ -8489,8 +8572,7 @@ function AssessmentsPage({ userProfile, user }) {
         <button onClick={() => setTaking(null)} className="flex items-center gap-1 text-stone-500 hover:text-stone-700 mb-4 text-sm">
           <Icons.ChevronLeft /> Back to Assessments
         </button>
-        <MeasureAssessment measure={MEASURES.perma4} waveNumber={taking} embedded user={user}
-          onComplete={() => setTaking(null)} />
+        <WaveBattery waveNumber={taking} user={user} onComplete={() => setTaking(null)} />
       </div>
     );
   }
