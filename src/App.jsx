@@ -3809,7 +3809,7 @@ function TextCoach({ coachType, setCurrentView, user, setActions, actions }) {
 // NAVIGATION COMPONENTS
 // ============================================================================
 
-function Sidebar({ currentView, setCurrentView, user, onSignOut, userProfile, onToggleDemoMode }) {
+function Sidebar({ currentView, setCurrentView, user, onSignOut, userProfile, onToggleDemoMode, onSetDemoWave }) {
   const navItems = [
     { id: 'dashboard', label: 'Home', icon: Icons.Home },
     { id: 'assessments', label: 'Assessments', icon: Icons.CheckSquare },
@@ -3847,13 +3847,28 @@ function Sidebar({ currentView, setCurrentView, user, onSignOut, userProfile, on
           </div>
         </div>
         {userProfile?.is_admin && (
-          <button onClick={onToggleDemoMode}
-            className={`w-full flex items-center justify-between px-4 py-2 rounded-xl text-sm mb-1 transition-colors ${userProfile.demo_mode_active ? 'bg-amber-100 text-amber-800' : 'text-stone-600 hover:bg-stone-50'}`}>
-            <span className="flex items-center gap-3"><Icons.Award /><span>Demo Mode</span></span>
-            <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${userProfile.demo_mode_active ? 'bg-amber-500 text-white' : 'bg-stone-200 text-stone-500'}`}>
-              {userProfile.demo_mode_active ? 'ON' : 'OFF'}
-            </span>
-          </button>
+          <div className="mb-1 rounded-xl bg-stone-50 border border-stone-200 p-2">
+            <button onClick={onToggleDemoMode}
+              className="w-full flex items-center justify-between px-2 py-1.5 rounded-lg text-sm text-stone-700 hover:bg-stone-100 transition-colors">
+              <span className="flex items-center gap-2"><Icons.Award /><span>Demo Mode</span></span>
+              <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${userProfile.demo_mode_active ? 'bg-amber-500 text-white' : 'bg-stone-200 text-stone-500'}`}>
+                {userProfile.demo_mode_active ? 'ON' : 'OFF'}
+              </span>
+            </button>
+            <div className="flex items-center gap-1 px-2 pt-2">
+              <span className="text-xs text-stone-500 mr-1">Wave</span>
+              {[1, 2, 3, 4].map(n => (
+                <button key={n} onClick={() => onSetDemoWave(n)}
+                  className={`w-7 h-7 rounded-md text-xs font-semibold transition-colors ${userProfile.demo_wave_override === n ? 'bg-amber-500 text-white' : 'bg-white border border-stone-200 text-stone-600 hover:border-amber-300'}`}>
+                  {n}
+                </button>
+              ))}
+              <button onClick={() => onSetDemoWave(null)}
+                className={`px-2 h-7 rounded-md text-xs font-medium transition-colors ${userProfile.demo_wave_override == null ? 'bg-stone-300 text-stone-700' : 'bg-white border border-stone-200 text-stone-500 hover:border-stone-300'}`}>
+                Off
+              </button>
+            </div>
+          </div>
         )}
         <button onClick={() => setCurrentView('privacy-settings')} className="w-full flex items-center gap-3 px-4 py-2 text-stone-600 hover:bg-stone-50 rounded-xl text-sm mb-1">
           <Icons.Shield /><span>Privacy Settings</span>
@@ -8240,11 +8255,15 @@ const ASSESSMENT_WAVES = [
   { number: 4, label: 'Week 8 post-program', triggerWeek: 8, description: 'The post-program assessment.' }
 ];
 
-function AssessmentsPage() {
-  // Step 2 scaffold — static statuses. Real wave-eligibility logic is Step 4.
-  const statusFor = (wave) => wave.number === 1
-    ? { label: 'Available now', cls: 'bg-amber-100 text-amber-700' }
-    : { label: 'Not yet available', cls: 'bg-stone-100 text-stone-500' };
+function AssessmentsPage({ demoWaveOverride }) {
+  // Current wave: the admin demo override when set, else wave 1 for now.
+  // Step 4 replaces the fallback with date-based eligibility logic.
+  const currentWave = demoWaveOverride || 1;
+  const statusFor = (wave) => {
+    if (wave.number < currentWave) return { label: 'Completed', cls: 'bg-emerald-100 text-emerald-700' };
+    if (wave.number === currentWave) return { label: 'Available now', cls: 'bg-amber-100 text-amber-700' };
+    return { label: 'Not yet available', cls: 'bg-stone-100 text-stone-500' };
+  };
 
   return (
     <div className="animate-fadeIn pb-8">
@@ -8408,6 +8427,17 @@ export default function DayByDayApp() {
       .eq('user_id', user.id);
   };
 
+  // Admin-only: pin this user to a specific assessment wave (1-4), or null
+  // to fall back to date-based eligibility.
+  const setDemoWave = async (n) => {
+    if (!userProfile) return;
+    setUserProfile({ ...userProfile, demo_wave_override: n });
+    await supabase
+      .from('user_profiles')
+      .update({ demo_wave_override: n, updated_at: new Date().toISOString() })
+      .eq('user_id', user.id);
+  };
+
   const handleSignOut = async () => {
     await supabase.auth.signOut();
     setUser(null);
@@ -8469,7 +8499,7 @@ export default function DayByDayApp() {
     
     switch (currentView) {
       case 'dashboard': return <Dashboard setCurrentView={setCurrentView} user={user} actions={actions} journalEntries={journalEntries} sessionCount={sessionCount} intakeFocus={intakeFocus} />;
-      case 'assessments': return <AssessmentsPage />;
+      case 'assessments': return <AssessmentsPage demoWaveOverride={userProfile?.demo_wave_override} />;
       case 'leader-development': return <LeaderDevelopmentPage setCurrentView={setCurrentView} isConstructUnlocked={isConstructUnlocked} />;
       case 'leadership-development': return <LeadershipDevelopmentPage setCurrentView={setCurrentView} isConstructUnlocked={isConstructUnlocked} />;
       case 'wellbeing': return <WellbeingPage setCurrentView={setCurrentView} user={user} />;
@@ -8499,7 +8529,7 @@ export default function DayByDayApp() {
         .animate-spin { animation: spin 1s linear infinite; }
         .line-clamp-1 { display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
       `}</style>
-      <Sidebar currentView={currentView} setCurrentView={setCurrentView} user={user} onSignOut={handleSignOut} userProfile={userProfile} onToggleDemoMode={toggleDemoMode} />
+      <Sidebar currentView={currentView} setCurrentView={setCurrentView} user={user} onSignOut={handleSignOut} userProfile={userProfile} onToggleDemoMode={toggleDemoMode} onSetDemoWave={setDemoWave} />
       <Header streak={streak} />
       <main className="px-5 py-6 max-w-lg mx-auto pb-24 lg:ml-64 lg:max-w-4xl lg:pb-8">{renderView()}</main>
       <BottomNav currentView={currentView} setCurrentView={setCurrentView} />
