@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
+import { RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, BarChart, Bar, Cell } from 'recharts';
 import { supabase } from './lib/supabase';
 
 // ============================================================================
@@ -8540,6 +8540,105 @@ function MeasureAssessment({ measure, phase, waveNumber, user, onComplete, embed
   );
 }
 
+// Banding a score within its scale into strength / moderate / growth.
+function scoreBand(score, scale) {
+  const pct = (score - scale.min) / (scale.max - scale.min);
+  if (pct >= 0.7) return { label: 'strength', pill: 'bg-emerald-100 text-emerald-700', color: '#10b981' };
+  if (pct >= 0.4) return { label: 'moderate', pill: 'bg-amber-100 text-amber-700', color: '#f59e0b' };
+  return { label: 'growth area', pill: 'bg-orange-100 text-orange-700', color: '#f97316' };
+}
+
+function DonutGauge({ value, max, color }) {
+  const size = 84, stroke = 9;
+  const r = (size - stroke) / 2;
+  const circ = 2 * Math.PI * r;
+  const pct = Math.max(0, Math.min(1, max ? value / max : 0));
+  return (
+    <div className="relative shrink-0" style={{ width: size, height: size }}>
+      <svg width={size} height={size}>
+        <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="#f5f5f4" strokeWidth={stroke} />
+        <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke={color} strokeWidth={stroke}
+          strokeDasharray={`${circ * pct} ${circ}`} strokeLinecap="round"
+          transform={`rotate(-90 ${size / 2} ${size / 2})`} />
+      </svg>
+      <div className="absolute inset-0 flex flex-col items-center justify-center leading-none">
+        <span className="text-lg font-bold text-stone-800">{value}</span>
+        <span className="text-[10px] text-stone-400 mt-0.5">/ {max}</span>
+      </div>
+    </div>
+  );
+}
+
+// One result card per measure, with the chart that fits it.
+function MeasureResultCard({ measure, results }) {
+  const dims = results?.dimensions || {};
+  const subscales = Object.keys(dims);
+  const scale = measure.scale;
+  const overall = results?.overall ?? 0;
+  const band = scoreBand(overall, scale);
+  const chartType = subscales.length <= 1 ? 'donut' : (measure.id === 'perma4' ? 'radar' : 'bar');
+
+  let interp;
+  if (subscales.length <= 1) {
+    interp = `Your ${measure.name.toLowerCase()} score is in the ${band.label} range.`;
+  } else {
+    const sorted = [...subscales].sort((a, b) => dims[b] - dims[a]);
+    interp = `${sorted[0]} is your strongest area; ${sorted[sorted.length - 1]} has the most room to grow.`;
+  }
+
+  return (
+    <div className="bg-white rounded-xl border border-stone-200 p-4">
+      <div className="flex items-center justify-between gap-3 mb-3">
+        <h3 className="font-semibold text-stone-800">{measure.name}</h3>
+        <span className={`text-xs font-medium px-2 py-0.5 rounded-full shrink-0 ${band.pill}`}>{band.label}</span>
+      </div>
+
+      {chartType === 'donut' && (
+        <div className="flex items-center gap-4">
+          <DonutGauge value={overall} max={scale.max} color={band.color} />
+          <p className="text-sm text-stone-600 flex-1">{interp}</p>
+        </div>
+      )}
+
+      {chartType === 'radar' && (
+        <>
+          <div className="h-60 -mx-2">
+            <ResponsiveContainer width="100%" height="100%">
+              <RadarChart data={subscales.map(s => ({ subscale: s, score: dims[s] }))} outerRadius="68%">
+                <PolarGrid />
+                <PolarAngleAxis dataKey="subscale" tick={{ fontSize: 9, fill: '#57534e' }} />
+                <PolarRadiusAxis domain={[scale.min, scale.max]} tick={false} axisLine={false} />
+                <Radar dataKey="score" stroke="#0d9488" fill="#0d9488" fillOpacity={0.35} />
+              </RadarChart>
+            </ResponsiveContainer>
+          </div>
+          <p className="text-sm text-stone-600">{interp}</p>
+        </>
+      )}
+
+      {chartType === 'bar' && (
+        <>
+          <div className="-mx-2" style={{ height: 44 + subscales.length * 34 }}>
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={subscales.map(s => ({ subscale: s, score: dims[s] }))} layout="vertical"
+                margin={{ top: 4, right: 16, bottom: 4, left: 8 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#f5f5f4" horizontal={false} />
+                <XAxis type="number" domain={[scale.min, scale.max]} tick={{ fontSize: 10, fill: '#a8a29e' }} />
+                <YAxis type="category" dataKey="subscale" width={132} tick={{ fontSize: 10, fill: '#57534e' }} />
+                <Tooltip />
+                <Bar dataKey="score" radius={[0, 4, 4, 0]}>
+                  {subscales.map((s, i) => (<Cell key={i} fill={scoreBand(dims[s], scale).color} />))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+          <p className="text-sm text-stone-600 mt-1">{interp}</p>
+        </>
+      )}
+    </div>
+  );
+}
+
 // Results landing page for a completed wave — one card per measure
 // showing its subscale scores, read from the latest assessment_responses.
 function WaveResults({ waveNumber, user, onContinue, embedded, setCurrentView }) {
@@ -8577,26 +8676,7 @@ function WaveResults({ waveNumber, user, onContinue, embedded, setCurrentView })
             const measure = MEASURES[id];
             const row = latest[id];
             if (!measure || !row) return null;
-            const dims = row.results?.dimensions || {};
-            const max = measure.scale.max;
-            return (
-              <div key={id} className="bg-white rounded-xl border border-stone-200 p-4">
-                <h3 className="font-semibold text-stone-800 mb-3">{measure.name}</h3>
-                <div className="space-y-2">
-                  {Object.entries(dims).map(([sub, score]) => (
-                    <div key={sub}>
-                      <div className="flex justify-between text-xs mb-1">
-                        <span className="text-stone-500">{sub}</span>
-                        <span className="font-medium text-stone-700">{score} / {max}</span>
-                      </div>
-                      <div className="h-2 bg-stone-100 rounded-full overflow-hidden">
-                        <div className="h-full bg-amber-500 rounded-full" style={{ width: `${Math.max(0, Math.min(100, (score / max) * 100))}%` }} />
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            );
+            return <MeasureResultCard key={id} measure={measure} results={row.results} />;
           })}
         </div>
 
