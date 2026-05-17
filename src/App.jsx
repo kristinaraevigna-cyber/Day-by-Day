@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, ResponsiveContainer } from 'recharts';
 import { supabase } from './lib/supabase';
 
 // ============================================================================
@@ -6287,33 +6288,180 @@ function LeadershipDevelopmentPage({ setCurrentView, isConstructUnlocked }) {
 
 // Scaffold for the Well-being page. The four sections (framing, assessment,
 // results, practices) are built out in subsequent commits.
-function WellbeingPage({ setCurrentView }) {
-  const sections = [
-    { n: 1, title: 'Why Well-being Matters', desc: 'Framing — the PERMA+4 framework and why well-being is a leadership and workforce outcome.' },
-    { n: 2, title: 'Take the Assessment', desc: 'The 9-item PERMA+4 short form — one item per screen, 0–10 scale.' },
-    { n: 3, title: 'Your Results', desc: 'A 9-spoke radar of your scores, with plain-language interpretation.' },
-    { n: 4, title: 'Practices', desc: 'Evidence-based well-being interventions to try, with completion tracking.' }
-  ];
+// Evidence-based well-being practices for the Well-being construct page.
+const WELLBEING_INTERVENTIONS = [
+  { id: 'three_good_things', name: 'Three Good Things', cadence: '5 min/day · 1 week', source: 'Seligman et al.',
+    description: 'Each evening, note three things that went well that day and why. A simple, well-evidenced way to shift attention toward what is working.',
+    prompt: 'Before you finish today, write down three things that went well — and for each, one sentence on why it happened or what it meant to you.' },
+  { id: 'gratitude_letter', name: 'Gratitude Letter', cadence: 'One-time · ~20 min', source: 'Lyubomirsky',
+    description: 'Write a letter to someone whose impact on you was never fully acknowledged. The writing itself is the core; sharing it amplifies the effect.',
+    prompt: 'Think of one person who shaped you and was never properly thanked. Write them a specific, concrete letter — what they did, and the difference it made.' },
+  { id: 'best_possible_self', name: 'Best Possible Self', cadence: 'Weekly · 15 min', source: 'King',
+    description: 'Imagine and write about a future in which your work and life have gone as well as they realistically could. Clarifies direction and builds optimism.',
+    prompt: 'Picture yourself two years from now, having made steady progress as a leader. Write what a good day looks like — what you are doing, and how it feels.' },
+  { id: 'self_compassion_break', name: 'Self-Compassion Break', cadence: '5 min · as needed', source: 'Neff',
+    description: 'A brief practice for hard moments: name the difficulty, recognize that struggle is shared, and offer yourself the kindness you would give a colleague — useful given how common moral distress is in healthcare.',
+    prompt: 'Bring a current difficulty to mind. Tell yourself: this is hard; difficulty is part of leading; may I be as kind to myself as I would be to a colleague facing this.' }
+];
+
+// Healthcare-contextualized framing for the dimensions that warrant it.
+const PERMA_LOW_NOTES = {
+  Health: 'Low scores here are common in healthcare — shift work and long hours take a real toll. Treat this as an invitation to look at sleep, recovery, and self-care, not a personal failing.',
+  Environment: 'A low environment score is often about the space, not you — many clinical workspaces lack quiet, daylight, or room to focus. It can be worth surfacing to leadership.',
+  'Economic security': 'Economic security reflects circumstances as much as choices, and is a real pressure for many healthcare workers, especially earlier in a career. Read this matter-of-factly.'
+};
+
+function WellbeingPage({ setCurrentView, user }) {
+  const [latestPerma, setLatestPerma] = useState(undefined); // undefined = loading
+  const [completed, setCompleted] = useState([]);
+  const [openPrompt, setOpenPrompt] = useState(null);
+
+  useEffect(() => {
+    if (!user) return;
+    let active = true;
+    (async () => {
+      const { data: perma } = await supabase
+        .from('assessment_responses')
+        .select('results, completed_at')
+        .eq('user_id', user.id)
+        .eq('assessment_id', 'perma4')
+        .order('completed_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      if (active) setLatestPerma(perma || null);
+      const { data: comps } = await supabase
+        .from('intervention_completions')
+        .select('intervention_id')
+        .eq('user_id', user.id)
+        .eq('construct_id', 'wellbeing');
+      if (active) setCompleted((comps || []).map(c => c.intervention_id));
+    })();
+    return () => { active = false; };
+  }, [user]);
+
+  const markComplete = async (id) => {
+    if (completed.includes(id)) return;
+    setCompleted(c => [...c, id]);
+    await supabase.from('intervention_completions').insert({
+      user_id: user.id,
+      intervention_id: id,
+      construct_id: 'wellbeing',
+      started_at: new Date().toISOString(),
+      completed_at: new Date().toISOString()
+    });
+  };
+
+  const dims = latestPerma?.results?.dimensions;
+  const radarData = dims ? Object.entries(dims).map(([dimension, score]) => ({ dimension, score })) : [];
+  const lowDims = dims ? Object.entries(dims).filter(([, s]) => s < 5).map(([d]) => d) : [];
+
   return (
     <div className="animate-fadeIn pb-8">
       <button onClick={() => setCurrentView('leader-development')} className="flex items-center gap-1 text-stone-500 hover:text-stone-700 mb-4 text-sm">
         <Icons.ChevronLeft /> Leader Development
       </button>
+
       <div className="bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-200 rounded-2xl p-6 mb-6">
         <h1 className="font-serif text-2xl text-stone-800 mb-1">Well-being</h1>
         <p className="text-stone-600 text-sm">Your capacity to flourish at work — the foundation for sustainable leadership.</p>
       </div>
-      <div className="space-y-3">
-        {sections.map(s => (
-          <div key={s.n} className="bg-white rounded-xl border border-stone-200 p-4 flex items-start gap-3">
-            <div className="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-sm shrink-0">{s.n}</div>
-            <div>
-              <h3 className="font-semibold text-stone-800">{s.title}</h3>
-              <p className="text-sm text-stone-500">{s.desc}</p>
-              <span className="inline-block mt-2 text-xs text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full">Building next</span>
-            </div>
+
+      <div className="bg-white rounded-xl border border-stone-200 p-5 mb-4">
+        <h2 className="font-semibold text-stone-800 mb-2">Why well-being matters</h2>
+        <p className="text-sm text-stone-600 leading-relaxed">
+          Well-being isn't a perk — it's a foundation. Depleted leaders can't sustain the attention, judgment, and steadiness their teams rely on. In healthcare, where burnout and moral distress are widespread, a leader's well-being is also a workforce outcome: it shapes retention, engagement, and the psychological safety of everyone around them. This module uses <span className="font-medium">PERMA+4</span> (Donaldson) — a validated, systems-informed model of flourishing at work — to give you an honest read on nine dimensions, plus small, evidence-based practices to strengthen them.
+        </p>
+      </div>
+
+      <div className="bg-white rounded-xl border border-stone-200 p-5 mb-4">
+        <h2 className="font-semibold text-stone-800 mb-3">Your PERMA+4 results</h2>
+        {latestPerma === undefined && <p className="text-sm text-stone-400">Loading…</p>}
+        {latestPerma === null && (
+          <div>
+            <p className="text-sm text-stone-600 mb-3">You haven't completed the PERMA+4 yet — it's part of the Wave 1 battery.</p>
+            <button onClick={() => setCurrentView('assessments')} className="px-4 py-2 bg-emerald-600 text-white rounded-lg text-sm font-medium">
+              Go to Assessments
+            </button>
           </div>
-        ))}
+        )}
+        {dims && (
+          <div>
+            <div className="h-72 -mx-2">
+              <ResponsiveContainer width="100%" height="100%">
+                <RadarChart data={radarData} outerRadius="72%">
+                  <PolarGrid />
+                  <PolarAngleAxis dataKey="dimension" tick={{ fontSize: 11, fill: '#57534e' }} />
+                  <PolarRadiusAxis domain={[0, 10]} tick={{ fontSize: 10, fill: '#a8a29e' }} />
+                  <Radar dataKey="score" stroke="#0d9488" fill="#0d9488" fillOpacity={0.35} />
+                </RadarChart>
+              </ResponsiveContainer>
+            </div>
+            {lowDims.length > 0 ? (
+              <div className="mt-3 space-y-2">
+                <p className="text-xs font-medium text-stone-500">Worth a closer look</p>
+                {lowDims.map(d => (
+                  <p key={d} className="text-sm text-stone-600">
+                    <span className="font-medium text-stone-800">{d}.</span> {PERMA_LOW_NOTES[d] || 'A lower score here is a growth area — the practices below can help.'}
+                  </p>
+                ))}
+              </div>
+            ) : (
+              <p className="text-sm text-stone-600 mt-3">No dimension is low right now — use the practices below to maintain and build on your strengths.</p>
+            )}
+          </div>
+        )}
+      </div>
+
+      <div className="mb-4">
+        <h2 className="font-semibold text-stone-800 mb-1">Practices</h2>
+        <p className="text-xs text-stone-500 mb-3">Evidence-based well-being practices. Try one, then mark it complete.</p>
+        <div className="space-y-3">
+          {WELLBEING_INTERVENTIONS.map(iv => {
+            const done = completed.includes(iv.id);
+            const open = openPrompt === iv.id;
+            return (
+              <div key={iv.id} className={`bg-white rounded-xl border p-4 ${done ? 'border-emerald-300' : 'border-stone-200'}`}>
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <h3 className="font-semibold text-stone-800">{iv.name}</h3>
+                    <p className="text-xs text-stone-400">{iv.cadence} · {iv.source}</p>
+                  </div>
+                  {done && <span className="text-xs font-medium text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full shrink-0">✓ Completed</span>}
+                </div>
+                <p className="text-sm text-stone-600 mt-2">{iv.description}</p>
+                {open && (
+                  <div className="mt-3 bg-emerald-50 border border-emerald-100 rounded-lg p-3">
+                    <p className="text-xs font-medium text-emerald-800 mb-1">Try this</p>
+                    <p className="text-sm text-stone-700">{iv.prompt}</p>
+                  </div>
+                )}
+                <div className="flex gap-2 mt-3">
+                  <button onClick={() => setOpenPrompt(open ? null : iv.id)}
+                    className="px-3 py-1.5 bg-stone-100 rounded-lg text-sm font-medium text-stone-700 hover:bg-stone-200">
+                    {open ? 'Hide' : 'Try this'}
+                  </button>
+                  <button onClick={() => markComplete(iv.id)} disabled={done}
+                    className={`px-3 py-1.5 rounded-lg text-sm font-medium ${done ? 'bg-emerald-100 text-emerald-700' : 'bg-emerald-600 text-white hover:bg-emerald-700'}`}>
+                    {done ? 'Completed' : 'Mark complete'}
+                  </button>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 gap-3">
+        <button onClick={() => setCurrentView('coaches')} className="bg-white rounded-xl border border-stone-200 p-4 text-left hover:shadow-md transition-all">
+          <div className="w-10 h-10 rounded-lg bg-amber-50 text-amber-700 flex items-center justify-center mb-2"><Icons.MessageCircle /></div>
+          <p className="font-medium text-stone-800 text-sm">Discuss with a coach</p>
+          <p className="text-xs text-stone-500">Talk through your results</p>
+        </button>
+        <button onClick={() => setCurrentView('journal')} className="bg-white rounded-xl border border-stone-200 p-4 text-left hover:shadow-md transition-all">
+          <div className="w-10 h-10 rounded-lg bg-violet-50 text-violet-700 flex items-center justify-center mb-2"><Icons.Edit /></div>
+          <p className="font-medium text-stone-800 text-sm">Save a reflection</p>
+          <p className="text-xs text-stone-500">Journal on what you noticed</p>
+        </button>
       </div>
     </div>
   );
