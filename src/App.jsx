@@ -4422,125 +4422,99 @@ function LibraryView({ setCurrentView }) {
 // PRACTICE VIEW (VCoL-Based Activities)
 // ============================================================================
 
-function PracticeView({ setCurrentView, user }) {
-  const [selectedCompetency, setSelectedCompetency] = useState(null);
+// First-pass mapping of each activity to competencies from the intake
+// framework (Lombardo & Eichinger, 2009). Review with Day before the demo.
+const ACTIVITY_FOCUS_TAGS = {
+  pause_practice: ['Self-Regulation', 'Balance'],
+  growth_reframe: ['Perseverance', 'Love of Learning'],
+  bold_action: ['Enterprise Initiative', 'Self-Confidence'],
+  resource_hunt: ['Enterprise Initiative', 'Innovative Thinking'],
+  values_alignment: ['Ethical Responsibility', 'Purposefulness'],
+  speak_up: ['Self-Confidence', 'Effective Communication'],
+  idea_generation: ['Innovative Thinking'],
+  challenge_assumption: ['Innovative Thinking'],
+  active_listening: ['Effective Communication', 'Empathic Engagement'],
+  powerful_question: ['Effective Communication', 'Development'],
+  decision_framework: ['Decision-Making'],
+  anticipate_problems: ['Decision-Making'],
+  perspective_taking: ['Empathic Engagement'],
+  curiosity_practice: ['Empathic Engagement', 'Love of Learning'],
+  network_map: ['Team-Building', 'Collaboration'],
+  learn_from_others: ['Love of Learning'],
+  build_safety: ['Team-Building'],
+  give_recognition: ['Team-Building', 'Development'],
+  stress_recovery: ['Balance', 'Self-Regulation'],
+  failure_analysis: ['Perseverance', 'Love of Learning'],
+  optimism_practice: ['Perseverance', 'Balance'],
+  opportunity_scan: ['Enterprise Initiative', 'Innovative Thinking'],
+  calculated_risk: ['Enterprise Initiative', 'Decision-Making'],
+  first_follower: ['Vision Casting', 'Negotiation'],
+  values_audit: ['Self-Awareness', 'Ethical Responsibility'],
+  ethical_dilemma: ['Ethical Responsibility', 'Decision-Making'],
+  courageous_conversation: ['Conflict Management', 'Effective Communication'],
+  reverse_brainstorm: ['Innovative Thinking'],
+  assumption_busting: ['Innovative Thinking', 'Self-Awareness'],
+  creative_constraints: ['Innovative Thinking'],
+  story_crafting: ['Vision Casting', 'Purposefulness'],
+  metaphor_thinking: ['Effective Communication'],
+  socratic_questions: ['Effective Communication', 'Development'],
+  root_cause: ['Decision-Making'],
+  decision_matrix: ['Decision-Making'],
+  scenario_planning: ['Decision-Making', 'Vision Casting'],
+  empathy_interview: ['Empathic Engagement'],
+  bias_check: ['Self-Awareness', 'Cross-Cultural Resourcefulness'],
+  inclusive_language: ['Cross-Cultural Resourcefulness', 'Effective Communication'],
+  learning_from_failure_others: ['Love of Learning'],
+  reverse_mentoring: ['Love of Learning', 'Development'],
+  peer_coaching: ['Development', 'Collaboration'],
+  meeting_design: ['Collaboration', 'Team-Building'],
+  conflict_approach: ['Conflict Management'],
+  delegate_develop: ['Delegation', 'Development']
+};
 
-  const competencyColors = {
-    courage: { bg: 'bg-amber-50', border: 'border-amber-200', text: 'text-amber-700', accent: 'bg-amber-600' },
-    creativity: { bg: 'bg-violet-50', border: 'border-violet-200', text: 'text-violet-700', accent: 'bg-violet-600' },
-    collaboration: { bg: 'bg-teal-50', border: 'border-teal-200', text: 'text-teal-700', accent: 'bg-teal-600' }
-  };
+function PracticeView({ setCurrentView, intakeFocus = [] }) {
+  const focusSet = new Set(intakeFocus);
+  const matches = ACTIVITIES.filter(a => (ACTIVITY_FOCUS_TAGS[a.id] || []).some(t => focusSet.has(t)));
+  const matchIds = new Set(matches.map(a => a.id));
+  const rest = ACTIVITIES.filter(a => !matchIds.has(a.id));
 
-  if (selectedCompetency) {
-    const competency = KLI_COMPETENCIES.find(c => c.id === selectedCompetency);
-    const activities = ACTIVITIES.filter(a => a.competency === selectedCompetency);
-    const colors = competencyColors[selectedCompetency];
-
-    return (
-      <div className="animate-fadeIn">
-        <button onClick={() => setSelectedCompetency(null)} className="flex items-center gap-1 text-stone-500 hover:text-stone-700 mb-4 text-sm">
-          <Icons.ChevronLeft /> All Competencies
-        </button>
-        
-        <div className={`${colors.bg} ${colors.border} border rounded-xl p-6 mb-6`}>
-          <h1 className={`text-2xl font-bold ${colors.text} mb-2`}>{competency.name}</h1>
-          <p className="text-stone-600">{competency.description}</p>
-        </div>
-
-        <h2 className="font-semibold text-stone-800 mb-4">Practice Activities</h2>
-        <div className="space-y-3">
-          {activities.map(activity => {
-            const capability = competency.capabilities.find(c => c.id === activity.capability);
-            return (
-              <button
-                key={activity.id}
-                onClick={() => setCurrentView(`practice-${activity.id}`)}
-                className="w-full bg-white rounded-xl border border-stone-200 p-4 hover:shadow-md transition-all text-left"
-              >
-                <div className="flex justify-between items-start mb-2">
-                  <div>
-                    <h3 className="font-semibold text-stone-800">{activity.title}</h3>
-                    <p className={`text-xs ${colors.text}`}>{capability?.name}</p>
-                  </div>
-                  <span className={`text-xs px-2 py-1 rounded-full ${colors.bg} ${colors.text}`}>{activity.level}</span>
-                </div>
-                <p className="text-sm text-stone-600 mb-2">{activity.description}</p>
-                <div className="flex items-center text-stone-400 text-xs">
-                  <Icons.Clock /> <span className="ml-1">{activity.duration}</span>
-                </div>
-              </button>
-            );
-          })}
-        </div>
-
-        <div className={`mt-6 p-4 ${colors.bg} rounded-xl`}>
-          <h3 className={`font-semibold ${colors.text} mb-2`}>Capabilities & Attributes</h3>
-          {competency.capabilities.map(cap => (
-            <div key={cap.id} className="mb-3">
-              <p className="font-medium text-stone-700 text-sm">{cap.name}</p>
-              <div className="flex flex-wrap gap-1 mt-1">
-                {cap.attributes.map(attr => (
-                  <span key={attr} className="text-xs bg-white px-2 py-0.5 rounded text-stone-600">{attr}</span>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
+  const renderCard = (activity) => (
+    <button
+      key={activity.id}
+      onClick={() => setCurrentView(`practice-${activity.id}`)}
+      className="w-full bg-white rounded-xl border border-stone-200 p-4 text-left hover:shadow-md hover:border-stone-300 transition-all"
+    >
+      <div className="flex justify-between items-start gap-3 mb-1">
+        <h3 className="font-semibold text-stone-800">{activity.title}</h3>
+        <span className="text-xs text-stone-400 flex items-center gap-1 shrink-0"><Icons.Clock /> {activity.duration}</span>
       </div>
-    );
-  }
+      <p className="text-sm text-stone-600 mb-2">{activity.description}</p>
+      <div className="flex flex-wrap gap-1">
+        {(ACTIVITY_FOCUS_TAGS[activity.id] || []).map(t => (
+          <span key={t} className={`text-xs px-2 py-0.5 rounded-full ${focusSet.has(t) ? 'bg-amber-100 text-amber-700 font-medium' : 'bg-stone-100 text-stone-500'}`}>{t}</span>
+        ))}
+      </div>
+    </button>
+  );
 
   return (
-    <div className="animate-fadeIn">
-      <h1 className="text-2xl font-bold text-stone-800 mb-2">Daily Practice</h1>
-      <p className="text-stone-600 mb-6">Build leadership skills through the VCoL framework: Vision, Coaching, Learning.</p>
-
-      <div className="bg-gradient-to-r from-amber-50 via-violet-50 to-teal-50 rounded-xl p-4 mb-6 border border-stone-200">
-        <h2 className="font-semibold text-stone-700 mb-2">The VCoL Framework</h2>
-        <div className="grid grid-cols-4 gap-2 text-center">
-          <div className="bg-white rounded-lg p-2">
-            <div className="text-lg font-bold text-amber-600">1</div>
-            <div className="text-xs text-stone-600">Set Goal</div>
-          </div>
-          <div className="bg-white rounded-lg p-2">
-            <div className="text-lg font-bold text-violet-600">2</div>
-            <div className="text-xs text-stone-600">Gather Info</div>
-          </div>
-          <div className="bg-white rounded-lg p-2">
-            <div className="text-lg font-bold text-teal-600">3</div>
-            <div className="text-xs text-stone-600">Apply</div>
-          </div>
-          <div className="bg-white rounded-lg p-2">
-            <div className="text-lg font-bold text-stone-600">4</div>
-            <div className="text-xs text-stone-600">Reflect</div>
-          </div>
-        </div>
+    <div className="animate-fadeIn pb-8">
+      <div className="mb-6">
+        <h1 className="font-serif text-2xl lg:text-3xl text-stone-800 mb-1">Practice</h1>
+        <p className="text-stone-500 text-sm">Short, evidence-based exercises that follow the VCoL cycle — set a goal, gather information, apply, then reflect.</p>
       </div>
 
-      <h2 className="font-semibold text-stone-800 mb-4">Choose a Competency</h2>
-      <div className="space-y-4">
-        {KLI_COMPETENCIES.map(comp => {
-          const colors = competencyColors[comp.id];
-          const activityCount = ACTIVITIES.filter(a => a.competency === comp.id).length;
-          return (
-            <button
-              key={comp.id}
-              onClick={() => setSelectedCompetency(comp.id)}
-              className={`w-full ${colors.bg} ${colors.border} border rounded-xl p-5 hover:shadow-md transition-all text-left`}
-            >
-              <div className="flex justify-between items-center mb-2">
-                <h3 className={`text-xl font-bold ${colors.text}`}>{comp.name}</h3>
-                <span className={`${colors.accent} text-white text-xs px-2 py-1 rounded-full`}>{activityCount} activities</span>
-              </div>
-              <p className="text-stone-600 text-sm mb-3">{comp.description}</p>
-              <div className="flex flex-wrap gap-2">
-                {comp.capabilities.map(cap => (
-                  <span key={cap.id} className="text-xs bg-white px-2 py-1 rounded text-stone-600">{cap.name}</span>
-                ))}
-              </div>
-            </button>
-          );
-        })}
+      {matches.length > 0 && (
+        <div className="mb-8">
+          <h2 className="font-semibold text-stone-800 mb-1">For your focus</h2>
+          <p className="text-xs text-stone-500 mb-3">Matched to the competencies you chose at intake.</p>
+          <div className="space-y-3">{matches.map(renderCard)}</div>
+        </div>
+      )}
+
+      <div>
+        <h2 className="font-semibold text-stone-800 mb-3">{matches.length > 0 ? 'All other activities' : 'All activities'}</h2>
+        <div className="space-y-3">{rest.map(renderCard)}</div>
       </div>
     </div>
   );
@@ -8078,6 +8052,7 @@ export default function DayByDayApp() {
   const [loading, setLoading] = useState(true);
   const [hasConsent, setHasConsent] = useState(null);
   const [hasIntake, setHasIntake] = useState(null);
+  const [intakeFocus, setIntakeFocus] = useState([]);
   const [currentView, setCurrentView] = useState('dashboard');
   const [streak, setStreak] = useState(0);
   const [actions, setActions] = useState([]);
@@ -8116,10 +8091,11 @@ export default function DayByDayApp() {
   const checkIntake = async () => {
     const { data } = await supabase
       .from('user_intake')
-      .select('completed_at')
+      .select('completed_at, focus_competencies')
       .eq('user_id', user.id)
       .maybeSingle();
     setHasIntake(!!data?.completed_at);
+    setIntakeFocus(Array.isArray(data?.focus_competencies) ? data.focus_competencies : []);
   };
 
   const loadUserData = async () => {
@@ -8184,6 +8160,7 @@ export default function DayByDayApp() {
     setUser(null);
     setHasConsent(null);
     setHasIntake(null);
+    setIntakeFocus([]);
     setUserProfile(null);
     setConstructUnlocks([]);
   };
@@ -8233,7 +8210,7 @@ export default function DayByDayApp() {
       case 'leadership-development': return <LeadershipDevelopmentPage setCurrentView={setCurrentView} isConstructUnlocked={isConstructUnlocked} />;
       case 'wellbeing': return <WellbeingPage setCurrentView={setCurrentView} user={user} />;
       case 'develop': return <LeaderDevelopmentPage setCurrentView={setCurrentView} isConstructUnlocked={isConstructUnlocked} />;
-      case 'practice': return <PracticeView setCurrentView={setCurrentView} user={user} />;
+      case 'practice': return <PracticeView setCurrentView={setCurrentView} intakeFocus={intakeFocus} />;
       case 'chapters': return <ChaptersView setCurrentView={setCurrentView} />;
       case 'journal': return <JournalView user={user} journalEntries={journalEntries} setJournalEntries={setJournalEntries} />;
       case 'actions': return <ActionsView user={user} actions={actions} setActions={setActions} />;
