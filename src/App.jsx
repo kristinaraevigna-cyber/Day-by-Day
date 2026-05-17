@@ -4580,7 +4580,7 @@ function DailyPractice({ activityId, setCurrentView, user }) {
 
   const steps = [
     { key: 'set_goal', title: 'Set Your Goal', icon: '🎯', prompt: activity.vcol.set_goal },
-    { key: 'gather_info', title: 'Gather Information', icon: 'awareness', prompt: activity.vcol.gather_info },
+    { key: 'gather_info', title: 'Gather Information', icon: '🔍', prompt: activity.vcol.gather_info },
     { key: 'apply', title: 'Apply & Practice', icon: '⚡', prompt: activity.vcol.apply },
     { key: 'reflect', title: 'Reflect', icon: '💭', prompt: activity.vcol.reflect }
   ];
