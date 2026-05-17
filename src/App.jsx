@@ -8042,7 +8042,7 @@ const INTAKE_STEPS = [
   }
 ];
 
-function IntakeForm({ user, onComplete }) {
+function IntakeForm({ user, onComplete, embedded }) {
   const [step, setStep] = useState(0);
   const [values, setValues] = useState({ race_ethnicity: [], focus_competencies: [] });
   const [customComp, setCustomComp] = useState('');
@@ -8189,11 +8189,11 @@ function IntakeForm({ user, onComplete }) {
   };
 
   return (
-    <div className="min-h-screen bg-stone-50 py-8 px-5">
+    <div className={embedded ? 'animate-fadeIn' : 'min-h-screen bg-stone-50 py-8 px-5'}>
       <div className="max-w-lg mx-auto">
         <div className="mb-6">
-          <h1 className="font-serif text-2xl text-stone-800 mb-1">Welcome to Day by Day</h1>
-          <p className="text-stone-500 text-sm">A few questions before you begin — this takes about 3 minutes.</p>
+          <h1 className="font-serif text-2xl text-stone-800 mb-1">{embedded ? 'Intake questionnaire' : 'Welcome to Day by Day'}</h1>
+          <p className="text-stone-500 text-sm">A few questions about you and your leadership focus — this takes about 3 minutes.</p>
         </div>
 
         <div className="mb-6">
@@ -8236,7 +8236,7 @@ function IntakeForm({ user, onComplete }) {
           )}
           <button type="button" onClick={handleContinue} disabled={!stepComplete || saving}
             className="flex-1 bg-amber-600 text-white py-3 rounded-xl font-medium disabled:opacity-50">
-            {saving ? 'Saving…' : isLastStep ? 'Finish & enter Day by Day' : 'Continue'}
+            {saving ? 'Saving…' : isLastStep ? (embedded ? 'Finish' : 'Finish & enter Day by Day') : 'Continue'}
           </button>
         </div>
       </div>
@@ -8741,7 +8741,7 @@ function WaveBattery({ waveNumber, user, onComplete, embedded, setCurrentView })
 }
 
 // ============================================================================
-// WELCOME — "A message from David", shown once after the baseline assessment
+// WELCOME — "A message from David", shown once right after consent
 // ============================================================================
 
 function WelcomeMessage({ onBegin }) {
@@ -8752,7 +8752,7 @@ function WelcomeMessage({ onBegin }) {
           <p className="text-xs font-medium text-amber-700 mb-1">A message from David</p>
           <h1 className="font-serif text-2xl text-stone-800 mb-4">Welcome to Day by Day</h1>
           <div className="space-y-4 text-sm text-stone-600 leading-relaxed">
-            <p>You've just completed your first assessment — thank you. That's your starting point. Everything from here is about what you choose to do with it.</p>
+            <p>I'm glad you're here. Before you dive in, there are a few things I want you to know — they shape everything that follows.</p>
             <div>
               <h2 className="font-semibold text-stone-800 mb-1">This isn't a training program.</h2>
               <p>Most leadership "development" is an event — a workshop, a course, a retreat. You attend, you feel inspired, and then ordinary work resumes and little actually changes. The evidence is clear that one-off programs rarely produce lasting growth. Real development happens in the daily practice of leading — small, deliberate reps, reflected on over time. This app isn't a course to finish. It's a practice to keep.</p>
@@ -8920,11 +8920,13 @@ function TrajectoryView({ user, onBack }) {
   );
 }
 
-function AssessmentsPage({ userProfile, user, setCurrentView }) {
+function AssessmentsPage({ userProfile, user, setCurrentView, onIntakeComplete }) {
   const [taking, setTaking] = useState(null);
   const [reviewing, setReviewing] = useState(null);
   const [showTrajectory, setShowTrajectory] = useState(false);
+  const [doingIntake, setDoingIntake] = useState(false);
   const [completions, setCompletions] = useState({});
+  const [intakeDone, setIntakeDone] = useState(null);
 
   useEffect(() => {
     if (!user) return;
@@ -8938,6 +8940,15 @@ function AssessmentsPage({ userProfile, user, setCurrentView }) {
       });
     return () => { active = false; };
   }, [user, taking]);
+
+  // Intake completion — drives the intake card's status pill.
+  useEffect(() => {
+    if (!user) return;
+    let active = true;
+    supabase.from('user_intake').select('completed_at').eq('user_id', user.id).maybeSingle()
+      .then(({ data }) => { if (active) setIntakeDone(!!data?.completed_at); });
+    return () => { active = false; };
+  }, [user, doingIntake]);
 
   const waves = computeWaveStatuses(userProfile?.enrolled_at, userProfile?.demo_wave_override, completions);
 
@@ -8969,6 +8980,21 @@ function AssessmentsPage({ userProfile, user, setCurrentView }) {
     return <TrajectoryView user={user} onBack={() => setShowTrajectory(false)} />;
   }
 
+  if (doingIntake) {
+    return (
+      <div className="animate-fadeIn">
+        <button onClick={() => setDoingIntake(false)} className="flex items-center gap-1 text-stone-500 hover:text-stone-700 mb-4 text-sm">
+          <Icons.ChevronLeft /> Back to Assessments
+        </button>
+        <IntakeForm
+          user={user}
+          embedded
+          onComplete={() => { setDoingIntake(false); onIntakeComplete && onIntakeComplete(); }}
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="animate-fadeIn pb-8">
       <div className="mb-6">
@@ -8977,6 +9003,20 @@ function AssessmentsPage({ userProfile, user, setCurrentView }) {
       </div>
 
       <div className="space-y-3">
+        <button onClick={() => setDoingIntake(true)}
+          className="w-full text-left bg-white rounded-xl border border-stone-200 p-5 hover:shadow-md hover:border-stone-300 transition-all">
+          <div className="flex items-start justify-between gap-3 mb-1">
+            <h3 className="font-semibold text-stone-800">Intake questionnaire</h3>
+            {intakeDone !== null && (
+              <span className={`text-xs font-medium px-2 py-0.5 rounded-full shrink-0 ${intakeDone ? WAVE_STATUS_PILL.completed.cls : WAVE_STATUS_PILL.available.cls}`}>
+                {intakeDone ? 'Completed' : 'Not started'}
+              </span>
+            )}
+          </div>
+          <p className="text-sm text-stone-600 mb-2">A few background questions and the leadership competencies you want to focus on.</p>
+          <p className="text-xs text-stone-400">Take once · ~3 minutes</p>
+        </button>
+
         {waves.map(wave => {
           const pill = WAVE_STATUS_PILL[wave.status];
           const action = wave.status === 'completed'
@@ -9025,9 +9065,7 @@ export default function DayByDayApp() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [hasConsent, setHasConsent] = useState(null);
-  const [hasIntake, setHasIntake] = useState(null);
   const [intakeFocus, setIntakeFocus] = useState([]);
-  const [wave1Done, setWave1Done] = useState(null);
   const [welcomeSeen, setWelcomeSeen] = useState(null);
   const [currentView, setCurrentView] = useState('dashboard');
   const [streak, setStreak] = useState(0);
@@ -9048,7 +9086,6 @@ export default function DayByDayApp() {
     if (user) {
       checkConsent();
       checkIntake();
-      checkWave1();
       checkWelcome();
       loadUserData();
       loadProfile();
@@ -9067,28 +9104,18 @@ export default function DayByDayApp() {
     setHasConsent(consentGiven);
   };
 
+  // Intake no longer gates the app — it lives on the Assessments page.
+  // We still load focus_competencies so the rest of the app can use them.
   const checkIntake = async () => {
     const { data } = await supabase
       .from('user_intake')
-      .select('completed_at, focus_competencies')
+      .select('focus_competencies')
       .eq('user_id', user.id)
       .maybeSingle();
-    setHasIntake(!!data?.completed_at);
     setIntakeFocus(Array.isArray(data?.focus_competencies) ? data.focus_competencies : []);
   };
 
-  // Wave 1 gates the app — complete once the full battery is finished.
-  const checkWave1 = async () => {
-    const { data } = await supabase
-      .from('user_wave_completions')
-      .select('status')
-      .eq('user_id', user.id)
-      .eq('wave_number', 1)
-      .maybeSingle();
-    setWave1Done(data?.status === 'completed');
-  };
-
-  // "A message from David" — shown once after the baseline assessment.
+  // "A message from David" — shown once, right after consent.
   // Defensive: if the welcome_seen_at column isn't there yet, skip the gate
   // rather than break the app.
   const checkWelcome = async () => {
@@ -9183,9 +9210,7 @@ export default function DayByDayApp() {
     await supabase.auth.signOut();
     setUser(null);
     setHasConsent(null);
-    setHasIntake(null);
     setIntakeFocus([]);
-    setWave1Done(null);
     setWelcomeSeen(null);
     setSessionCount(0);
     setUserProfile(null);
@@ -9205,23 +9230,9 @@ export default function DayByDayApp() {
     return <div className="min-h-screen bg-stone-50 flex items-center justify-center"><Icons.Loader /></div>;
   }
 
-  // Require the intake form before the app is accessible
-  if (hasIntake === false) {
-    return <IntakeForm user={user} onComplete={() => setHasIntake(true)} />;
-  }
-  if (hasIntake === null) {
-    return <div className="min-h-screen bg-stone-50 flex items-center justify-center"><Icons.Loader /></div>;
-  }
-
-  // Require the full Wave 1 battery immediately after intake
-  if (wave1Done === false) {
-    return <WaveBattery waveNumber={1} user={user} onComplete={() => setWave1Done(true)} />;
-  }
-  if (wave1Done === null) {
-    return <div className="min-h-screen bg-stone-50 flex items-center justify-center"><Icons.Loader /></div>;
-  }
-
-  // "A message from David" — once, right after the baseline assessment
+  // "A message from David" — once, right after consent.
+  // The intake form and the Wave 1 battery are no longer entry gates;
+  // both are reached from the Assessments page instead.
   if (welcomeSeen === false) {
     return <WelcomeMessage onBegin={completeWelcome} />;
   }
@@ -9249,7 +9260,7 @@ export default function DayByDayApp() {
     
     switch (currentView) {
       case 'dashboard': return <Dashboard setCurrentView={setCurrentView} user={user} actions={actions} journalEntries={journalEntries} sessionCount={sessionCount} intakeFocus={intakeFocus} />;
-      case 'assessments': return <AssessmentsPage userProfile={userProfile} user={user} setCurrentView={setCurrentView} />;
+      case 'assessments': return <AssessmentsPage userProfile={userProfile} user={user} setCurrentView={setCurrentView} onIntakeComplete={checkIntake} />;
       case 'leader-development': return <LeaderDevelopmentPage setCurrentView={setCurrentView} isConstructUnlocked={isConstructUnlocked} />;
       case 'leadership-development': return <LeadershipDevelopmentPage setCurrentView={setCurrentView} isConstructUnlocked={isConstructUnlocked} />;
       case 'wellbeing': return <WellbeingPage setCurrentView={setCurrentView} user={user} />;
